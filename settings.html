@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark" class="app-loading">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aplikasi manajemen karyawan modern">
+  <title>Pengaturan · KaryawanKu</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="settings">
+  <div class="app-shell">
+    
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="dashboard.html" aria-label="KaryawanKu" data-sidebar-link>
+    <span class="brand-mark" data-icon="brand"></span>
+    <span><strong>KARYAWANKU</strong><small>PEOPLE & CULTURE</small></span>
+  </a>
+  <nav class="nav-menu" data-sidebar-scroll>
+    <span class="nav-label">MENU UTAMA</span>
+    <a href="dashboard.html" data-page="dashboard" data-sidebar-link><span class="nav-icon" data-icon="dashboard"></span>Dashboard</a>
+    <div class="nav-group" data-nav-group="employees">
+      <div class="nav-parent-row">
+        <a href="employees.html" data-page="employees" class="nav-parent-link" data-sidebar-link><span class="nav-icon" data-icon="users"></span><span class="nav-parent-label">Data Karyawan</span></a>
+        <button class="nav-submenu-toggle" type="button" data-nav-toggle="employees" aria-expanded="false" aria-controls="employeeSubmenu" aria-label="Buka submenu Data Karyawan"><span data-icon="chevronDown"></span></button>
+      </div>
+      <div class="nav-submenu" id="employeeSubmenu">
+        <a href="employees.html?status=Aktif" data-employee-status="Aktif" data-sidebar-link><span class="nav-submenu-icon" data-icon="userCheck"></span><span>Aktif</span><small data-status-count="Aktif">0</small></a>
+        <a href="employees.html?status=Cuti" data-employee-status="Cuti" data-sidebar-link><span class="nav-submenu-icon" data-icon="leave"></span><span>Cuti</span><small data-status-count="Cuti">0</small></a>
+        <a href="employees.html?status=Probation" data-employee-status="Probation" data-sidebar-link><span class="nav-submenu-icon" data-icon="clock"></span><span>Probation</span><small data-status-count="Probation">0</small></a>
+        <a href="employees.html?status=Resign" data-employee-status="Resign" data-sidebar-link><span class="nav-submenu-icon" data-icon="logout"></span><span>Resign</span><small data-status-count="Resign">0</small></a>
+        <a href="employees.html?status=Mutasi" data-employee-status="Mutasi" data-sidebar-link><span class="nav-submenu-icon" data-icon="workflow"></span><span>Mutasi</span><small data-status-count="Mutasi">0</small></a>
+        <a href="employees.html?status=Blacklist" data-employee-status="Blacklist" data-sidebar-link><span class="nav-submenu-icon" data-icon="shieldOff"></span><span>Blacklist</span><small data-status-count="Blacklist">0</small></a>
+      </div>
+    </div>
+    <a href="performance.html" data-page="performance" data-sidebar-link><span class="nav-icon" data-icon="award"></span>Penilaian Karyawan</a>
+    <a href="attendance.html" data-page="attendance" data-sidebar-link><span class="nav-icon" data-icon="attendance"></span>Absensi</a>
+    <a href="leave.html" data-page="leave" data-sidebar-link><span class="nav-icon" data-icon="leave"></span>Cuti & Izin</a>
+    <span class="nav-label">ORGANISASI</span>
+    <a href="payroll.html" data-page="payroll" data-sidebar-link><span class="nav-icon" data-icon="wallet"></span>Penggajian</a>
+    <a href="departments.html" data-page="departments" data-sidebar-link><span class="nav-icon" data-icon="building"></span>Departemen</a>
+    <span class="nav-label">SISTEM</span>
+    <a href="settings.html" data-page="settings" data-sidebar-link><span class="nav-icon" data-icon="settings"></span>Pengaturan</a>
+  </nav>
+</aside>
+
+    <div class="main-wrapper">
+      
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Buka menu"><span data-icon="menu"></span></button>
+    <div class="topbar-title">
+      <p class="eyebrow" id="pageEyebrow">Human Resource</p>
+      <strong id="pageTitle">Dashboard</strong>
+    </div>
+  </div>
+  <label class="global-search" aria-label="Pencarian global">
+    <span data-icon="search"></span>
+    <input id="globalSearch" type="search" placeholder="Cari karyawan, departemen, atau menu...">
+    <kbd>/</kbd>
+  </label>
+  <div class="topbar-actions">
+    <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Ganti tema"><span data-icon="sun"></span></button>
+    <button class="icon-btn notification-btn" aria-label="Notifikasi"><span data-icon="bell"></span><span class="notification-dot" hidden></span></button>
+    <div class="profile">
+      <span class="avatar avatar-sm" aria-hidden="true"></span>
+      <div><strong id="profileName" data-auth-name></strong><small data-auth-role></small></div>
+      <span class="chevron" data-icon="chevronDown"></span>
+    </div>
+    <div class="date-chip"><span data-icon="calendar"></span><span id="currentDateLabel">Hari ini</span></div>
+  </div>
+</header>
+
+      <main class="content">
+<section class="page-head">
+  <div><h2>Pengaturan</h2><p>Sesuaikan profil perusahaan, preferensi, dan data aplikasi.</p></div>
+</section>
+<section class="settings-layout">
+  <aside class="card settings-nav">
+    <button class="active" data-settings-tab="company">Owner & Perusahaan</button>
+    <button data-settings-tab="branches">Manajemen Cabang</button>
+    <button data-settings-tab="notifications">Notifikasi</button>
+    <button data-settings-tab="appearance">Tampilan</button>
+    <button data-settings-tab="data">Data & Backup</button>
+  </aside>
+  <div>
+    <section class="card settings-section active" id="settings-company">
+      <div class="card-header"><div><h3>Owner & Profil Perusahaan</h3><p>Satu akun owner untuk mengontrol seluruh cabang usaha.</p></div></div>
+      <form id="companyForm"><div class="card-body"><div class="form-grid">
+        <div class="form-group"><label for="ownerName">Nama owner</label><input class="input" id="ownerName" required></div>
+        <div class="form-group"><label for="ownerEmail">Email owner</label><input class="input" type="email" id="ownerEmail" required></div>
+        <div class="form-group full"><label for="companyName">Nama perusahaan</label><input class="input" id="companyName" required></div>
+        <div class="form-group"><label for="companyEmail">Email HR</label><input class="input" type="email" id="companyEmail" required></div>
+        <div class="form-group"><label for="companyPhone">Telepon</label><input class="input" id="companyPhone"></div>
+        <div class="form-group full"><label for="companyAddress">Alamat</label><textarea class="textarea" id="companyAddress"></textarea></div>
+      </div></div><div class="card-footer"><button class="btn btn-primary" type="submit">Simpan Profil</button></div></form>
+    </section>
+
+    <section class="card settings-section" id="settings-branches">
+      <div class="card-header">
+        <div><h3>Manajemen Cabang</h3><p>Owner dapat menambah, mengubah, dan berpindah antar cabang dari satu workspace.</p></div>
+        <button class="btn btn-primary btn-sm" id="addBranch"><span data-icon="plus"></span> Tambah Cabang</button>
+      </div>
+      <div class="card-body">
+        <div class="owner-branch-summary" id="ownerBranchSummary"></div>
+        <div class="branch-management-grid" id="branchManagementGrid"></div>
+      </div>
+    </section>
+    <section class="card settings-section" id="settings-notifications">
+      <div class="card-header"><div><h3>Notifikasi</h3><p>Atur pengingat aktivitas penting.</p></div></div>
+      <div class="card-body">
+        <div class="setting-row"><div><strong>Notifikasi email</strong><small>Kirim ringkasan aktivitas penting melalui email.</small></div><label class="switch"><input type="checkbox" id="emailNotifications"><span class="slider"></span></label></div>
+        <div class="setting-row"><div><strong>Pengingat absensi</strong><small>Pengingat untuk melengkapi absensi harian.</small></div><label class="switch"><input type="checkbox" id="attendanceReminder"><span class="slider"></span></label></div>
+        <div class="setting-row"><div><strong>Pengingat payroll</strong><small>Pengingat menjelang jadwal pembayaran gaji.</small></div><label class="switch"><input type="checkbox" id="payrollReminder"><span class="slider"></span></label></div>
+      </div><div class="card-footer"><button class="btn btn-primary" id="saveNotifications">Simpan Preferensi</button></div>
+    </section>
+    <section class="card settings-section" id="settings-appearance">
+      <div class="card-header"><div><h3>Tampilan</h3><p>Sesuaikan tema antarmuka.</p></div></div>
+      <div class="card-body"><div class="setting-row"><div><strong>Mode gelap</strong><small>Gunakan tampilan gelap yang nyaman untuk malam hari.</small></div><label class="switch"><input type="checkbox" id="darkModeSetting"><span class="slider"></span></label></div></div>
+    </section>
+    <section class="card settings-section" id="settings-data">
+      <div class="card-header"><div><h3>Data & Backup</h3><p>Cadangkan atau pulihkan data aplikasi lokal.</p></div></div>
+      <div class="card-body"><div class="quick-grid">
+        <div class="quick-card"><strong>Unduh Backup</strong><small>Simpan seluruh data dalam format JSON.</small><button class="btn btn-outline btn-sm" id="backupData" style="margin-top:12px"><span data-icon="download"></span> Unduh</button></div>
+        <div class="quick-card"><strong>Impor Backup</strong><small>Pulihkan data dari file JSON sebelumnya.</small><label class="btn btn-outline btn-sm" style="margin-top:12px"><span data-icon="upload"></span> Pilih File<input class="hidden" type="file" id="restoreData" accept=".json"></label></div>
+        <div class="quick-card"><strong>Hapus Data Lokal</strong><small>Kosongkan seluruh data operasional yang tersimpan di browser ini.</small><button class="btn btn-danger btn-sm" id="resetData" style="margin-top:12px">Hapus Semua Data</button></div>
+        <div class="quick-card"><strong>Penyimpanan Lokal</strong><small>Data disimpan di browser ini menggunakan localStorage.</small></div>
+      </div></div>
+    </section>
+  </div>
+</section>
+
+<div class="modal" id="branchModal">
+  <div class="modal-panel">
+    <div class="modal-header"><h3 id="branchModalTitle">Tambah Cabang</h3><button class="modal-close" data-close-modal aria-label="Tutup"><span data-icon="close"></span></button></div>
+    <form id="branchForm">
+      <div class="modal-body"><input type="hidden" id="branchId">
+        <div class="form-grid">
+          <div class="form-group"><label for="branchName">Nama cabang</label><input class="input" id="branchName" placeholder="Nama cabang" required></div>
+          <div class="form-group"><label for="branchCode">Kode cabang</label><input class="input" id="branchCode" maxlength="4" placeholder="Kode" required></div>
+          <div class="form-group"><label for="branchCity">Kota</label><input class="input" id="branchCity" required></div>
+          <div class="form-group"><label for="branchPhone">Telepon</label><input class="input" id="branchPhone"></div>
+          <div class="form-group"><label for="branchManager">Penanggung jawab</label><input class="input" id="branchManager" placeholder="Nama penanggung jawab"></div>
+          <div class="form-group"><label for="branchStatus">Status</label><select class="select" id="branchStatus"><option>Aktif</option><option>Nonaktif</option></select></div>
+          <div class="form-group full"><label for="branchAddress">Alamat lengkap</label><textarea class="textarea" id="branchAddress" required></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" type="button" data-close-modal>Batal</button><button class="btn btn-primary" type="submit">Simpan Cabang</button></div>
+    </form>
+  </div>
+</div>
+</main>
+    </div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="js/auth.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>
