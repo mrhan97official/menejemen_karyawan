@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#071a31" />
+  <title>PeopleFlow — Manajemen Karyawan</title>
+  <link rel="stylesheet" href="styles.css?v=20260807-10" />
+</head>
+<body class="auth-locked">
+  <section class="login-screen" id="loginScreen" aria-hidden="false">
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <div class="login-card">
+      <div class="brand login-brand"><span class="brand-mark">PF</span><span><strong>PeopleFlow</strong><small>Employee Management</small></span></div>
+      <div class="login-copy"><p class="eyebrow">Portal administrator</p><h1>Masuk ke aplikasi</h1><p>Kelola data karyawan, absensi, cuti, interview, dan penilaian kinerja dalam satu tempat.</p></div>
+      <form id="loginForm" class="login-form">
+        <label><span>Username</span><div class="input-with-icon"><span data-icon="user"></span><input id="loginUsername" autocomplete="username" required placeholder="Masukkan username" /></div></label>
+        <label><span>Password</span><div class="input-with-icon"><span data-icon="lock"></span><input id="loginPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Masukkan password" /><button type="button" class="text-btn" id="passwordToggle">Lihat</button></div></label>
+        <p class="form-error" id="loginError" role="alert"></p>
+        <button class="btn btn-primary btn-block" type="submit"><span data-icon="login"></span> Masuk</button>
+      </form>
+      <p class="login-hint">Akun awal: <strong>admin</strong> / <strong>admin123</strong> <span>· Team IT</span></p>
+    </div>
+  </section>
+
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" data-view-link="dashboard"><span class="brand-mark">PF</span><span><strong id="brandName">PeopleFlow</strong><small>Employee Management</small></span></a>
+      <nav class="side-nav">
+        <button class="nav-item active" data-view="dashboard"><span data-icon="home"></span><span>Beranda</span></button>
+        <button class="nav-item" data-view="employees"><span data-icon="users"></span><span>Karyawan</span></button>
+        <button class="nav-item" data-view="attendance"><span data-icon="calendar-check"></span><span>Absensi</span></button>
+        <button class="nav-item" data-view="leave"><span data-icon="calendar"></span><span>Cuti & Izin</span></button>
+        <button class="nav-item" data-view="interview"><span data-icon="users"></span><span>Interview</span></button>
+        <button class="nav-item" data-view="evaluation"><span data-icon="chart"></span><span>Penilaian</span></button>
+        <button class="nav-item" data-view="branches"><span data-icon="building"></span><span>Cabang</span></button>
+        <button class="nav-item" data-view="reports"><span data-icon="chart"></span><span>Laporan</span></button>
+        <button class="nav-item" data-view="settings"><span data-icon="settings"></span><span>Pengaturan</span></button>
+      </nav>
+    </aside>
+    <button class="sidebar-overlay" id="sidebarOverlay" aria-label="Tutup menu"></button>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="topbar-title-wrap"><button class="menu-toggle" id="sidebarToggle" aria-label="Tampilkan atau sembunyikan sidebar" aria-controls="sidebar" aria-expanded="false"><span></span><span></span><span></span></button><div><p class="eyebrow" id="pageEyebrow">Ringkasan perusahaan</p><h1 id="pageTitle">Dashboard Karyawan</h1></div></div>
+        <div class="topbar-actions">
+          <div class="branch-context" id="branchContextWrap"><span class="branch-context-icon" data-icon="building"></span><div class="branch-context-copy"><small>Cabang aktif</small><select id="branchContextSelect" aria-label="Pilih cabang aktif"><option value="all">Semua Cabang</option></select></div></div>
+          <div class="date-badge"><span data-icon="calendar-clock"></span><div><strong id="currentDate">—</strong><small id="currentTime">—</small></div></div>
+          <div class="profile-menu" id="profileMenu">
+            <button class="profile-pill" id="profilePill" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="profileDropdown">
+              <span class="avatar" id="profileAvatar">IT</span>
+              <span class="profile-pill-copy"><strong id="profileName">Team IT</strong><small id="profileRole">Team IT</small></span>
+              <span class="profile-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="profile-dropdown" id="profileDropdown" role="menu" aria-hidden="true">
+              <div class="profile-dropdown-head">
+                <span class="avatar profile-dropdown-avatar" id="profileDropdownAvatar">IT</span>
+                <div><strong id="profileDropdownName">Team IT</strong><small id="profileDropdownRole">Team IT</small></div>
+              </div>
+              <div class="profile-dropdown-meta">
+                <div><span>Username</span><strong id="profileDropdownUsername">@admin</strong></div>
+                <div><span>Cabang</span><strong id="profileDropdownBranch">Akses semua cabang</strong></div>
+              </div>
+              <div class="profile-dropdown-divider"></div>
+              <button class="profile-dropdown-item" id="profileAccountBtn" type="button" role="menuitem"><span data-icon="settings"></span><span><strong id="profileAccountLabel">Pengaturan Akun</strong><small id="profileAccountHint">Kelola akun dan preferensi</small></span></button>
+              <button class="profile-dropdown-item danger" id="logoutBtn" type="button" role="menuitem"><span data-icon="logout"></span><span><strong>Keluar</strong><small>Akhiri sesi pada perangkat ini</small></span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <section class="app-view active" id="dashboardView" data-view-panel="dashboard">
+          <div class="hero-card">
+            <div><span class="status-chip"><i></i> Sistem aktif</span><p>Selamat datang kembali,</p><h2>Kelola tim dengan lebih rapi.</h2><small id="dashboardScopeText">Ringkasan seluruh cabang dalam satu Owner.</small></div>
+            <button class="btn btn-light" data-open-employee><span data-icon="plus"></span> Tambah Karyawan</button>
+          </div>
+          <div class="stats-grid">
+            <article class="stat-card"><span class="stat-icon"><span data-icon="users"></span></span><div><small>Total Karyawan</small><strong id="statEmployees">0</strong><p id="statActiveEmployees">0 aktif</p></div></article>
+            <article class="stat-card"><span class="stat-icon"><span data-icon="calendar-check"></span></span><div><small>Hadir Hari Ini</small><strong id="statPresent">0</strong><p id="statAttendanceRate">0% kehadiran</p></div></article>
+            <article class="stat-card"><span class="stat-icon"><span data-icon="calendar"></span></span><div><small>Cuti / Izin</small><strong id="statLeave">0</strong><p>Hari ini</p></div></article>
+            <article class="stat-card"><span class="stat-icon"><span data-icon="building"></span></span><div><small>Cabang</small><strong id="statBranches">0</strong><p>Unit aktif</p></div></article>
+          </div>
+          <div class="dashboard-grid">
+            <article class="panel"><div class="panel-head"><div><p class="eyebrow">Aktivitas hari ini</p><h2>Kehadiran Terbaru</h2></div><button class="text-link" data-view="attendance">Lihat semua</button></div><div id="recentAttendance" class="activity-list"></div></article>
+            <article class="panel"><div class="panel-head"><div><p class="eyebrow">Komposisi tim</p><h2>Per Cabang</h2></div></div><div id="branchBars" class="branch-bars"></div></article>
+          </div>
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">Direktori</p><h2>Karyawan Terbaru</h2></div><button class="text-link" data-view="employees">Kelola karyawan</button></div><div id="recentEmployees" class="employee-mini-grid"></div></article>
+        </section>
+
+        <section class="app-view" id="employeesView" data-view-panel="employees">
+          <div class="section-toolbar"><div><p class="eyebrow">Database tim</p><h2>Daftar Karyawan</h2><p class="muted">Tambah, edit, nonaktifkan, atau cari data karyawan.</p></div><button class="btn btn-primary" data-open-employee><span data-icon="plus"></span> Tambah Karyawan</button></div>
+          <div class="panel filters-panel"><div class="search-box"><span data-icon="search"></span><input id="employeeSearch" placeholder="Cari nama, ID, cabang, jabatan, email..." /></div><select id="branchFilter"><option value="all">Semua cabang</option></select><select id="statusFilter"><option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Nonaktif</option></select></div>
+          <div class="panel table-panel"><div class="table-wrap"><table class="employee-data-table"><thead><tr><th>Karyawan</th><th>Penempatan</th><th>Gaji & Status</th><th>Kontak</th><th>Bank & Rekening</th><th>Bergabung</th><th>Alamat & Darurat</th><th></th></tr></thead><tbody id="employeeTableBody"></tbody></table></div><div id="employeeEmpty" class="empty-state hidden"><span data-icon="users"></span><h3>Belum ada karyawan</h3><p>Tambahkan karyawan pertama untuk memulai.</p></div></div>
+        </section>
+
+        <section class="app-view" id="attendanceView" data-view-panel="attendance">
+          <div class="section-toolbar"><div><p class="eyebrow">Kehadiran</p><h2>Absensi Karyawan</h2><p class="muted">Catat status hadir, terlambat, izin, atau tidak hadir per hari.</p></div><div class="toolbar-actions"><input class="date-input" type="date" id="attendanceDate" /><button class="btn btn-primary" id="saveAttendanceBtn"><span data-icon="save"></span> Simpan Absensi</button></div></div>
+          <div class="stats-grid compact"><article class="stat-card"><div><small>Hadir</small><strong id="attPresent">0</strong></div></article><article class="stat-card"><div><small>Terlambat</small><strong id="attLate">0</strong></div></article><article class="stat-card"><div><small>Izin</small><strong id="attExcused">0</strong></div></article><article class="stat-card"><div><small>Alpa</small><strong id="attAbsent">0</strong></div></article></div>
+          <div class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Karyawan</th><th>Cabang</th><th>Status</th><th>Jam Masuk</th><th>Catatan</th></tr></thead><tbody id="attendanceTableBody"></tbody></table></div></div>
+        </section>
+
+        <section class="app-view" id="leaveView" data-view-panel="leave">
+          <div class="section-toolbar"><div><p class="eyebrow">Administrasi</p><h2>Cuti & Izin</h2><p class="muted">Kelola permohonan cuti, sakit, dan izin karyawan.</p></div><button class="btn btn-primary" id="openLeaveBtn"><span data-icon="plus"></span> Ajukan Cuti / Izin</button></div>
+          <div class="stats-grid compact"><article class="stat-card"><div><small>Menunggu</small><strong id="leavePending">0</strong></div></article><article class="stat-card"><div><small>Disetujui</small><strong id="leaveApproved">0</strong></div></article><article class="stat-card"><div><small>Ditolak</small><strong id="leaveRejected">0</strong></div></article><article class="stat-card"><div><small>Total Pengajuan</small><strong id="leaveTotal">0</strong></div></article></div>
+          <div class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Karyawan</th><th>Jenis</th><th>Periode</th><th>Durasi</th><th>Alasan</th><th>Status</th><th></th></tr></thead><tbody id="leaveTableBody"></tbody></table></div><div class="empty-state hidden" id="leaveEmpty"><span data-icon="calendar"></span><h3>Belum ada pengajuan</h3><p>Pengajuan cuti atau izin akan muncul di sini.</p></div></div>
+        </section>
+
+        <section class="app-view" id="interviewView" data-view-panel="interview">
+          <div class="section-toolbar"><div><p class="eyebrow">Rekrutmen</p><h2>Interview Kandidat</h2><p class="muted">Kelola kandidat, jadwal interview, hasil penilaian, dan keputusan rekrutmen.</p></div><button class="btn btn-primary" id="openInterviewBtn"><span data-icon="plus"></span> Tambah Interview</button></div>
+          <div class="stats-grid compact interview-stats"><article class="stat-card"><div><small>Total Kandidat</small><strong id="interviewTotal">0</strong></div></article><article class="stat-card"><div><small>Terjadwal</small><strong id="interviewScheduled">0</strong></div></article><article class="stat-card"><div><small>Proses / Selesai</small><strong id="interviewDone">0</strong></div></article><article class="stat-card"><div><small>Lolos</small><strong id="interviewPassed">0</strong></div></article></div>
+          <div class="panel filters-panel interview-filters"><div class="search-box"><span data-icon="search"></span><input id="interviewSearch" placeholder="Cari kandidat, posisi, interviewer..." /></div><select id="interviewBranchFilter"><option value="all">Semua cabang</option></select><select id="interviewStatusFilter"><option value="all">Semua status</option><option value="scheduled">Terjadwal</option><option value="interviewed">Sudah Interview</option><option value="passed">Lolos</option><option value="rejected">Ditolak</option><option value="hired">Direkrut</option></select></div>
+          <div class="panel table-panel"><div class="table-wrap"><table class="interview-table"><thead><tr><th>Kandidat</th><th>Posisi & Cabang</th><th>Jadwal</th><th>Interviewer</th><th>Hasil</th><th>Status</th><th></th></tr></thead><tbody id="interviewTableBody"></tbody></table></div><div id="interviewEmpty" class="empty-state hidden"><span data-icon="users"></span><h3>Belum ada interview</h3><p>Tambahkan kandidat untuk membuat jadwal interview pertama.</p></div></div>
+        </section>
+
+
+        <section class="app-view" id="evaluationView" data-view-panel="evaluation">
+          <div class="section-toolbar"><div><p class="eyebrow">Performance management</p><h2>Penilaian Karyawan</h2><p class="muted">Nilai kinerja karyawan per periode dengan indikator yang konsisten dan transparan.</p></div><button class="btn btn-primary" id="openEvaluationBtn"><span data-icon="plus"></span> Tambah Penilaian</button></div>
+          <div class="stats-grid compact evaluation-stats"><article class="stat-card"><div><small>Total Penilaian</small><strong id="evaluationTotal">0</strong></div></article><article class="stat-card"><div><small>Rata-rata Nilai</small><strong id="evaluationAverage">0</strong></div></article><article class="stat-card"><div><small>Sangat Baik</small><strong id="evaluationExcellent">0</strong></div></article><article class="stat-card"><div><small>Perlu Perhatian</small><strong id="evaluationAttention">0</strong></div></article></div>
+          <div class="panel filters-panel evaluation-filters"><div class="search-box"><span data-icon="search"></span><input id="evaluationSearch" placeholder="Cari karyawan, jabatan, penilai..." /></div><select id="evaluationBranchFilter"><option value="all">Semua cabang</option></select><input id="evaluationPeriodFilter" class="month-filter" type="month" aria-label="Filter periode penilaian" /><select id="evaluationStatusFilter"><option value="all">Semua status</option><option value="draft">Draft</option><option value="published">Final</option></select></div>
+          <div class="panel table-panel"><div class="table-wrap"><table class="evaluation-table"><thead><tr><th>Karyawan</th><th>Penempatan</th><th>Periode & Penilai</th><th>Nilai</th><th>Catatan</th><th>Status</th><th></th></tr></thead><tbody id="evaluationTableBody"></tbody></table></div><div id="evaluationEmpty" class="empty-state hidden"><span data-icon="chart"></span><h3>Belum ada penilaian</h3><p>Penilaian kinerja karyawan akan muncul di sini.</p></div></div>
+        </section>
+
+        <section class="app-view" id="branchesView" data-view-panel="branches">
+          <div class="section-toolbar"><div><p class="eyebrow">Struktur organisasi</p><h2>Cabang</h2><p class="muted">Kelola seluruh cabang yang berada di bawah satu Owner.</p></div><button class="btn btn-primary" id="openBranchBtn"><span data-icon="plus"></span> Tambah Cabang</button></div>
+          <div id="branchGrid" class="branch-grid"></div>
+        </section>
+
+        <section class="app-view" id="reportsView" data-view-panel="reports">
+          <div class="section-toolbar"><div><p class="eyebrow">Analitik SDM</p><h2>Laporan Karyawan</h2><p class="muted">Ringkasan headcount, kehadiran, dan status tenaga kerja.</p></div><button class="btn btn-secondary" id="exportBtn"><span data-icon="download"></span> Export CSV</button></div>
+          <div class="stats-grid"><article class="stat-card"><div><small>Karyawan Aktif</small><strong id="reportActive">0</strong><p>Headcount saat ini</p></div></article><article class="stat-card"><div><small>Rata-rata Kehadiran</small><strong id="reportAttendance">0%</strong><p>30 hari terakhir</p></div></article><article class="stat-card"><div><small>Total Pengajuan Cuti</small><strong id="reportLeaves">0</strong><p>Semua periode</p></div></article><article class="stat-card"><div><small>Masa Kerja Rata-rata</small><strong id="reportTenure">0 bln</strong><p>Karyawan aktif</p></div></article></div>
+          <div class="dashboard-grid"><article class="panel"><div class="panel-head"><div><p class="eyebrow">Headcount</p><h2>Karyawan per Cabang</h2></div></div><div id="reportBranchBars" class="branch-bars"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">Status</p><h2>Komposisi Karyawan</h2></div></div><div id="statusDonut" class="status-summary"></div></article></div>
+        </section>
+
+        <section class="app-view" id="settingsView" data-view-panel="settings">
+          <div class="section-toolbar"><div><p class="eyebrow">Konfigurasi</p><h2>Pengaturan Aplikasi</h2><p class="muted">Ubah identitas perusahaan dan akun login.</p></div></div>
+          <div class="settings-grid">
+            <form class="panel settings-card" id="companySettingsForm"><div class="panel-head"><div><p class="eyebrow">Perusahaan</p><h2>Identitas Perusahaan</h2></div></div><label>Nama perusahaan<input id="settingCompanyName" maxlength="50" required /></label><label>Nama owner / administrator<input id="settingAdminName" maxlength="50" required /></label><label>Email perusahaan<input id="settingCompanyEmail" type="email" /></label><label>Alamat<textarea id="settingAddress" rows="3"></textarea></label><button class="btn btn-primary" type="submit"><span data-icon="save"></span> Simpan Perubahan</button></form>
+            <form class="panel settings-card" id="accountSettingsForm"><div class="panel-head"><div><p class="eyebrow">Keamanan</p><h2>Akun Saya</h2></div></div><label>Username<input id="settingUsername" minlength="3" maxlength="32" required /></label><label>Password baru<input id="settingPassword" type="password" minlength="6" placeholder="Kosongkan jika tidak diubah" /></label><label>Konfirmasi password<input id="settingPasswordConfirm" type="password" minlength="6" placeholder="Ulangi password baru" /></label><button class="btn btn-secondary" type="submit"><span data-icon="lock"></span> Perbarui Akun</button></form>
+            <div class="panel settings-card role-manager-card" id="userManagementCard"><div class="panel-head"><div><p class="eyebrow">Hak akses</p><h2>Akun & Role</h2></div><button class="btn btn-secondary" id="openUserBtn" type="button"><span data-icon="plus"></span> Tambah Akun</button></div><p class="muted">Team IT dapat membuat akun dan menentukan hak akses setiap pengguna.</p><div class="table-wrap user-table-wrap"><table class="user-table"><thead><tr><th>Pengguna</th><th>Role</th><th>Terhubung</th><th></th></tr></thead><tbody id="userTableBody"></tbody></table></div></div><div class="panel settings-card danger-card" id="resetCard"><div class="panel-head"><div><p class="eyebrow">Data lokal</p><h2>Reset Aplikasi</h2></div></div><p class="muted">Menghapus seluruh data karyawan, absensi, cuti, interview, penilaian, cabang, akun role, dan mengembalikan data contoh.</p><button class="btn btn-danger" id="resetDataBtn"><span data-icon="refresh"></span> Reset Data</button></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop hidden" id="employeeModal"><div class="modal modal-lg"><div class="modal-head"><div><p class="eyebrow">Data personalia</p><h2 id="employeeModalTitle">Tambah Karyawan</h2></div><button class="icon-btn modal-close" data-close="employeeModal"><span data-icon="close"></span></button></div><form id="employeeForm" class="form-grid"><input type="hidden" id="employeeId" />
+    <label class="span-2">Nama lengkap<input id="employeeName" required maxlength="60" /></label>
+    <label>ID Karyawan<input id="employeeCode" required maxlength="20" /></label>
+    <label>Cabang<select id="employeeBranch" required></select></label>
+    <label>Jabatan<input id="employeeRole" required maxlength="50" /></label>
+    <label>Gaji<input id="employeeSalary" type="number" min="0" step="1000" inputmode="numeric" placeholder="Contoh: 5000000" /></label>
+    <label>Status<select id="employeeStatus"><option value="active">Aktif</option><option value="inactive">Nonaktif</option></select></label>
+    <label>Email<input id="employeeEmail" type="email" maxlength="80" /></label>
+    <label>No. telepon<input id="employeePhone" type="tel" maxlength="24" /></label>
+    <label>Bank<input id="employeeBank" maxlength="40" placeholder="Contoh: BCA" /></label>
+    <label>No. rekening<input id="employeeAccountNumber" inputmode="numeric" maxlength="32" /></label>
+    <label>Tanggal gabung<input id="employeeJoinDate" type="date" required /></label>
+    <label>Jenis kelamin<select id="employeeGender"><option value="Pria">Pria</option><option value="Wanita">Wanita</option><option value="Lainnya">Lainnya</option></select></label>
+    <label class="span-2">Alamat<textarea id="employeeAddress" rows="3" maxlength="250"></textarea></label>
+    <label class="span-2">No. telepon darurat<input id="employeeEmergencyPhone" type="tel" maxlength="24" placeholder="Nomor keluarga / kontak darurat" /></label>
+    <div class="modal-actions span-2"><button type="button" class="btn btn-ghost" data-close="employeeModal">Batal</button><button type="submit" class="btn btn-primary"><span data-icon="save"></span> Simpan Karyawan</button></div></form></div></div>
+
+  <div class="modal-backdrop hidden" id="leaveModal"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Permohonan</p><h2>Ajukan Cuti / Izin</h2></div><button class="icon-btn" data-close="leaveModal"><span data-icon="close"></span></button></div><form id="leaveForm" class="form-stack"><label>Karyawan<select id="leaveEmployee" required></select></label><label>Jenis<select id="leaveType"><option>Cuti Tahunan</option><option>Sakit</option><option>Izin</option><option>Cuti Khusus</option></select></label><div class="form-two"><label>Tanggal mulai<input id="leaveStart" type="date" required /></label><label>Tanggal selesai<input id="leaveEnd" type="date" required /></label></div><label>Alasan<textarea id="leaveReason" rows="3" required maxlength="200"></textarea></label><div class="modal-actions"><button type="button" class="btn btn-ghost" data-close="leaveModal">Batal</button><button class="btn btn-primary" type="submit"><span data-icon="save"></span> Simpan Pengajuan</button></div></form></div></div>
+
+  <div class="modal-backdrop hidden" id="interviewModal"><div class="modal modal-lg"><div class="modal-head"><div><p class="eyebrow">Rekrutmen</p><h2 id="interviewModalTitle">Tambah Interview</h2></div><button class="icon-btn" data-close="interviewModal"><span data-icon="close"></span></button></div><form id="interviewForm" class="form-grid"><input id="interviewId" type="hidden" />
+    <label>Nama kandidat<input id="interviewCandidateName" required maxlength="70" /></label>
+    <label>Posisi yang dilamar<input id="interviewPosition" required maxlength="60" /></label>
+    <label>Email<input id="interviewEmail" type="email" maxlength="80" /></label>
+    <label>No. telepon<input id="interviewPhone" type="tel" maxlength="24" /></label>
+    <label>Cabang<select id="interviewBranch" required></select></label>
+    <label>Interviewer<select id="interviewInterviewer"><option value="">Belum ditentukan</option></select></label>
+    <label>Tanggal interview<input id="interviewDate" type="date" required /></label>
+    <label>Jam interview<input id="interviewTime" type="time" required /></label>
+    <label>Metode<select id="interviewMethod"><option value="onsite">On-site</option><option value="online">Online</option><option value="phone">Telepon</option></select></label>
+    <label>Lokasi / Link<input id="interviewLocation" maxlength="120" placeholder="Ruang meeting / link meeting" /></label>
+    <label>Status<select id="interviewStatus"><option value="scheduled">Terjadwal</option><option value="interviewed">Sudah Interview</option><option value="passed">Lolos</option><option value="rejected">Ditolak</option><option value="hired">Direkrut</option></select></label>
+    <label>Nilai (0–100)<input id="interviewScore" type="number" min="0" max="100" step="1" placeholder="Opsional" /></label>
+    <label class="span-2">Catatan / Hasil Interview<textarea id="interviewNotes" rows="4" maxlength="600" placeholder="Kekuatan kandidat, kekurangan, rekomendasi, atau catatan lain"></textarea></label>
+    <div class="modal-actions span-2"><button type="button" class="btn btn-ghost" data-close="interviewModal">Batal</button><button class="btn btn-primary" type="submit"><span data-icon="save"></span> Simpan Interview</button></div></form></div></div>
+
+
+  <div class="modal-backdrop hidden" id="evaluationModal"><div class="modal modal-lg"><div class="modal-head"><div><p class="eyebrow">Performance review</p><h2 id="evaluationModalTitle">Tambah Penilaian</h2></div><button class="icon-btn" data-close="evaluationModal"><span data-icon="close"></span></button></div><form id="evaluationForm" class="form-grid"><input id="evaluationId" type="hidden" />
+    <label class="span-2">Karyawan<select id="evaluationEmployee" required></select></label>
+    <label>Periode<input id="evaluationPeriod" type="month" required /></label>
+    <label>Status<select id="evaluationStatus"><option value="draft">Draft</option><option value="published">Final / Dipublikasikan</option></select></label>
+    <div class="evaluation-score-grid span-2">
+      <label>Kinerja<input id="evaluationPerformance" class="evaluation-score-input" type="number" min="0" max="100" step="1" required value="80" /></label>
+      <label>Kedisiplinan<input id="evaluationDiscipline" class="evaluation-score-input" type="number" min="0" max="100" step="1" required value="80" /></label>
+      <label>Kehadiran<input id="evaluationAttendance" class="evaluation-score-input" type="number" min="0" max="100" step="1" required value="80" /></label>
+      <label>Kerja Tim<input id="evaluationTeamwork" class="evaluation-score-input" type="number" min="0" max="100" step="1" required value="80" /></label>
+      <label>Inisiatif<input id="evaluationInitiative" class="evaluation-score-input" type="number" min="0" max="100" step="1" required value="80" /></label>
+    </div>
+    <div class="evaluation-preview span-2"><span>Nilai akhir</span><strong id="evaluationScorePreview">80</strong><small id="evaluationGradePreview">Sangat Baik</small></div>
+    <label class="span-2">Catatan Penilaian<textarea id="evaluationNotes" rows="4" maxlength="700" placeholder="Kekuatan, area yang perlu ditingkatkan, target berikutnya, atau catatan lainnya"></textarea></label>
+    <div class="modal-actions span-2"><button type="button" class="btn btn-ghost" data-close="evaluationModal">Batal</button><button class="btn btn-primary" type="submit"><span data-icon="save"></span> Simpan Penilaian</button></div>
+  </form></div></div>
+
+  <div class="modal-backdrop hidden" id="branchModal"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Unit kerja</p><h2 id="branchModalTitle">Tambah Cabang</h2></div><button class="icon-btn" data-close="branchModal"><span data-icon="close"></span></button></div><form id="branchForm" class="form-stack"><input id="branchId" type="hidden" /><label>Nama cabang<input id="branchName" maxlength="40" required /></label><label>Penanggung jawab<input id="branchHead" maxlength="50" placeholder="Nama manager / kepala unit" /></label><label>Deskripsi<textarea id="branchDescription" rows="3" maxlength="160"></textarea></label><div class="modal-actions"><button type="button" class="btn btn-ghost" data-close="branchModal">Batal</button><button class="btn btn-primary" type="submit"><span data-icon="save"></span> Simpan Cabang</button></div></form></div></div>
+
+  <div class="modal-backdrop hidden" id="userModal"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Hak akses</p><h2 id="userModalTitle">Tambah Akun</h2></div><button class="icon-btn" data-close="userModal"><span data-icon="close"></span></button></div><form id="userForm" class="form-stack"><input id="userId" type="hidden" /><label>Nama pengguna<input id="userDisplayName" maxlength="50" required placeholder="Contoh: Budi Santoso" /></label><label>Username<input id="userUsername" minlength="3" maxlength="32" required /></label><label>Role<select id="userAccessRole" required><option value="team_it">Team IT</option><option value="owner">Owner</option><option value="manager">Manajer</option><option value="employee">Karyawan</option></select></label><label id="userEmployeeLabel">Hubungkan ke karyawan<select id="userEmployeeId"><option value="">Tidak terhubung</option></select><small class="field-hint">Wajib untuk Manajer dan Karyawan agar cakupan data dapat ditentukan.</small></label><label>Password<input id="userPassword" type="password" minlength="6" placeholder="Minimal 6 karakter" /></label><label>Konfirmasi password<input id="userPasswordConfirm" type="password" minlength="6" placeholder="Ulangi password" /></label><div class="modal-actions"><button type="button" class="btn btn-ghost" data-close="userModal">Batal</button><button class="btn btn-primary" type="submit"><span data-icon="save"></span> Simpan Akun</button></div></form></div></div>
+
+  <div class="toast-stack" id="toastStack"></div>
+  <script src="script.js?v=20260807-9"></script>
+</body>
+</html>
