@@ -2351,12 +2351,26 @@
                     </div>
 
                     <form id="inventoryShiftCheckForm" class="space-y-3">
+                        <div id="inventoryCheckToolbar" class="hidden bg-white rounded-2xl p-3 sm:p-4 shadow-soft border border-slate-50">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-semibold text-slate-800">Cek cepat area</p>
+                                    <p id="inventoryCheckProgress" class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Semua barang otomatis dianggap sesuai. Ubah hanya jika ada masalah.</p>
+                                </div>
+                                <button type="button" onclick="markAllInventoryCheckItemsOk()" class="flex-shrink-0 px-3 py-2 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 text-[10px] sm:text-xs font-semibold inline-flex items-center gap-1.5">
+                                    <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Semua Sesuai
+                                </button>
+                            </div>
+                        </div>
                         <div id="inventoryCheckItems" class="space-y-3"></div>
                         <div id="inventoryCheckSubmitWrap" class="hidden bg-white rounded-2xl p-4 shadow-soft border border-slate-50">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <p class="text-[11px] text-slate-500 max-w-xl">Pastikan jumlah aktual dan kondisi setiap barang sudah sesuai kondisi fisik. Catatan dianjurkan bila ada selisih, kerusakan, atau barang hilang.</p>
+                                <div>
+                                    <p id="inventoryCheckSubmitSummary" class="text-xs font-semibold text-slate-700">Siap disimpan sebagai 1 laporan shift.</p>
+                                    <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 max-w-xl">Tidak perlu menyelesaikan barang satu per satu. Periksa seluruh daftar, ubah yang bermasalah, lalu simpan sekali.</p>
+                                </div>
                                 <button type="submit" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-brand-500 text-white text-sm font-semibold shadow-glow hover:bg-brand-600 inline-flex items-center justify-center gap-2">
-                                    <i data-lucide="send" class="w-4 h-4"></i> Kirim Hasil Cek
+                                    <i data-lucide="save" class="w-4 h-4"></i> Simpan 1 Laporan Shift
                                 </button>
                             </div>
                         </div>
@@ -4460,7 +4474,8 @@ function getInventoryCheckSessionSummary(session) {
     const discrepancyCount = items.filter(item => Number(item.actualQuantity) !== Number(item.expectedQuantity)).length;
     const conditionIssueCount = items.filter(item => item.actualCondition !== 'Baik').length;
     const issueCount = items.filter(item => Number(item.actualQuantity) !== Number(item.expectedQuantity) || item.actualCondition !== 'Baik').length;
-    return { total: items.length, discrepancyCount, conditionIssueCount, issueCount, ok: issueCount === 0 };
+    const okCount = Math.max(0, items.length - issueCount);
+    return { total: items.length, okCount, discrepancyCount, conditionIssueCount, issueCount, ok: issueCount === 0 };
 }
 
 function getInventoryCheckStatusBadge(session) {
@@ -4524,6 +4539,7 @@ function renderInventoryShiftCheck() {
     const container = $('#inventoryCheckItems');
     const areaSelect = $('#inventoryCheckArea');
     const submitWrap = $('#inventoryCheckSubmitWrap');
+    const toolbar = $('#inventoryCheckToolbar');
     if (!container || !areaSelect || !submitWrap) return;
 
     const ctx = getEmployeeInventoryCheckContext();
@@ -4532,6 +4548,7 @@ function renderInventoryShiftCheck() {
         areaSelect.innerHTML = '<option value="">Area tidak tersedia</option>';
         container.innerHTML = '<div class="bg-white rounded-2xl border border-slate-50 p-8 text-center shadow-soft"><i data-lucide="user-round-x" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-3">Pemeriksaan belum tersedia</p><p class="text-xs text-slate-500 mt-1">Hubungi Admin atau Manajer agar akun Anda terhubung dengan Data Karyawan aktif.</p></div>';
         submitWrap.classList.add('hidden');
+        toolbar?.classList.add('hidden');
         refreshIcons();
         return;
     }
@@ -4546,8 +4563,9 @@ function renderInventoryShiftCheck() {
     const selectedArea = areaSelect.value;
     const todayKey = getJakartaDateKey();
     if (!selectedArea) {
-        container.innerHTML = '<div class="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center"><i data-lucide="map-pin-check" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-medium text-slate-700 mt-3">Pilih area yang akan diperiksa</p><p class="text-xs text-slate-500 mt-1">Daftar inventaris pada area tersebut akan muncul otomatis.</p></div>';
+        container.innerHTML = '<div class="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center"><i data-lucide="map-pin-check" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-medium text-slate-700 mt-3">Pilih area yang akan diperiksa</p><p class="text-xs text-slate-500 mt-1">Semua inventaris pada area tersebut akan tampil sekaligus.</p></div>';
         submitWrap.classList.add('hidden');
+        toolbar?.classList.add('hidden');
         $('#inventoryCheckTodayStatus').textContent = '';
         refreshIcons();
         return;
@@ -4555,41 +4573,167 @@ function renderInventoryShiftCheck() {
 
     const existing = inventoryCheckSessions.find(session => session.dateKey === todayKey && session.branchId === ctx.branchId && session.shift === ctx.shift && session.area === selectedArea && String(session.employeeRecordId) === String(ctx.employee.id));
     $('#inventoryCheckTodayStatus').innerHTML = existing
-        ? `<span class="inline-flex items-center gap-1 text-brand-600 font-semibold"><i data-lucide="circle-check" class="w-3.5 h-3.5"></i>Sudah dicek shift ini</span>`
-        : '<span class="text-slate-500">Belum diperiksa pada shift ini</span>';
+        ? `<span class="inline-flex items-center gap-1 text-brand-600 font-semibold"><i data-lucide="circle-check" class="w-3.5 h-3.5"></i>Laporan shift sudah tersimpan</span>`
+        : '<span class="text-slate-500">Belum disimpan pada shift ini</span>';
 
     const items = inventories.filter(item => item.branchId === ctx.branchId && item.area === selectedArea);
     if (!items.length) {
         container.innerHTML = '<div class="bg-white rounded-2xl border border-slate-50 p-8 text-center"><p class="text-sm text-slate-600">Belum ada inventaris pada area ini.</p></div>';
         submitWrap.classList.add('hidden');
+        toolbar?.classList.add('hidden');
         return;
     }
 
     container.innerHTML = items.map((item, index) => {
         const previous = existing?.items?.find(row => Number(row.inventoryId) === Number(item.id));
         const actualQty = previous?.actualQuantity ?? item.quantity;
-        const actualCondition = previous?.actualCondition || item.condition || 'Baik';
+        const actualCondition = previous?.actualCondition || 'Baik';
         const note = previous?.note || '';
-        return `<div class="bg-white rounded-2xl p-4 sm:p-5 shadow-soft border border-slate-50" data-inventory-check-row="${item.id}">
+        const expected = Number(item.quantity || 0);
+        const qtyOk = Number(actualQty) === expected;
+        const conditionOk = actualCondition === 'Baik';
+        const rowOk = qtyOk && conditionOk;
+        return `<div class="bg-white rounded-2xl p-4 sm:p-5 shadow-soft border ${rowOk ? 'border-slate-50' : 'border-amber-200'}" data-inventory-check-row="${item.id}" data-check-expected="${expected}">
             <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold">${index + 1}</span></div>
+                <div class="w-9 h-9 rounded-xl ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-amber-50 text-amber-700'} flex items-center justify-center flex-shrink-0" data-check-index-badge><span class="text-xs font-bold">${index + 1}</span></div>
                 <div class="min-w-0 flex-1">
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                        <div><p class="text-sm font-semibold text-slate-800">${escapeHTML(item.name)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(item.code || 'Tanpa kode')} · ${escapeHTML(item.location)}</p></div>
-                        <div class="text-[10px] text-slate-500 sm:text-right">Data tercatat: <span class="font-semibold text-slate-700">${Number(item.quantity).toLocaleString('id-ID')} ${escapeHTML(item.unit)}</span><br>${getInventoryConditionBadge(item.condition)}</div>
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0"><p class="text-sm font-semibold text-slate-800 truncate">${escapeHTML(item.name)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(item.code || 'Tanpa kode')} · ${escapeHTML(item.location)}</p></div>
+                        <button type="button" onclick="markInventoryCheckItemOk(${item.id})" class="flex-shrink-0 px-2.5 py-1.5 rounded-lg ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-slate-100 text-slate-600'} text-[10px] font-semibold inline-flex items-center gap-1" data-check-ok-button><i data-lucide="check" class="w-3 h-3"></i> Sesuai</button>
                     </div>
-                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div><label class="block text-[11px] font-medium text-slate-700 mb-1">Jumlah aktual</label><div class="relative"><input data-check-qty type="number" inputmode="numeric" min="0" step="1" value="${Number(actualQty)}" class="w-full px-3.5 py-2.5 pr-14 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"><span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-500">${escapeHTML(item.unit)}</span></div></div>
-                        <div><label class="block text-[11px] font-medium text-slate-700 mb-1">Kondisi aktual</label><select data-check-condition class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">${['Baik','Perlu Perbaikan','Rusak','Hilang'].map(condition => `<option value="${condition}" ${condition === actualCondition ? 'selected' : ''}>${condition}</option>`).join('')}</select></div>
+
+                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                            <div class="flex items-center justify-between gap-2 mb-2"><p class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Jumlah</p><span data-check-qty-status class="text-[10px] font-semibold ${qtyOk ? 'text-brand-600' : 'text-amber-700'}">${qtyOk ? 'Lengkap' : 'Ada selisih'}</span></div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="adjustInventoryCheckQty(${item.id}, -1)" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                                <div class="flex-1 relative"><input data-check-qty type="number" inputmode="numeric" min="0" step="1" value="${Number(actualQty)}" oninput="updateInventoryCheckRowState(this.closest('[data-inventory-check-row]'))" class="w-full h-9 px-2 pr-10 text-center bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50"><span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-slate-400">${escapeHTML(item.unit)}</span></div>
+                                <button type="button" onclick="adjustInventoryCheckQty(${item.id}, 1)" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                            </div>
+                            <p class="text-[9px] text-slate-400 text-center mt-1.5">Seharusnya ${expected.toLocaleString('id-ID')} ${escapeHTML(item.unit)}</p>
+                        </div>
+
+                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                            <div class="flex items-center justify-between gap-2 mb-2"><p class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Kondisi</p><span data-check-condition-status class="text-[10px] font-semibold ${conditionOk ? 'text-brand-600' : 'text-amber-700'}">${escapeHTML(actualCondition)}</span></div>
+                            <input type="hidden" data-check-condition value="${escapeHTML(actualCondition)}">
+                            <div class="grid grid-cols-2 gap-1.5">
+                                ${['Baik','Perlu Perbaikan','Rusak','Hilang'].map(condition => {
+                                    const selected = condition === actualCondition;
+                                    return `<button type="button" onclick="setInventoryCheckCondition(${item.id}, '${condition}')" data-check-condition-button="${condition}" class="px-2 py-2 rounded-lg border text-[9px] sm:text-[10px] font-semibold transition-colors ${selected ? (condition === 'Baik' ? 'bg-brand-50 border-brand-200 text-brand-600' : 'bg-amber-50 border-amber-200 text-amber-700') : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100'}">${condition}</button>`;
+                                }).join('')}
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-3"><label class="block text-[11px] font-medium text-slate-700 mb-1">Catatan <span class="font-normal text-slate-400">(opsional)</span></label><textarea data-check-note rows="2" placeholder="Contoh: 1 gelas retak, printer tidak menyala..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50">${escapeHTML(note)}</textarea></div>
+
+                    <div class="mt-3"><textarea data-check-note rows="1" placeholder="Catatan bila ada masalah (opsional)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50">${escapeHTML(note)}</textarea></div>
                 </div>
             </div>
         </div>`;
     }).join('');
+    toolbar?.classList.remove('hidden');
     submitWrap.classList.remove('hidden');
-    submitWrap.querySelector('button[type="submit"]').innerHTML = existing ? '<i data-lucide="refresh-cw" class="w-4 h-4"></i> Perbarui Hasil Cek' : '<i data-lucide="send" class="w-4 h-4"></i> Kirim Hasil Cek';
+    submitWrap.querySelector('button[type="submit"]').innerHTML = existing ? '<i data-lucide="refresh-cw" class="w-4 h-4"></i> Perbarui 1 Laporan Shift' : '<i data-lucide="save" class="w-4 h-4"></i> Simpan 1 Laporan Shift';
+    updateInventoryCheckProgress();
     refreshIcons();
+}
+
+function getInventoryCheckRowById(id) {
+    return $(`[data-inventory-check-row="${id}"]`);
+}
+
+function markInventoryCheckItemOk(id) {
+    const row = getInventoryCheckRowById(id);
+    if (!row) return;
+    const expected = Number(row.dataset.checkExpected || 0);
+    const qty = row.querySelector('[data-check-qty]');
+    const condition = row.querySelector('[data-check-condition]');
+    if (qty) qty.value = expected;
+    if (condition) condition.value = 'Baik';
+    updateInventoryCheckRowState(row);
+}
+
+function markAllInventoryCheckItemsOk() {
+    $$('[data-inventory-check-row]').forEach(row => {
+        const expected = Number(row.dataset.checkExpected || 0);
+        const qty = row.querySelector('[data-check-qty]');
+        const condition = row.querySelector('[data-check-condition]');
+        if (qty) qty.value = expected;
+        if (condition) condition.value = 'Baik';
+        updateInventoryCheckRowState(row, false);
+    });
+    updateInventoryCheckProgress();
+    showToast('Semua barang ditandai lengkap dan kondisi baik.', 'success');
+}
+
+function adjustInventoryCheckQty(id, delta) {
+    const row = getInventoryCheckRowById(id);
+    const input = row?.querySelector('[data-check-qty]');
+    if (!row || !input) return;
+    input.value = Math.max(0, Number(input.value || 0) + Number(delta || 0));
+    updateInventoryCheckRowState(row);
+}
+
+function setInventoryCheckCondition(id, condition) {
+    const row = getInventoryCheckRowById(id);
+    const input = row?.querySelector('[data-check-condition]');
+    if (!row || !input) return;
+    input.value = condition;
+    updateInventoryCheckRowState(row);
+}
+
+function updateInventoryCheckRowState(row, updateProgress = true) {
+    if (!row) return;
+    const expected = Number(row.dataset.checkExpected || 0);
+    const actual = Math.max(0, Number(row.querySelector('[data-check-qty]')?.value || 0));
+    const condition = row.querySelector('[data-check-condition]')?.value || 'Baik';
+    const qtyOk = actual === expected;
+    const conditionOk = condition === 'Baik';
+    const rowOk = qtyOk && conditionOk;
+
+    const qtyStatus = row.querySelector('[data-check-qty-status]');
+    if (qtyStatus) {
+        const diff = actual - expected;
+        qtyStatus.textContent = qtyOk ? 'Lengkap' : (diff < 0 ? `Kurang ${Math.abs(diff)}` : `Lebih ${diff}`);
+        qtyStatus.className = `text-[10px] font-semibold ${qtyOk ? 'text-brand-600' : 'text-amber-700'}`;
+    }
+    const conditionStatus = row.querySelector('[data-check-condition-status]');
+    if (conditionStatus) {
+        conditionStatus.textContent = condition;
+        conditionStatus.className = `text-[10px] font-semibold ${conditionOk ? 'text-brand-600' : 'text-amber-700'}`;
+    }
+    row.querySelectorAll('[data-check-condition-button]').forEach(button => {
+        const selected = button.dataset.checkConditionButton === condition;
+        const selectedGood = selected && condition === 'Baik';
+        const selectedIssue = selected && condition !== 'Baik';
+        button.className = `px-2 py-2 rounded-lg border text-[9px] sm:text-[10px] font-semibold transition-colors ${selectedGood ? 'bg-brand-50 border-brand-200 text-brand-600' : selectedIssue ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100'}`;
+    });
+    row.classList.toggle('border-amber-200', !rowOk);
+    row.classList.toggle('border-slate-50', rowOk);
+    const okButton = row.querySelector('[data-check-ok-button]');
+    if (okButton) okButton.className = `flex-shrink-0 px-2.5 py-1.5 rounded-lg ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-slate-100 text-slate-600'} text-[10px] font-semibold inline-flex items-center gap-1`;
+    const badge = row.querySelector('[data-check-index-badge]');
+    if (badge) badge.className = `w-9 h-9 rounded-xl ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-amber-50 text-amber-700'} flex items-center justify-center flex-shrink-0`;
+    if (updateProgress) updateInventoryCheckProgress();
+    refreshIcons();
+}
+
+function updateInventoryCheckProgress() {
+    const rows = [...$$('[data-inventory-check-row]')];
+    if (!rows.length) return;
+    let okCount = 0;
+    rows.forEach(row => {
+        const expected = Number(row.dataset.checkExpected || 0);
+        const actual = Number(row.querySelector('[data-check-qty]')?.value || 0);
+        const condition = row.querySelector('[data-check-condition]')?.value || 'Baik';
+        if (actual === expected && condition === 'Baik') okCount += 1;
+    });
+    const issueCount = rows.length - okCount;
+    const progress = $('#inventoryCheckProgress');
+    const submitSummary = $('#inventoryCheckSubmitSummary');
+    if (progress) progress.innerHTML = `<span class="font-semibold ${issueCount ? 'text-amber-700' : 'text-brand-600'}">${okCount}/${rows.length} sesuai</span>${issueCount ? ` · ${issueCount} perlu perhatian` : ' · semua lengkap dan baik'}`;
+    if (submitSummary) submitSummary.innerHTML = issueCount
+        ? `<span class="text-amber-700">${issueCount} temuan</span> akan tersimpan bersama ${okCount} item yang sesuai dalam 1 laporan.`
+        : `Semua ${rows.length} item sesuai. Siap disimpan sebagai 1 laporan shift.`;
 }
 
 function handleInventoryShiftCheckSubmit(event) {
@@ -4675,7 +4819,7 @@ function renderInventoryCheckHistory() {
             <td class="px-5 py-4"><p class="text-xs font-semibold text-slate-700">${escapeHTML(formatCheckTimestamp(session.timestamp))}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(session.dateKey)}</p></td>
             <td class="px-5 py-4"><p class="text-xs font-semibold text-slate-700">${escapeHTML(session.checkerName)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(shift.label)} · ${escapeHTML(shift.name)}</p></td>
             <td class="px-5 py-4"><p class="text-xs font-medium text-slate-700">${escapeHTML(getBranchName(session.branchId))}</p><p class="text-[10px] text-violet-600 font-semibold mt-0.5">${escapeHTML(session.area)}</p></td>
-            <td class="px-5 py-4">${getInventoryCheckStatusBadge(session)}<p class="text-[10px] text-slate-500 mt-1">${summary.total} item diperiksa</p></td>
+            <td class="px-5 py-4">${getInventoryCheckStatusBadge(session)}<p class="text-[10px] text-slate-500 mt-1"><span class="font-semibold text-brand-600">${summary.okCount}/${summary.total} sesuai</span>${summary.issueCount ? ` · ${summary.issueCount} perlu perhatian` : ''}</p></td>
             <td class="px-5 py-4 text-right"><button type="button" onclick="openInventoryCheckDetailModal(${session.id})" class="px-3 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-[11px] font-semibold inline-flex items-center gap-1.5"><i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail</button></td>
         </tr>`;
     }).join('');
@@ -4702,12 +4846,18 @@ function openInventoryCheckDetailModal(id) {
     const summary = getInventoryCheckSessionSummary(session);
     $('#inventoryCheckDetailMeta').textContent = `${session.checkerName} · ${getBranchName(session.branchId)} · ${session.area} · ${shift.label} · ${formatCheckTimestamp(session.timestamp)}`;
     $('#inventoryCheckDetailContent').innerHTML = `
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div class="rounded-xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] text-slate-500">Item Diperiksa</p><p class="text-lg font-bold text-slate-800 mt-0.5">${summary.total}</p></div>
+            <div class="rounded-xl bg-brand-50 border border-brand-100 p-3"><p class="text-[10px] text-brand-600">Sesuai</p><p class="text-lg font-bold text-brand-600 mt-0.5">${summary.okCount}</p></div>
             <div class="rounded-xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] text-slate-500">Selisih Jumlah</p><p class="text-lg font-bold ${summary.discrepancyCount ? 'text-amber-700' : 'text-brand-600'} mt-0.5">${summary.discrepancyCount}</p></div>
-            <div class="rounded-xl bg-slate-50 border border-slate-100 p-3 col-span-2 sm:col-span-1"><p class="text-[10px] text-slate-500">Masalah Kondisi</p><p class="text-lg font-bold ${summary.conditionIssueCount ? 'text-red-600' : 'text-brand-600'} mt-0.5">${summary.conditionIssueCount}</p></div>
+            <div class="rounded-xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] text-slate-500">Masalah Kondisi</p><p class="text-lg font-bold ${summary.conditionIssueCount ? 'text-red-600' : 'text-brand-600'} mt-0.5">${summary.conditionIssueCount}</p></div>
         </div>
-        <div class="space-y-2">${session.items.map(item => {
+        ${summary.issueCount ? '<div class="rounded-xl bg-amber-50 border border-amber-200 px-3.5 py-2.5 text-[11px] text-amber-800"><span class="font-semibold">Prioritas pengecekan:</span> item dengan temuan ditampilkan lebih dulu.</div>' : ''}
+        <div class="space-y-2">${[...session.items].sort((a,b) => {
+            const ai = Number(a.actualQuantity) !== Number(a.expectedQuantity) || a.actualCondition !== 'Baik';
+            const bi = Number(b.actualQuantity) !== Number(b.expectedQuantity) || b.actualCondition !== 'Baik';
+            return Number(bi) - Number(ai);
+        }).map(item => {
             const qtyMismatch = Number(item.actualQuantity) !== Number(item.expectedQuantity);
             const conditionIssue = item.actualCondition !== 'Baik';
             return `<div class="rounded-xl border ${qtyMismatch || conditionIssue ? 'border-amber-200 bg-amber-50/40' : 'border-slate-100 bg-slate-50'} p-3.5">
