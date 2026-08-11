@@ -1499,13 +1499,13 @@
 
                         <img
                             id="topbarAvatar"
-                            src="https://i.pravatar.cc/150?img=11"
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E"
                             alt="Admin"
                             class="w-9 h-9 rounded-full border-2 border-brand-500 object-cover">
 
                         <div class="hidden lg:block text-left text-sm">
                             <p id="topbarName" class="font-medium text-slate-800">
-                                Budi Santoso
+                                Pengguna
                             </p>
 
                             <p id="topbarRole" class="text-slate-500 text-xs">
@@ -1519,11 +1519,11 @@
                     <div id="profileDropdown" class="dropdown-menu dropdown-hidden absolute right-0 top-[calc(100%+10px)] w-64 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden">
                         <div class="p-4 border-b border-slate-100 bg-slate-50/70">
                             <div class="flex items-center gap-3">
-                                <img id="dropdownAvatar" src="https://i.pravatar.cc/150?img=11" alt="Admin" class="w-11 h-11 rounded-full border-2 border-brand-500">
+                                <img id="dropdownAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E" alt="Admin" class="w-11 h-11 rounded-full border-2 border-brand-500">
 
                                 <div class="min-w-0">
                                     <p id="dropdownName" class="font-semibold text-sm text-slate-800 truncate">
-                                        Budi Santoso
+                                        Pengguna
                                     </p>
 
                                     <p id="dropdownUsername" class="text-xs text-slate-500 truncate">
@@ -2441,7 +2441,7 @@
                         <div class="flex items-center space-x-4 mb-6">
                             <img
                                 id="profileAvatar"
-                                src="https://i.pravatar.cc/150?img=11"
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E"
                                 alt="Admin"
                                 class="w-20 h-20 rounded-full border-2 border-brand-500 object-cover shadow-sm">
 
@@ -2509,7 +2509,7 @@
             </section>
 
             <footer class="mt-8 pb-4 text-center text-sm text-slate-400">
-                © 2026 KaryaHub - Sistem Manajemen Karyawan Premium.
+                © 2026 KaryaHub · Google Sheets Database.
             </footer>
         </main>
     </div>
@@ -2579,11 +2579,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-slate-700 mb-1" for="inventoryName">Nama Inventaris</label>
-                        <input id="inventoryName" required type="text" placeholder="Contoh: Laptop Kasir, Meja, AC, Motor Operasional" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                        <input id="inventoryName" required type="text" placeholder="Nama inventaris" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1" for="inventoryCode">Kode / Nomor Aset <span class="text-slate-400 font-normal">(opsional)</span></label>
-                        <input id="inventoryCode" type="text" placeholder="INV-JKT-001" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                        <input id="inventoryCode" type="text" placeholder="Kode aset (opsional)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
                     </div>
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-1">
@@ -2616,7 +2616,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1" for="inventoryLocation">Lokasi Detail</label>
-                        <input id="inventoryLocation" required type="text" placeholder="Contoh: Counter 1, Rak A2, Lantai 2, Ruang belakang" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                        <input id="inventoryLocation" required type="text" placeholder="Lokasi detail inventaris" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1" for="inventoryResponsible">Penanggung Jawab <span class="text-slate-400 font-normal">(opsional)</span></label>
@@ -2673,7 +2673,7 @@
                 <input id="inventoryAreaId" type="hidden">
                 <div>
                     <label for="inventoryAreaName" class="block text-xs font-medium text-slate-700 mb-1">Nama Area</label>
-                    <input id="inventoryAreaName" required type="text" placeholder="Contoh: Bar, Kasir, Gudang" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                    <input id="inventoryAreaName" required type="text" placeholder="Nama area inventaris" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
                 </div>
                 <div>
                     <label for="inventoryAreaBranch" class="block text-xs font-medium text-slate-700 mb-1">Cabang</label>
@@ -2728,7 +2728,7 @@
                             <label for="empEmployeeId" class="block text-sm font-medium text-slate-700 mb-1">ID Karyawan</label>
                             <input type="text" id="empEmployeeId" required maxlength="30"
                                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                                placeholder="Contoh: KH-JKT-001">
+                                placeholder="ID karyawan">
                         </div>
 
                         <div>
@@ -2762,7 +2762,7 @@
                                 <input type="text" id="empUsername" required minlength="3" maxlength="30"
                                     autocomplete="off" autocapitalize="none" spellcheck="false"
                                     class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                                    placeholder="contoh: andi.saputra">
+                                    placeholder="username.karyawan">
                                 <p class="text-[11px] text-slate-400 mt-1">Gunakan huruf kecil, angka, titik, garis bawah, atau strip.</p>
                             </div>
 
@@ -2806,11 +2806,7 @@
                             <label for="empDept" class="block text-sm font-medium text-slate-700 mb-1">Departemen</label>
                             <select id="empDept" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
                                 <option value="" disabled selected>Pilih Dept</option>
-                                <option value="IT & Engineering">IT & Engineering</option>
-                                <option value="Human Resources">Human Resources</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Operations">Operations</option>
+
                             </select>
                         </div>
 
@@ -2818,7 +2814,7 @@
                             <label for="empPosition" class="block text-sm font-medium text-slate-700 mb-1">Posisi / Jabatan</label>
                             <input type="text" id="empPosition" required
                                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                                placeholder="Mis: UI/UX Designer">
+                                placeholder="Nama jabatan">
                         </div>
                     </div>
 
@@ -2869,7 +2865,7 @@
                                 <label for="empBank" class="block text-sm font-medium text-slate-700 mb-1">Bank</label>
                                 <input type="text" id="empBank" required
                                     class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                                    placeholder="Contoh: BCA">
+                                    placeholder="Nama bank">
                             </div>
 
                             <div>
@@ -3019,7 +3015,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Judul Aturan</label>
-                <input id="messRuleTitle" type="text" required maxlength="100" placeholder="Contoh: Jam malam mess" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                <input id="messRuleTitle" type="text" required maxlength="100" placeholder="Judul aturan mess" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Lingkup Aturan</label>
@@ -3070,12 +3066,12 @@
             <input id="sopId" type="hidden">
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Judul SOP</label>
-                <input id="sopTitle" type="text" required maxlength="120" placeholder="Contoh: SOP Operasional Kasir" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                <input id="sopTitle" type="text" required maxlength="120" placeholder="Judul SOP jabatan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Jabatan</label>
-                    <input id="sopPosition" type="text" required maxlength="80" placeholder="Contoh: Kasir" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                    <input id="sopPosition" type="text" required maxlength="80" placeholder="Nama jabatan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Departemen</label>
@@ -3193,530 +3189,31 @@ const ROLE_CONFIG = {
     }
 };
 
-const branches = [
-    {
-        id: 'jakarta',
-        code: 'JKT',
-        name: 'Cabang Jakarta Pusat',
-        address: 'Jakarta Pusat, DKI Jakarta'
-    },
-    {
-        id: 'bandung',
-        code: 'BDG',
-        name: 'Cabang Bandung',
-        address: 'Bandung, Jawa Barat'
-    },
-    {
-        id: 'surabaya',
-        code: 'SBY',
-        name: 'Cabang Surabaya',
-        address: 'Surabaya, Jawa Timur'
-    }
-];
+let branches = [];
 
-const attendanceByBranch = {
-    jakarta: { onTime: 3, late: 1, absent: 0 },
-    bandung: { onTime: 2, late: 0, absent: 1 },
-    surabaya: { onTime: 2, late: 1, absent: 0 }
-};
+let attendanceByBranch = {};
 
 
-let activityLogs = [
-    {
-        id: 1,
-        type: 'employee',
-        title: 'Data karyawan diperbarui',
-        detail: 'Profil karyawan Andi Saputra diperbarui oleh Admin.',
-        branchId: 'jakarta',
-        actor: 'Admin',
-        timestamp: '2026-08-11T06:40:00+07:00'
-    },
-    {
-        id: 2,
-        type: 'attendance',
-        title: 'Rekap kehadiran diperbarui',
-        detail: 'Rekap kehadiran pagi Cabang Bandung telah tercatat.',
-        branchId: 'bandung',
-        actor: 'Sistem',
-        timestamp: '2026-08-11T06:25:00+07:00'
-    },
-    {
-        id: 3,
-        type: 'sop',
-        title: 'SOP jabatan diperbarui',
-        detail: 'SOP Senior Developer versi terbaru tersedia untuk Cabang Jakarta Pusat.',
-        branchId: 'jakarta',
-        actor: 'Admin',
-        timestamp: '2026-08-10T16:20:00+07:00'
-    },
-    {
-        id: 4,
-        type: 'mess',
-        title: 'Aturan mess diperbarui',
-        detail: 'Aturan kebersihan mess telah diperbarui untuk seluruh cabang.',
-        branchId: 'all',
-        actor: 'Admin',
-        timestamp: '2026-08-10T14:10:00+07:00'
-    },
-    {
-        id: 5,
-        type: 'status',
-        title: 'Status karyawan berubah',
-        detail: 'Status salah satu karyawan Cabang Surabaya diperbarui.',
-        branchId: 'surabaya',
-        actor: 'Manajer',
-        timestamp: '2026-08-10T10:45:00+07:00'
-    }
-];
+let activityLogs = [];
 
-const users = [
-    {
-        id: 1,
-        name: 'Budi Santoso',
-        username: 'admin',
-        password: 'admin123',
-        roleKey: 'admin',
-        branchIds: ['*'],
-        avatar: 'https://i.pravatar.cc/150?img=11'
-    },
-    {
-        id: 2,
-        name: 'Rina Wijaya',
-        username: 'owner',
-        password: 'owner123',
-        roleKey: 'owner',
-        branchIds: ['jakarta', 'bandung', 'surabaya'],
-        avatar: 'https://i.pravatar.cc/150?img=32'
-    },
-    {
-        id: 3,
-        name: 'Dimas Pratama',
-        username: 'manager',
-        password: 'manager123',
-        roleKey: 'manager',
-        branchIds: ['jakarta'],
-        avatar: 'https://i.pravatar.cc/150?img=14'
-    },
-    {
-        id: 4,
-        name: 'Nabila Putri',
-        username: 'kasir',
-        password: 'kasir123',
-        roleKey: 'cashier',
-        branchIds: ['bandung'],
-        avatar: 'https://i.pravatar.cc/150?img=25'
-    },
-    {
-        id: 5,
-        name: 'Andi Saputra',
-        username: 'karyawan',
-        password: 'karyawan123',
-        roleKey: 'employee',
-        branchIds: ['jakarta'],
-        avatar: 'https://i.pravatar.cc/150?img=33'
-    }
-];
+let users = [];
 
 let currentUser = null;
 let currentBranchId = 'all';
 let currentPageId = 'dasbor';
 
-let employees = [
-    {
-        id: 1,
-        employeeId: 'KH-JKT-001',
-        shift: 'shift1',
-        name: 'Andi Saputra',
-        username: 'andi',
-        password: 'andi123',
-        joinDate: '2022-03-15',
-        email: 'andi.s@karyahub.com',
-        phone: '081234567801',
-        address: 'Jl. Cempaka No. 12, Jakarta Pusat',
-        salary: 8500000,
-        bank: 'BCA',
-        accountNumber: '1234567890',
-        emergencyContact: { name: 'Rudi Saputra', phone: '081298765401', address: 'Jakarta Timur, DKI Jakarta' },
-        department: 'IT & Engineering', position: 'Senior Developer', branchId: 'jakarta', status: 'Aktif',
-        avatar: 'https://i.pravatar.cc/150?img=33'
-    },
-    {
-        id: 2,
-        employeeId: 'KH-BDG-001',
-        shift: 'shift2',
-        name: 'Siti Nurhaliza',
-        username: 'siti',
-        password: 'siti123',
-        joinDate: '2021-11-01',
-        email: 'siti.n@karyahub.com',
-        phone: '081234567802',
-        address: 'Jl. Sukajadi No. 25, Bandung',
-        salary: 9000000,
-        bank: 'Mandiri',
-        accountNumber: '1300012345678',
-        emergencyContact: { name: 'Ahmad Fauzi', phone: '081298765402', address: 'Cimahi, Jawa Barat' },
-        department: 'Marketing', position: 'Marketing Manager', branchId: 'bandung', status: 'Resign',
-        avatar: 'https://i.pravatar.cc/150?img=5'
-    },
-    {
-        id: 3,
-        employeeId: 'KH-SBY-001',
-        shift: 'shift1',
-        name: 'Reza Rahadian',
-        username: 'reza',
-        password: 'reza123',
-        joinDate: '2023-01-10',
-        email: 'reza.r@karyahub.com',
-        phone: '081234567803',
-        address: 'Jl. Dharmahusada No. 8, Surabaya',
-        salary: 7000000,
-        bank: 'BNI',
-        accountNumber: '0256789012',
-        emergencyContact: { name: 'Dewi Rahadian', phone: '081298765403', address: 'Sidoarjo, Jawa Timur' },
-        department: 'Finance', position: 'Financial Analyst', branchId: 'surabaya', status: 'Aktif',
-        avatar: 'https://i.pravatar.cc/150?img=12'
-    },
-    {
-        id: 4,
-        employeeId: 'KH-JKT-002',
-        shift: 'office',
-        name: 'Maya Angela',
-        username: 'maya',
-        password: 'maya123',
-        joinDate: '2023-06-22',
-        email: 'maya.a@karyahub.com',
-        phone: '081234567804',
-        address: 'Jl. Kramat Raya No. 31, Jakarta Pusat',
-        salary: 6500000,
-        bank: 'BRI',
-        accountNumber: '012345678901234',
-        emergencyContact: { name: 'Linda Angela', phone: '081298765404', address: 'Depok, Jawa Barat' },
-        department: 'Human Resources', position: 'HR Specialist', branchId: 'jakarta', status: 'Aktif',
-        avatar: 'https://i.pravatar.cc/150?img=47'
-    },
-    {
-        id: 5,
-        employeeId: 'KH-BDG-002',
-        shift: 'shift3',
-        name: 'Bagas Prakoso',
-        username: 'bagas',
-        password: 'bagas123',
-        joinDate: '2020-08-05',
-        email: '',
-        phone: '081234567805',
-        address: 'Jl. Antapani No. 17, Bandung',
-        salary: 4800000,
-        bank: 'BCA',
-        accountNumber: '9876543210',
-        emergencyContact: { name: 'Sri Prakoso', phone: '081298765405', address: 'Bandung, Jawa Barat' },
-        department: 'Operations', position: 'Operations Staff', branchId: 'bandung', status: 'Blacklist',
-        avatar: 'https://i.pravatar.cc/150?img=53'
-    },
-    {
-        id: 6,
-        employeeId: 'KH-SBY-002',
-        shift: 'shift2',
-        name: 'Fajar Nugroho',
-        username: 'fajar',
-        password: 'fajar123',
-        joinDate: '2022-09-12',
-        email: 'fajar.n@karyahub.com',
-        phone: '081234567806',
-        address: 'Jl. Rungkut Industri No. 9, Surabaya',
-        salary: 7500000,
-        bank: 'Mandiri',
-        accountNumber: '1420098765432',
-        emergencyContact: { name: 'Nurul Nugroho', phone: '081298765406', address: 'Gresik, Jawa Timur' },
-        department: 'Operations', position: 'Branch Supervisor', branchId: 'surabaya', status: 'Aktif',
-        avatar: 'https://i.pravatar.cc/150?img=15'
-    },
-    {
-        id: 7,
-        employeeId: 'KH-JKT-003',
-        shift: 'shift1',
-        name: 'Nadia Permata',
-        username: 'nadia',
-        password: 'nadia123',
-        joinDate: '2024-02-01',
-        email: 'nadia.p@karyahub.com',
-        phone: '081234567807',
-        address: 'Jl. Salemba Tengah No. 21, Jakarta Pusat',
-        salary: 5800000,
-        bank: 'CIMB Niaga',
-        accountNumber: '800123456700',
-        emergencyContact: { name: 'Rina Permata', phone: '081298765407', address: 'Bekasi, Jawa Barat' },
-        department: 'Marketing', position: 'Marketing Executive', branchId: 'jakarta', status: 'Aktif',
-        avatar: 'https://i.pravatar.cc/150?img=44'
-    },
-    {
-        id: 8,
-        employeeId: 'KH-BDG-003',
-        shift: 'office',
-        name: 'Yusuf Maulana',
-        username: 'yusuf',
-        password: 'yusuf123',
-        joinDate: '2024-04-18',
-        email: 'yusuf.m@karyahub.com',
-        phone: '081234567808',
-        address: 'Jl. Buah Batu No. 44, Bandung',
-        salary: 5200000,
-        bank: 'BSI',
-        accountNumber: '7112345678',
-        emergencyContact: { name: 'Dedi Maulana', phone: '081298765408', address: 'Garut, Jawa Barat' },
-        department: 'Finance', position: 'Finance Staff', branchId: 'bandung', status: 'Aktif',
-        avatar: 'https://i.pravatar.cc/150?img=68'
-    }
-];
+let employees = [];
 
 
-let inventoryAreas = [
-    { id: 1, name: 'Kasir', branchId: 'jakarta' },
-    { id: 2, name: 'Bar', branchId: 'jakarta' },
-    { id: 3, name: 'Gudang', branchId: 'jakarta' },
-    { id: 4, name: 'Mess', branchId: 'bandung' },
-    { id: 5, name: 'Gudang', branchId: 'bandung' },
-    { id: 6, name: 'Operasional', branchId: 'surabaya' },
-    { id: 7, name: 'Gudang', branchId: 'surabaya' }
-];
+let inventoryAreas = [];
 
-let inventories = [
-    { id: 1, name: 'Laptop Kasir', code: 'INV-JKT-001', area: 'Kasir', quantity: 2, unit: 'unit', condition: 'Baik', branchId: 'jakarta', location: 'Counter Kasir Utama', responsible: 'Maya Angela', purchaseDate: '2025-02-10', notes: 'Laptop operasional kasir dan administrasi.' },
-    { id: 2, name: 'AC Split 1 PK', code: 'INV-BDG-002', area: 'Mess', quantity: 3, unit: 'unit', condition: 'Perlu Perbaikan', branchId: 'bandung', location: 'Lantai 1 dan Lantai 2', responsible: 'Yusuf Maulana', purchaseDate: '2023-08-20', notes: 'Satu unit perlu pengecekan pendingin.' },
-    { id: 3, name: 'Meja Kerja', code: 'INV-SBY-003', area: 'Operasional', quantity: 8, unit: 'buah', condition: 'Baik', branchId: 'surabaya', location: 'Ruang Operasional Utama', responsible: 'Fajar Nugroho', purchaseDate: '2024-01-15', notes: '' },
-    { id: 4, name: 'Motor Operasional', code: 'INV-JKT-004', area: 'Gudang', quantity: 1, unit: 'unit', condition: 'Baik', branchId: 'jakarta', location: 'Parkir Belakang', responsible: 'Andi Saputra', purchaseDate: '2024-05-02', notes: 'Digunakan untuk kebutuhan operasional cabang.' },
-    { id: 5, name: 'Vacuum Cleaner', code: 'INV-BDG-005', area: 'Gudang', quantity: 1, unit: 'unit', condition: 'Rusak', branchId: 'bandung', location: 'Rak Peralatan Kebersihan', responsible: '', purchaseDate: '2022-11-11', notes: 'Motor mesin tidak menyala.' }
-];
+let inventories = [];
 
 let currentMessGender = 'cowok';
 
-let messRules = [
-    {
-        id: 1,
-        gender: 'cowok',
-        category: 'Kedisiplinan',
-        title: 'Jam Malam dan Waktu Istirahat',
-        branchId: 'all',
-        description: 'Menjaga ketertiban dan waktu istirahat seluruh penghuni mess cowok.',
-        details: [
-            'Penghuni wajib sudah berada di area mess maksimal pukul 23.00 kecuali mendapat izin atasan.',
-            'Aktivitas yang menimbulkan suara keras dihentikan mulai pukul 22.00.',
-            'Jika pulang terlambat karena pekerjaan, penghuni wajib menginformasikan penanggung jawab mess.'
-        ],
-        active: true
-    },
-    {
-        id: 2,
-        gender: 'cowok',
-        category: 'Kebersihan',
-        title: 'Kebersihan Kamar dan Area Bersama',
-        branchId: 'all',
-        description: 'Setiap penghuni bertanggung jawab menjaga kebersihan kamar dan fasilitas bersama.',
-        details: [
-            'Tempat tidur dan barang pribadi harus dirapikan setiap hari.',
-            'Sampah wajib dibuang ke tempat yang telah ditentukan.',
-            'Jadwal piket area bersama dijalankan sesuai pembagian penghuni.'
-        ],
-        active: true
-    },
-    {
-        id: 3,
-        gender: 'cowok',
-        category: 'Tamu',
-        title: 'Ketentuan Menerima Tamu',
-        branchId: 'jakarta',
-        description: 'Membatasi akses tamu untuk menjaga keamanan dan kenyamanan penghuni.',
-        details: [
-            'Tamu wajib melapor kepada penanggung jawab mess.',
-            'Tamu tidak diperkenankan menginap tanpa izin tertulis dari manajemen.',
-            'Tamu lawan jenis tidak diperkenankan masuk ke area kamar penghuni.'
-        ],
-        active: true
-    },
-    {
-        id: 4,
-        gender: 'cewek',
-        category: 'Keamanan',
-        title: 'Keamanan Akses Mess Cewek',
-        branchId: 'all',
-        description: 'Menjaga keamanan penghuni dengan pengendalian akses ke area mess cewek.',
-        details: [
-            'Pintu utama wajib selalu dikunci setelah pukul 21.00.',
-            'Kunci atau akses masuk tidak boleh dipinjamkan kepada pihak luar.',
-            'Aktivitas mencurigakan segera dilaporkan kepada penanggung jawab mess atau atasan.'
-        ],
-        active: true
-    },
-    {
-        id: 5,
-        gender: 'cewek',
-        category: 'Tamu',
-        title: 'Ketentuan Tamu dan Kunjungan',
-        branchId: 'all',
-        description: 'Mengatur kunjungan agar privasi dan keamanan penghuni mess cewek tetap terjaga.',
-        details: [
-            'Tamu hanya diterima di area yang telah ditentukan.',
-            'Tamu lawan jenis dilarang memasuki area kamar penghuni.',
-            'Tamu yang akan berada di area mess lebih dari dua jam wajib melapor kepada penanggung jawab.'
-        ],
-        active: true
-    },
-    {
-        id: 6,
-        gender: 'cewek',
-        category: 'Kebersihan',
-        title: 'Kebersihan Dapur dan Kamar Mandi',
-        branchId: 'bandung',
-        description: 'Menjaga fasilitas bersama tetap bersih dan dapat digunakan dengan nyaman.',
-        details: [
-            'Peralatan masak dicuci segera setelah digunakan.',
-            'Barang pribadi tidak ditinggalkan di kamar mandi bersama.',
-            'Jadwal piket mingguan wajib dijalankan dan dicatat.'
-        ],
-        active: true
-    }
-];
+let messRules = [];
 
-let positionSops = [
-    {
-        id: 1,
-        title: 'SOP Operasional Kasir',
-        position: 'Kasir',
-        department: 'Finance',
-        branchId: 'all',
-        version: '1.2',
-        updatedAt: '2026-08-01',
-        objective: 'Memastikan seluruh transaksi pembayaran tercatat akurat, aman, dan dapat direkonsiliasi pada akhir shift.',
-        responsibilities: [
-            'Memproses transaksi sesuai metode pembayaran yang berlaku.',
-            'Memastikan nominal uang tunai dan non-tunai sesuai bukti transaksi.',
-            'Menjaga keamanan kas, perangkat pembayaran, dan dokumen transaksi.'
-        ],
-        steps: [
-            'Lakukan pengecekan saldo awal kas sebelum operasional dimulai.',
-            'Input setiap transaksi ke sistem sebelum menerima atau mengembalikan pembayaran.',
-            'Berikan bukti transaksi kepada pelanggan atau pihak terkait.',
-            'Lakukan rekonsiliasi kas dan transaksi non-tunai pada akhir shift.',
-            'Laporkan selisih kas kepada atasan sebelum serah terima shift.'
-        ],
-        standards: [
-            'Dilarang menggunakan kas perusahaan untuk kepentingan pribadi.',
-            'Tidak boleh membagikan PIN atau akses sistem kasir kepada orang lain.',
-            'Selisih kas harus dilaporkan pada hari yang sama.'
-        ],
-        active: true
-    },
-    {
-        id: 2,
-        title: 'SOP Branch Supervisor',
-        position: 'Branch Supervisor',
-        department: 'Operations',
-        branchId: 'all',
-        version: '1.0',
-        updatedAt: '2026-07-20',
-        objective: 'Menjamin kegiatan operasional cabang berjalan sesuai target, SOP perusahaan, dan standar pelayanan.',
-        responsibilities: [
-            'Mengawasi kesiapan operasional harian cabang.',
-            'Mengatur pembagian tugas dan memastikan kehadiran tim.',
-            'Melaporkan kendala operasional dan pencapaian kepada manajemen.'
-        ],
-        steps: [
-            'Lakukan briefing tim sebelum operasional dimulai.',
-            'Periksa kesiapan area kerja, perangkat, stok, dan kebutuhan operasional.',
-            'Pantau pelaksanaan tugas dan tangani eskalasi yang tidak dapat diselesaikan staf.',
-            'Lakukan evaluasi singkat pada akhir shift.',
-            'Kirim laporan operasional sesuai jadwal yang ditentukan.'
-        ],
-        standards: [
-            'Setiap insiden keselamatan atau kehilangan wajib segera dieskalasikan.',
-            'Perubahan jadwal tim harus terdokumentasi.',
-            'Supervisor wajib menjaga kerahasiaan data perusahaan dan karyawan.'
-        ],
-        active: true
-    },
-    {
-        id: 3,
-        title: 'SOP Senior Developer',
-        position: 'Senior Developer',
-        department: 'IT & Engineering',
-        branchId: 'jakarta',
-        version: '2.1',
-        updatedAt: '2026-07-28',
-        objective: 'Menjaga kualitas pengembangan perangkat lunak melalui proses implementasi, review, pengujian, dan dokumentasi yang konsisten.',
-        responsibilities: [
-            'Mengembangkan fitur sesuai kebutuhan dan standar teknis.',
-            'Melakukan code review dan membantu penyelesaian isu teknis.',
-            'Menjaga dokumentasi perubahan serta keamanan akses pengembangan.'
-        ],
-        steps: [
-            'Pahami acceptance criteria sebelum memulai pekerjaan.',
-            'Buat perubahan pada branch kerja sesuai konvensi tim.',
-            'Jalankan pengujian yang relevan sebelum membuat pull request.',
-            'Mintakan code review minimal kepada satu anggota tim.',
-            'Perbarui dokumentasi teknis jika terdapat perubahan perilaku sistem.'
-        ],
-        standards: [
-            'Credential produksi tidak boleh disimpan di source code.',
-            'Perubahan kritikal wajib melalui review dan pengujian.',
-            'Insiden keamanan harus segera dilaporkan kepada penanggung jawab.'
-        ],
-        active: true
-    },
-    {
-        id: 4,
-        title: 'SOP HR Specialist',
-        position: 'HR Specialist',
-        department: 'Human Resources',
-        branchId: 'all',
-        version: '1.3',
-        updatedAt: '2026-07-15',
-        objective: 'Memastikan administrasi SDM, data karyawan, dan komunikasi kebijakan berjalan akurat dan rahasia.',
-        responsibilities: [
-            'Memelihara kelengkapan data dan dokumen karyawan.',
-            'Mendukung proses onboarding, perubahan status, dan offboarding.',
-            'Menjaga kerahasiaan informasi personal serta dokumen perusahaan.'
-        ],
-        steps: [
-            'Verifikasi dokumen dan data sebelum melakukan perubahan pada sistem.',
-            'Catat perubahan status atau data sesuai otorisasi yang diterima.',
-            'Sampaikan informasi kebijakan kepada pihak yang berkepentingan.',
-            'Arsipkan dokumen sesuai klasifikasi dan periode penyimpanan.'
-        ],
-        standards: [
-            'Data pribadi tidak boleh dibagikan tanpa dasar pekerjaan yang sah.',
-            'Setiap perubahan data penting harus dapat ditelusuri.',
-            'Dokumen sensitif wajib disimpan pada lokasi yang memiliki kontrol akses.'
-        ],
-        active: true
-    },
-    {
-        id: 5,
-        title: 'SOP Marketing Executive',
-        position: 'Marketing Executive',
-        department: 'Marketing',
-        branchId: 'all',
-        version: '1.0',
-        updatedAt: '2026-07-10',
-        objective: 'Menjalankan aktivitas pemasaran secara terencana, sesuai brand guideline, dan dapat diukur hasilnya.',
-        responsibilities: [
-            'Menjalankan kampanye sesuai kalender pemasaran.',
-            'Membuat dan mengoordinasikan materi promosi.',
-            'Mencatat hasil kegiatan dan menyusun laporan performa.'
-        ],
-        steps: [
-            'Pastikan brief dan target kampanye telah disetujui.',
-            'Gunakan aset dan pesan yang sesuai brand guideline.',
-            'Koordinasikan jadwal publikasi atau aktivitas lapangan.',
-            'Pantau metrik utama selama kampanye.',
-            'Dokumentasikan hasil dan rekomendasi setelah kampanye selesai.'
-        ],
-        standards: [
-            'Materi publik tidak boleh memuat klaim yang belum disetujui.',
-            'Data pelanggan tidak boleh digunakan di luar tujuan yang diizinkan.',
-            'Pengeluaran promosi harus memiliki bukti dan persetujuan sesuai kebijakan.'
-        ],
-        active: true
-    }
-];
+let positionSops = [];
 
 const HOME_MENU_ITEMS = [
     { page: 'karyawan', label: 'Karyawan', icon: 'users', tone: 'brand' },
@@ -3736,22 +3233,7 @@ const HOME_MENU_ITEMS = [
     { page: 'profil', label: 'Profil', icon: 'user-cog', tone: 'slate' }
 ];
 
-let inventoryCheckSessions = [
-    {
-        id: 1,
-        branchId: 'jakarta',
-        area: 'Kasir',
-        shift: 'shift1',
-        checkerName: 'Andi Saputra',
-        checkerUsername: 'andi',
-        employeeRecordId: 1,
-        timestamp: '2026-08-11T08:05:00+07:00',
-        dateKey: '2026-08-11',
-        items: [
-            { inventoryId: 1, name: 'Laptop Kasir', unit: 'unit', expectedQuantity: 2, actualQuantity: 2, actualCondition: 'Baik', note: '' }
-        ]
-    }
-];
+let inventoryCheckSessions = [];
 
 let inventoryActiveTab = 'list';
 
@@ -3794,42 +3276,15 @@ const SHIFT_CONFIG = {
     }
 };
 
-const PAYROLL_ALLOWANCES = {
-    1: 750000, 2: 850000, 3: 650000, 4: 600000,
-    5: 450000, 6: 700000, 7: 500000, 8: 475000
-};
+let PAYROLL_ALLOWANCES = {};
 
-const internalAnnouncements = [
-    { id: 1, title: 'Pengingat Rekap Kehadiran Bulanan', content: 'Pastikan koreksi absensi dan izin sudah diajukan sebelum rekap bulanan ditutup.', date: '2026-08-10', branchId: 'all', type: 'Info' },
-    { id: 2, title: 'Jadwal Briefing Operasional', content: 'Briefing operasional cabang dilaksanakan sesuai jadwal masing-masing supervisor.', date: '2026-08-09', branchId: 'all', type: 'Operasional' },
-    { id: 3, title: 'Pemeriksaan Inventaris Mess', content: 'Tim cabang diminta melakukan pengecekan inventaris dan kebersihan mess minggu ini.', date: '2026-08-08', branchId: 'bandung', type: 'Cabang' }
-];
+let internalAnnouncements = [];
 
-const documentArchive = [
-    { id: 1, title: 'Form Pengajuan Cuti', category: 'Formulir', icon: 'file-text', description: 'Template administrasi untuk pengajuan cuti karyawan.' },
-    { id: 2, title: 'Panduan Kehadiran', category: 'Panduan', icon: 'book-open-check', description: 'Panduan pencatatan kehadiran, keterlambatan, dan izin.' },
-    { id: 3, title: 'Template Serah Terima', category: 'Operasional', icon: 'clipboard-check', description: 'Dokumen serah terima pekerjaan dan aset operasional.' },
-    { id: 4, title: 'Kebijakan Internal', category: 'Kebijakan', icon: 'shield-check', description: 'Ringkasan kebijakan internal yang berlaku untuk seluruh karyawan.' },
-    { id: 5, title: 'Form Perubahan Data', category: 'Formulir', icon: 'file-pen-line', description: 'Form pembaruan data pribadi dan rekening karyawan.' },
-    { id: 6, title: 'Arsip SOP', category: 'SOP', icon: 'archive', description: 'Akses ringkas ke kumpulan SOP jabatan yang telah diterbitkan.' }
-];
+let documentArchive = [];
 
-const helpGuides = [
-    { title: 'Jadwal & Shift', description: 'Lihat shift kerja, jam masuk, dan jadwal mingguan sesuai penempatan karyawan.', icon: 'calendar-range' },
-    { title: 'Mengelola Data Karyawan', description: 'Tambah, edit, lihat card, dan ubah status karyawan sesuai hak akses.', icon: 'users' },
-    { title: 'Memilih Cabang', description: 'Admin dan Owner dapat berpindah ruang kerja cabang dari Beranda atau halaman terkait.', icon: 'building-2' },
-    { title: 'Aturan Mess & SOP', description: 'Pelajari cara melihat atau mengelola aturan mess dan SOP berdasarkan role.', icon: 'clipboard-list' },
-    { title: 'Penggajian', description: 'Gunakan halaman Penggajian untuk melihat ringkasan gaji dan tunjangan cabang.', icon: 'wallet' },
-    { title: 'Laporan', description: 'Pantau statistik status, departemen, dan kehadiran dari satu halaman.', icon: 'bar-chart-3' },
-    { title: 'Keamanan Akun', description: 'Gunakan username unik, password yang kuat, dan keluar dari sesi pada perangkat bersama.', icon: 'shield-check' }
-];
+let helpGuides = [];
 
-const helpFaqs = [
-    ['Kenapa beberapa menu tidak terlihat?', 'Menu mengikuti role dan hak akses akun yang sedang login.'],
-    ['Kenapa pemilih cabang tidak muncul?', 'Pemilih cabang hanya tersedia untuk akun multi-cabang seperti Admin dan Owner.'],
-    ['Apakah perubahan status karyawan lewat menu Edit?', 'Tidak. Perubahan Aktif, Resign, dan Blacklist dilakukan lewat tombol Status di tabel karyawan.'],
-    ['Di mana melihat seluruh menu?', 'Gunakan tombol Lihat Semua pada bagian Menu Utama di Beranda.']
-];
+let helpFaqs = [];
 
 const pageMeta = {
     dasbor: {
@@ -3918,33 +3373,7 @@ const topbarPageConfig = {
     profil: { branch: false, search: false }
 };
 
-const departments = [
-    {
-        name: 'IT & Engineering',
-        icon: 'cpu',
-        desc: 'Pengembangan produk, infrastruktur, dan teknologi.'
-    },
-    {
-        name: 'Human Resources',
-        icon: 'users',
-        desc: 'Rekrutmen, pengembangan SDM, dan kesejahteraan.'
-    },
-    {
-        name: 'Marketing',
-        icon: 'trending-up',
-        desc: 'Strategi pemasaran, branding, dan pertumbuhan.'
-    },
-    {
-        name: 'Finance',
-        icon: 'wallet',
-        desc: 'Keuangan perusahaan, penggajian, dan audit.'
-    },
-    {
-        name: 'Operations',
-        icon: 'settings',
-        desc: 'Operasional harian dan manajemen fasilitas.'
-    }
-];
+let departments = [];
 
 
 /* =========================================================
@@ -5234,6 +4663,11 @@ function deleteInventory(id) {
 function renderDocuments() {
     const grid = $('#documentGrid');
     if (!grid) return;
+    if (!documentArchive.length) {
+        grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="folder-archive" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada dokumen</h4><p class="text-xs text-slate-500 mt-1">Data dokumen akan tampil setelah ditambahkan ke database.</p></div>`;
+        refreshIcons();
+        return;
+    }
     grid.innerHTML = documentArchive.map(item => `
         <article class="rounded-2xl border border-slate-100 bg-slate-50 p-4 flex flex-col">
             <div class="flex items-start justify-between gap-3">
@@ -5253,21 +4687,21 @@ function renderDocuments() {
 function renderHelp() {
     const guideGrid = $('#helpGuideGrid');
     const faqList = $('#helpFaqList');
-    if (guideGrid) guideGrid.innerHTML = helpGuides.map(item => `
+    if (guideGrid) guideGrid.innerHTML = helpGuides.length ? helpGuides.map(item => `
         <article class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
             <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center"><i data-lucide="${escapeHTML(item.icon)}" class="w-4 h-4"></i></div>
             <h4 class="font-semibold text-sm text-slate-800 mt-3">${escapeHTML(item.title)}</h4>
             <p class="text-[11px] text-slate-500 leading-relaxed mt-1">${escapeHTML(item.description)}</p>
         </article>
-    `).join('');
-    if (faqList) faqList.innerHTML = helpFaqs.map(([question, answer], index) => `
+    `).join('') : `<div class="sm:col-span-2 py-10 text-center text-sm text-slate-500">Belum ada panduan.</div>`;
+    if (faqList) faqList.innerHTML = helpFaqs.length ? helpFaqs.map(([question, answer], index) => `
         <details class="group rounded-2xl border border-slate-100 bg-slate-50 overflow-hidden" ${index === 0 ? 'open' : ''}>
             <summary class="cursor-pointer list-none flex items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-slate-700">
                 <span>${escapeHTML(question)}</span><i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180"></i>
             </summary>
             <div class="px-4 pb-4 text-xs text-slate-500 leading-relaxed">${escapeHTML(answer)}</div>
         </details>
-    `).join('');
+    `).join('') : `<div class="py-8 text-center text-sm text-slate-500">Belum ada FAQ.</div>`;
     refreshIcons();
 }
 
@@ -5761,6 +5195,12 @@ function renderBranchesPage() {
         helper.textContent = canSwitchBranch()
             ? 'Seluruh cabang yang berada dalam akses akun Anda.'
             : 'Informasi cabang tempat akun Anda ditugaskan.';
+    }
+
+    if (!accessible.length) {
+        grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="building-2" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada cabang</h4><p class="text-xs text-slate-500 mt-1">Tambahkan cabang pertama dari menu KaryaHub pada Google Sheet.</p></div>`;
+        refreshIcons();
+        return;
     }
 
     grid.innerHTML = accessible.map(branchId => {
@@ -6382,6 +5822,12 @@ function renderDepartments() {
 
     const scopedEmployees = getScopedEmployees();
 
+    if (!departments.length) {
+        container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="briefcase-business" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada departemen</h4><p class="text-xs text-slate-500 mt-1">Tambahkan master departemen dari Google Sheet / menu KaryaHub.</p></div>`;
+        refreshIcons();
+        return;
+    }
+
     container.innerHTML = departments.map(department => {
         const count = scopedEmployees.filter(employee => employee.department === department.name).length;
 
@@ -6690,10 +6136,13 @@ function openEmployeeModal(mode = 'add', data = null) {
     $('#empJoinDate').value = data?.joinDate || new Date().toISOString().split('T')[0];
     $('#empName').value = data?.name || '';
     $('#empUsername').value = data?.username || '';
-    $('#empPassword').value = data?.password || '';
+    $('#empPassword').value = '';
+    $('#empPassword').required = mode !== 'edit';
+    $('#empPassword').placeholder = mode === 'edit' ? 'Kosongkan jika tidak diubah' : 'Minimal 6 karakter';
     $('#empEmail').value = data?.email || '';
     $('#empPhone').value = data?.phone || '';
     $('#empAddress').value = data?.address || '';
+    populateEmployeeDepartmentOptions(data?.department || '');
     $('#empDept').value = data?.department || '';
     $('#empPosition').value = data?.position || '';
     $('#empShift').value = data?.shift || 'office';
@@ -6703,7 +6152,7 @@ function openEmployeeModal(mode = 'add', data = null) {
     $('#empEmergencyName').value = data?.emergencyContact?.name || '';
     $('#empEmergencyPhone').value = data?.emergencyContact?.phone || '';
     $('#empEmergencyAddress').value = data?.emergencyContact?.address || '';
-    $('#empAvatar').value = data?.avatar || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`;
+    $('#empAvatar').value = data?.avatar || DEFAULT_AVATAR;
     populateEmployeeBranchOptions(data?.branchId || '');
 
     modal.classList.remove('hidden');
@@ -7738,6 +7187,556 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+
+/* =========================================================
+   GOOGLE SHEETS DATABASE VIA VERCEL API
+   Semua array di atas hanya cache UI, bukan database permanen.
+========================================================= */
+const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E";
+
+const API_ENDPOINT = window.KARYAHUB_API_ENDPOINT || '/api/karyahub';
+
+function hasGasRuntime() {
+    // Dipertahankan agar fungsi lama tidak perlu dirombak.
+    // Pada hosting Vercel, komunikasi database menggunakan Fetch API.
+    return typeof window.fetch === 'function';
+}
+
+async function gasCall(method, ...args) {
+    if (!hasGasRuntime()) {
+        throw new Error('Browser ini tidak mendukung koneksi API.');
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    try {
+        const response = await fetch(API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin',
+            cache: 'no-store',
+            signal: controller.signal,
+            body: JSON.stringify({
+                action: method,
+                args
+            })
+        });
+
+        let payload;
+        try {
+            payload = await response.json();
+        } catch (error) {
+            throw new Error('Respons API tidak valid.');
+        }
+
+        if (!response.ok || payload?.ok === false) {
+            const message = payload?.error?.message || payload?.message || `API error (${response.status})`;
+            const apiError = new Error(message);
+            apiError.code = payload?.error?.code || `HTTP_${response.status}`;
+            throw apiError;
+        }
+
+        return payload;
+    } catch (error) {
+        if (error?.name === 'AbortError') {
+            throw new Error('Koneksi ke database terlalu lama. Coba lagi.');
+        }
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
+function getSessionToken() {
+    return sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY) || '';
+}
+
+function saveLoginSession(token, rememberMe = false) {
+    if (rememberMe) {
+        localStorage.setItem(SESSION_KEY, token);
+        sessionStorage.removeItem(SESSION_KEY);
+    } else {
+        sessionStorage.setItem(SESSION_KEY, token);
+        localStorage.removeItem(SESSION_KEY);
+    }
+}
+
+function updateLoginSession() {
+    // Token server tidak berubah ketika username diperbarui.
+}
+
+function clearLoginSession() {
+    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SESSION_KEY);
+}
+
+function normalizeAvatar(value) {
+    return String(value || '').trim() || DEFAULT_AVATAR;
+}
+
+function applyBootstrapData(data = {}) {
+    currentUser = data.currentUser ? { ...data.currentUser, avatar: normalizeAvatar(data.currentUser.avatar) } : null;
+    branches = Array.isArray(data.branches) ? data.branches : [];
+    employees = (Array.isArray(data.employees) ? data.employees : []).map(employee => ({
+        ...employee,
+        avatar: normalizeAvatar(employee.avatar),
+        password: '',
+        emergencyContact: employee.emergencyContact || { name: '', phone: '', address: '' }
+    }));
+    attendanceByBranch = data.attendanceByBranch && typeof data.attendanceByBranch === 'object' ? data.attendanceByBranch : {};
+    activityLogs = Array.isArray(data.activityLogs) ? data.activityLogs : [];
+    inventoryAreas = Array.isArray(data.inventoryAreas) ? data.inventoryAreas : [];
+    inventories = Array.isArray(data.inventories) ? data.inventories : [];
+    inventoryCheckSessions = Array.isArray(data.inventoryCheckSessions) ? data.inventoryCheckSessions : [];
+    messRules = Array.isArray(data.messRules) ? data.messRules : [];
+    positionSops = Array.isArray(data.positionSops) ? data.positionSops : [];
+    PAYROLL_ALLOWANCES = data.payrollAllowances && typeof data.payrollAllowances === 'object' ? data.payrollAllowances : {};
+    internalAnnouncements = Array.isArray(data.internalAnnouncements) ? data.internalAnnouncements : [];
+    documentArchive = Array.isArray(data.documentArchive) ? data.documentArchive : [];
+    helpGuides = Array.isArray(data.helpGuides) ? data.helpGuides : [];
+    helpFaqs = Array.isArray(data.helpFaqs) ? data.helpFaqs : [];
+    departments = Array.isArray(data.departments) ? data.departments : [];
+
+    normalizeCurrentBranch();
+}
+
+function applyServerResponse(response, { rerender = true } = {}) {
+    if (response?.data) applyBootstrapData(response.data);
+    if (rerender && currentUser) showApp(false);
+    return response;
+}
+
+function isSessionErrorMessage(message = '') {
+    const text = String(message).toLowerCase();
+    return text.includes('sesi') || text.includes('akun tidak aktif');
+}
+
+function handleServerError(error, fallback = 'Terjadi kesalahan saat menyimpan data.') {
+    const message = error?.message || fallback;
+    if (isSessionErrorMessage(message)) {
+        clearLoginSession();
+        currentUser = null;
+        showLogin();
+    }
+    showToast(message, 'error');
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const username = normalizeUsername($('#loginUsername').value);
+    const password = $('#loginPassword').value;
+    const rememberMe = $('#rememberMe').checked;
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    const originalHTML = submitButton?.innerHTML;
+
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Masuk...</span>';
+    }
+
+    try {
+        const response = await gasCall('apiLogin', username, password, rememberMe);
+        saveLoginSession(response.token, rememberMe);
+        applyBootstrapData(response.data);
+        currentBranchId = getRoleConfig(currentUser)?.multiBranch ? 'all' : (getAccessibleBranchIds(currentUser)[0] || 'all');
+        $('#loginForm').reset();
+        showApp();
+        showToast(`Selamat datang, ${currentUser.name}!`, 'success');
+    } catch (error) {
+        handleServerError(error, 'Login gagal.');
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalHTML;
+            refreshIcons();
+        }
+    }
+}
+
+async function checkSession() {
+    const token = getSessionToken();
+    if (!token) {
+        showLogin();
+        try {
+            const status = await gasCall('apiSystemStatus');
+            if (!status.configured) {
+                showToast('Database belum memiliki akun aktif. Jalankan setupDatabase() dari Apps Script lalu lihat username/password di Execution log.', 'error');
+            }
+        } catch (error) {
+            handleServerError(error, 'Tidak dapat terhubung ke database Google Sheets.');
+        }
+        return;
+    }
+
+    try {
+        const response = await gasCall('apiResume', token);
+        applyBootstrapData(response.data);
+        currentBranchId = getRoleConfig(currentUser)?.multiBranch ? 'all' : (getAccessibleBranchIds(currentUser)[0] || 'all');
+        showApp(false);
+    } catch (error) {
+        clearLoginSession();
+        currentUser = null;
+        showLogin();
+        handleServerError(error, 'Sesi tidak dapat dipulihkan.');
+    }
+}
+
+async function logoutUser() {
+    const token = getSessionToken();
+    try {
+        if (token && hasGasRuntime()) await gasCall('apiLogout', token);
+    } catch (error) {
+        console.warn(error);
+    } finally {
+        clearLoginSession();
+        currentUser = null;
+        currentBranchId = 'all';
+        showLogin();
+        showToast('Berhasil keluar dari sesi.', 'success');
+    }
+}
+
+async function saveProfile(event) {
+    event.preventDefault();
+    if (!currentUser) return;
+
+    const name = $('#profileName').value.trim();
+    const username = normalizeUsername($('#profileUsername').value);
+    if (!name || !isValidUsername(username)) {
+        showToast('Nama dan username yang valid wajib diisi.', 'error');
+        return;
+    }
+
+    try {
+        const response = await gasCall('apiSaveProfile', getSessionToken(), { name, username });
+        applyServerResponse(response);
+        showToast(response.message || 'Profil berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+function populateEmployeeDepartmentOptions(selected = '') {
+    const select = $('#empDept');
+    if (!select) return;
+    const options = departments.map(item => `<option value="${escapeHTML(item.name)}">${escapeHTML(item.name)}</option>`).join('');
+    select.innerHTML = `<option value="" disabled ${selected ? '' : 'selected'}>Pilih departemen</option>${options}`;
+    if (selected && departments.some(item => item.name === selected)) select.value = selected;
+}
+
+async function handleEmployeeSubmit(event) {
+    event.preventDefault();
+    const id = $('#empId').value;
+    const editing = Boolean(id);
+    const requestedPermission = editing ? 'employee.edit' : 'employee.create';
+    if (!hasPermission(requestedPermission)) {
+        showToast('Anda tidak memiliki izin untuk menyimpan perubahan ini.', 'error');
+        return;
+    }
+
+    const password = $('#empPassword').value;
+    if (!editing && password.length < 6) {
+        showToast('Password karyawan baru minimal 6 karakter.', 'error');
+        return;
+    }
+    if (editing && password && password.length < 6) {
+        showToast('Jika mengganti password, gunakan minimal 6 karakter.', 'error');
+        return;
+    }
+
+    const payload = {
+        id: editing ? Number(id) : null,
+        employeeId: $('#empEmployeeId').value.trim().toUpperCase(),
+        joinDate: $('#empJoinDate').value,
+        name: $('#empName').value.trim(),
+        username: normalizeUsername($('#empUsername').value),
+        password,
+        email: $('#empEmail').value.trim().toLowerCase(),
+        phone: $('#empPhone').value.trim(),
+        address: $('#empAddress').value.trim(),
+        department: $('#empDept').value,
+        position: $('#empPosition').value.trim(),
+        shift: $('#empShift').value,
+        branchId: $('#empBranch').value,
+        salary: parseNominalInput($('#empSalary').value),
+        bank: $('#empBank').value.trim(),
+        accountNumber: $('#empAccountNumber').value.trim(),
+        emergencyContact: {
+            name: $('#empEmergencyName').value.trim(),
+            phone: $('#empEmergencyPhone').value.trim(),
+            address: $('#empEmergencyAddress').value.trim()
+        },
+        avatar: $('#empAvatar').value || DEFAULT_AVATAR
+    };
+
+    if (!payload.name || !payload.employeeId || !payload.username || !payload.branchId || Number.isNaN(payload.salary)) {
+        showToast('Lengkapi seluruh data wajib karyawan.', 'error');
+        return;
+    }
+
+    try {
+        const response = await gasCall('apiSaveEmployee', getSessionToken(), payload);
+        closeEmployeeModal();
+        clearSearch();
+        applyServerResponse(response);
+        showToast(response.message || 'Data karyawan berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function updateEmployeeStatus(nextStatus) {
+    const allowedStatuses = ['Aktif', 'Resign', 'Blacklist'];
+    if (!allowedStatuses.includes(nextStatus) || selectedStatusEmployeeId === null) return;
+    const employee = employees.find(item => Number(item.id) === Number(selectedStatusEmployeeId));
+    if (!employee) return;
+
+    try {
+        const response = await gasCall('apiUpdateEmployeeStatus', getSessionToken(), Number(selectedStatusEmployeeId), nextStatus);
+        closeEmployeeStatusModal();
+        clearSearch();
+        applyServerResponse(response);
+        showToast(`${employee.name} sekarang berstatus ${nextStatus}.`, 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function confirmDelete(id) {
+    if (!hasPermission('employee.delete')) {
+        showToast('Anda tidak memiliki izin untuk menghapus karyawan.', 'error');
+        return;
+    }
+    const employee = employees.find(item => Number(item.id) === Number(id));
+    if (!employee) return;
+    if (!confirm(`Hapus data ${employee.name}?`)) return;
+
+    try {
+        const response = await gasCall('apiDeleteEmployee', getSessionToken(), Number(id));
+        clearSearch();
+        applyServerResponse(response);
+        showToast(response.message || 'Data karyawan berhasil dihapus.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function handleInventoryAreaSubmit(event) {
+    event.preventDefault();
+    if (!hasPermission('inventory.manage')) return;
+    const payload = {
+        id: Number($('#inventoryAreaId').value || 0) || null,
+        name: $('#inventoryAreaName').value.trim().replace(/\s+/g, ' '),
+        branchId: $('#inventoryAreaBranch').value
+    };
+    if (!payload.name || !payload.branchId) {
+        showToast('Nama area dan cabang wajib diisi.', 'error');
+        return;
+    }
+    try {
+        const response = await gasCall('apiSaveInventoryArea', getSessionToken(), payload);
+        applyBootstrapData(response.data);
+        resetInventoryAreaForm();
+        renderInventoryAreaList();
+        renderInventory();
+        renderActivities();
+        populateInventoryAreaOptions(payload.name);
+        showToast(response.message || 'Area inventaris berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function deleteInventoryArea(id) {
+    if (!hasPermission('inventory.manage')) return;
+    const area = inventoryAreas.find(item => Number(item.id) === Number(id));
+    if (!area) return;
+    if (!confirm(`Hapus area ${area.name}?`)) return;
+    try {
+        const response = await gasCall('apiDeleteInventoryArea', getSessionToken(), Number(id));
+        applyBootstrapData(response.data);
+        renderInventoryAreaList();
+        renderInventory();
+        renderActivities();
+        populateInventoryAreaOptions();
+        showToast(response.message || 'Area inventaris berhasil dihapus.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function handleInventorySubmit(event) {
+    event.preventDefault();
+    if (!hasPermission('inventory.manage')) return;
+    const payload = {
+        id: Number($('#inventoryId').value || 0) || null,
+        name: $('#inventoryName').value.trim(),
+        code: $('#inventoryCode').value.trim(),
+        area: $('#inventoryArea').value,
+        quantity: Math.max(0, Number($('#inventoryQuantity').value || 0)),
+        unit: $('#inventoryUnit').value.trim() || 'unit',
+        condition: $('#inventoryCondition').value,
+        branchId: $('#inventoryBranch').value,
+        location: $('#inventoryLocation').value.trim(),
+        responsible: $('#inventoryResponsible').value.trim(),
+        purchaseDate: $('#inventoryPurchaseDate').value,
+        notes: $('#inventoryNotes').value.trim()
+    };
+    if (!payload.name || !payload.area || !payload.location || !payload.branchId) {
+        showToast('Nama, area, cabang, dan lokasi detail inventaris wajib diisi.', 'error');
+        return;
+    }
+    try {
+        const response = await gasCall('apiSaveInventory', getSessionToken(), payload);
+        closeInventoryModal();
+        applyServerResponse(response);
+        showToast(response.message || 'Inventaris berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function deleteInventory(id) {
+    if (!hasPermission('inventory.manage')) return;
+    const item = inventories.find(row => Number(row.id) === Number(id));
+    if (!item) return;
+    if (!confirm(`Hapus inventaris ${item.name}?`)) return;
+    try {
+        const response = await gasCall('apiDeleteInventory', getSessionToken(), Number(id));
+        applyServerResponse(response);
+        showToast(response.message || 'Inventaris berhasil dihapus.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function handleInventoryShiftCheckSubmit(event) {
+    event.preventDefault();
+    const ctx = getEmployeeInventoryCheckContext();
+    const area = $('#inventoryCheckArea')?.value || '';
+    if (!ctx || !canPerformInventoryShiftCheck() || !area) {
+        showToast('Pilih area inventaris yang akan diperiksa.', 'error');
+        return;
+    }
+    const rows = [...$$('[data-inventory-check-row]')];
+    if (!rows.length) {
+        showToast('Tidak ada inventaris pada area ini.', 'error');
+        return;
+    }
+    const items = rows.map(row => {
+        const inventoryId = Number(row.dataset.inventoryCheckRow);
+        const master = inventories.find(item => Number(item.id) === inventoryId);
+        return {
+            inventoryId,
+            name: master?.name || 'Inventaris',
+            unit: master?.unit || 'unit',
+            expectedQuantity: Number(master?.quantity || 0),
+            actualQuantity: Math.max(0, Number(row.querySelector('[data-check-qty]')?.value || 0)),
+            actualCondition: row.querySelector('[data-check-condition]')?.value || 'Baik',
+            note: row.querySelector('[data-check-note]')?.value.trim() || ''
+        };
+    });
+
+    try {
+        const response = await gasCall('apiSaveInventoryCheck', getSessionToken(), { area, items });
+        applyBootstrapData(response.data);
+        renderInventoryShiftCheck();
+        renderInventoryCheckHistory();
+        renderActivities();
+        showToast(response.message || 'Pemeriksaan inventaris berhasil disimpan.', response.message?.includes('temuan') ? 'error' : 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function handleMessRuleSubmit(event) {
+    event.preventDefault();
+    if (!hasPermission('mess.manage')) return;
+    const payload = {
+        id: Number($('#messRuleId').value) || null,
+        gender: $('#messRuleGender').value,
+        category: $('#messRuleCategory').value,
+        title: $('#messRuleTitle').value.trim(),
+        branchId: $('#messRuleBranch').value,
+        description: $('#messRuleDescription').value.trim(),
+        details: $('#messRuleDetails').value.split('\n').map(line => line.trim()).filter(Boolean),
+        active: $('#messRuleActive').checked
+    };
+    if (!payload.details.length) {
+        showToast('Masukkan minimal satu poin aturan.', 'error');
+        return;
+    }
+    try {
+        const response = await gasCall('apiSaveMessRule', getSessionToken(), payload);
+        currentMessGender = payload.gender;
+        closeMessRuleModal();
+        applyServerResponse(response);
+        showToast(response.message || 'Aturan mess berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function deleteMessRule(id) {
+    if (!hasPermission('mess.manage')) return;
+    const rule = messRules.find(item => Number(item.id) === Number(id));
+    if (!rule || !confirm(`Hapus aturan "${rule.title}"?`)) return;
+    try {
+        const response = await gasCall('apiDeleteMessRule', getSessionToken(), Number(id));
+        applyServerResponse(response);
+        showToast(response.message || 'Aturan mess berhasil dihapus.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function handleSopSubmit(event) {
+    event.preventDefault();
+    if (!hasPermission('sop.manage')) return;
+    const toLines = selector => $(selector).value.split('\n').map(line => line.trim()).filter(Boolean);
+    const payload = {
+        id: Number($('#sopId').value) || null,
+        title: $('#sopTitle').value.trim(),
+        position: $('#sopPosition').value.trim(),
+        department: $('#sopDepartment').value,
+        branchId: $('#sopBranch').value,
+        version: $('#sopVersion').value.trim(),
+        objective: $('#sopObjective').value.trim(),
+        responsibilities: toLines('#sopResponsibilities'),
+        steps: toLines('#sopSteps'),
+        standards: toLines('#sopStandards'),
+        active: $('#sopActive').checked
+    };
+    if (!payload.responsibilities.length || !payload.steps.length || !payload.standards.length) {
+        showToast('Lengkapi tanggung jawab, langkah kerja, dan standar SOP.', 'error');
+        return;
+    }
+    try {
+        const response = await gasCall('apiSaveSop', getSessionToken(), payload);
+        closeSopFormModal();
+        applyServerResponse(response);
+        showToast(response.message || 'SOP berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
+
+async function deleteSop(id) {
+    if (!hasPermission('sop.manage')) return;
+    const sop = positionSops.find(item => Number(item.id) === Number(id));
+    if (!sop || !confirm(`Hapus SOP "${sop.title}"?`)) return;
+    try {
+        const response = await gasCall('apiDeleteSop', getSessionToken(), Number(id));
+        applyServerResponse(response);
+        showToast(response.message || 'SOP berhasil dihapus.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
 
 /* =========================================================
    EVENTS & INITIALIZATION
