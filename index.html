@@ -1837,7 +1837,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                         <div>
                             <h3 class="text-lg font-semibold text-slate-800">Departemen Perusahaan</h3>
-                            <p class="text-xs text-slate-500 mt-1">Kelola master departemen yang digunakan pada Data Karyawan dan SOP.</p>
+                            <p class="text-xs text-slate-500 mt-1">Departemen dibuat per cabang dan digunakan pada Data Karyawan serta SOP.</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <span id="departmentPageCount" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold"><i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>0 Departemen</span>
@@ -2824,6 +2824,13 @@
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><div><h3 id="departmentModalTitle" class="text-base font-semibold text-slate-800">Tambah Departemen</h3><p class="text-[11px] text-slate-500 mt-0.5">Dipakai pada Data Karyawan dan SOP.</p></div><button type="button" onclick="closeDepartmentModal()" class="w-8 h-8 rounded-lg inline-flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button></div>
         <form id="departmentForm" onsubmit="handleDepartmentSubmit(event)" class="p-5 space-y-4">
             <input type="hidden" id="departmentRecordId">
+            <div>
+                <label for="departmentBranch" class="block text-xs font-semibold text-slate-700 mb-1.5">Cabang</label>
+                <select id="departmentBranch" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                    <option value="" disabled selected>Pilih cabang terlebih dahulu</option>
+                </select>
+                <p class="text-[10px] text-slate-400 mt-1">Departemen akan tersedia hanya untuk cabang yang dipilih.</p>
+            </div>
             <div><label for="departmentName" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama Departemen</label><input id="departmentName" type="text" required autocomplete="off" placeholder="Human Resources" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"></div>
             <div><label for="departmentIcon" class="block text-xs font-semibold text-slate-700 mb-1.5">Ikon Lucide</label><input id="departmentIcon" type="text" value="briefcase" autocomplete="off" placeholder="briefcase" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"><p class="text-[10px] text-slate-400 mt-1">Contoh: briefcase, users, wallet, cpu, megaphone.</p></div>
             <div><label for="departmentDescription" class="block text-xs font-semibold text-slate-700 mb-1.5">Deskripsi</label><textarea id="departmentDescription" rows="3" placeholder="Deskripsi singkat fungsi departemen" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/30"></textarea></div>
@@ -3948,9 +3955,10 @@ function renderReports() {
         </div>
     `).join('');
 
-    const departmentCounts = departments.map(dept => ({
-        name: dept.name,
-        count: scoped.filter(employee => employee.department === dept.name).length
+    const reportDepartments = departments.filter(dept => !dept.branchId || currentBranchId === 'all' || dept.branchId === currentBranchId);
+    const departmentCounts = reportDepartments.map(dept => ({
+        name: currentBranchId === 'all' && dept.branchId ? `${dept.name} · ${getBranchName(dept.branchId)}` : dept.name,
+        count: scoped.filter(employee => employee.department === dept.name && (!dept.branchId || employee.branchId === dept.branchId)).length
     })).sort((a, b) => b.count - a.count);
     const maxCount = Math.max(1, ...departmentCounts.map(item => item.count));
     $('#reportDepartmentList').innerHTML = departmentCounts.map(item => `
@@ -5950,49 +5958,67 @@ function updateDashboardStats() {
 /* =========================================================
    DEPARTMENTS
 ========================================================= */
+function getScopedDepartments() {
+    return departments.filter(department => {
+        if (!department.branchId) return hasPermission('department.manage') && currentBranchId === 'all';
+        if (!canAccessBranch(department.branchId)) return false;
+        return currentBranchId === 'all' || department.branchId === currentBranchId;
+    });
+}
+
 function renderDepartments() {
     const container = $('#deptContainer');
     if (!container) return;
 
     const scopedEmployees = getScopedEmployees();
     const canManage = hasPermission('department.manage');
+    const scopedDepartments = getScopedDepartments();
     const countBadge = $('#departmentPageCount');
     const addButton = $('#addDepartmentButton');
-    if (countBadge) countBadge.innerHTML = `<i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>${departments.length} Departemen`;
-    if (addButton) { addButton.classList.toggle('hidden', !canManage); addButton.classList.toggle('inline-flex', canManage); }
+    if (countBadge) countBadge.innerHTML = `<i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>${scopedDepartments.length} Departemen`;
+    if (addButton) {
+        const canAdd = canManage && branches.length > 0;
+        addButton.classList.toggle('hidden', !canAdd);
+        addButton.classList.toggle('inline-flex', canAdd);
+    }
 
-    if (!departments.length) {
-        container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="briefcase-business" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada departemen</h4><p class="text-xs text-slate-500 mt-1">Admin atau Owner dapat menambahkan departemen langsung dari tombol Tambah.</p></div>`;
+    if (!branches.length && canManage) {
+        container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-amber-200 bg-amber-50/60"><i data-lucide="building-2" class="w-7 h-7 text-amber-600 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Buat cabang terlebih dahulu</h4><p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">Departemen wajib terhubung ke cabang. Tambahkan cabang terlebih dahulu, lalu kembali ke halaman Departemen.</p><button type="button" onclick="switchPage('cabang')" class="mt-4 px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold inline-flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i>Kelola Cabang</button></div>`;
         refreshIcons();
         return;
     }
 
-    container.innerHTML = departments.map(department => {
-        const count = scopedEmployees.filter(employee => employee.department === department.name).length;
+    if (!scopedDepartments.length) {
+        container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="briefcase-business" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada departemen</h4><p class="text-xs text-slate-500 mt-1">${canManage ? 'Pilih cabang lalu tambahkan departemen untuk cabang tersebut.' : 'Belum ada departemen pada cabang Anda.'}</p></div>`;
+        refreshIcons();
+        return;
+    }
+
+    container.innerHTML = scopedDepartments.map(department => {
+        const count = scopedEmployees.filter(employee => employee.department === department.name && (!department.branchId || employee.branchId === department.branchId)).length;
+        const branchLabel = department.branchId ? getBranchName(department.branchId) : 'Cabang belum ditentukan';
+        const branchBadge = department.branchId
+            ? `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold bg-brand-50 text-brand-700 border border-brand-200"><i data-lucide="map-pin" class="w-3 h-3"></i>${escapeHTML(branchLabel)}</span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i data-lucide="triangle-alert" class="w-3 h-3"></i>${escapeHTML(branchLabel)}</span>`;
 
         return `
             <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-50 flex flex-col justify-between">
                 <div>
-                    <div class="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-brand-500 mb-4">
-                        <i data-lucide="${department.icon}" class="w-6 h-6"></i>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-brand-500">
+                            <i data-lucide="${department.icon}" class="w-6 h-6"></i>
+                        </div>
+                        ${branchBadge}
                     </div>
-
-                    <h4 class="text-base font-semibold text-slate-800 mb-1">
-                        ${escapeHTML(department.name)}
-                    </h4>
-
-                    <p class="text-xs text-slate-500 mb-4">
-                        ${escapeHTML(department.desc)}
-                    </p>
+                    <h4 class="text-base font-semibold text-slate-800 mb-1">${escapeHTML(department.name)}</h4>
+                    <p class="text-xs text-slate-500 mb-4">${escapeHTML(department.desc)}</p>
                 </div>
-
                 <div class="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
                     <span class="text-slate-500 font-medium text-sm">${count} Karyawan</span>
                     <button onclick="switchPage('karyawan')" class="text-brand-600 font-medium hover:underline text-xs whitespace-nowrap">Lihat Anggota →</button>
                 </div>
                 ${canManage ? `<div class="mt-3 pt-3 border-t border-slate-100 flex justify-end gap-2"><button type="button" onclick="editDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 inline-flex items-center gap-1.5"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</button><button type="button" onclick="deactivateDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 inline-flex items-center gap-1.5"><i data-lucide="archive-x" class="w-3.5 h-3.5"></i>Nonaktifkan</button></div>` : ''}
-            </div>
-        `;
+            </div>`;
     }).join('');
 
     refreshIcons();
@@ -6023,23 +6049,42 @@ async function handleBranchSubmit(event) {
 }
 async function deactivateBranchMaster(branchId) {
     if(!hasPermission('branch.manage')) return; const branch=branches.find(item=>String(item.id)===String(branchId)); if(!branch)return;
-    if(!confirm(`Nonaktifkan cabang "${branch.name}"? Cabang yang masih memiliki karyawan atau inventaris tidak dapat dinonaktifkan.`)) return;
+    if(!confirm(`Nonaktifkan cabang "${branch.name}"? Cabang yang masih memiliki karyawan, inventaris, atau departemen aktif tidak dapat dinonaktifkan.`)) return;
     try { const response=await gasCall('apiDeleteBranch',getSessionToken(),branchId); applyServerResponse(response); showToast(response.message||'Cabang berhasil dinonaktifkan.','success'); } catch(error){handleServerError(error);}
 }
+function populateDepartmentBranchOptions(selectedBranchId = '') {
+    const select = $('#departmentBranch');
+    if (!select) return;
+    const accessible = getAccessibleBranchIds();
+    const preferred = selectedBranchId || (currentBranchId !== 'all' ? currentBranchId : accessible[0] || '');
+    select.innerHTML = `<option value="" disabled ${preferred ? '' : 'selected'}>Pilih cabang terlebih dahulu</option>` + accessible.map(branchId => {
+        const branch = getBranchById(branchId);
+        return branch ? `<option value="${escapeHTML(branch.id)}">${escapeHTML(branch.code)} · ${escapeHTML(branch.name)}</option>` : '';
+    }).join('');
+    if (preferred && accessible.includes(preferred)) select.value = preferred;
+}
+
 function openDepartmentModal(department = null) {
     if(!hasPermission('department.manage')){showToast('Hanya Admin dan Owner yang dapat mengelola departemen.','error');return;}
-    $('#departmentRecordId').value=department?.id||''; $('#departmentName').value=department?.name||''; $('#departmentIcon').value=department?.icon||'briefcase'; $('#departmentDescription').value=department?.desc||''; $('#departmentModalTitle').textContent=department?'Edit Departemen':'Tambah Departemen';
+    if (!branches.length) { showToast('Tambahkan cabang terlebih dahulu sebelum membuat departemen.', 'error'); return; }
+    $('#departmentRecordId').value=department?.id||'';
+    populateDepartmentBranchOptions(department?.branchId || '');
+    $('#departmentName').value=department?.name||'';
+    $('#departmentIcon').value=department?.icon||'briefcase';
+    $('#departmentDescription').value=department?.desc||'';
+    $('#departmentModalTitle').textContent=department?'Edit Departemen':'Tambah Departemen';
     const modal=$('#departmentModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.classList.add('overflow-hidden'); refreshIcons();
 }
 function closeDepartmentModal(){const modal=$('#departmentModal');if(!modal)return;modal.classList.add('hidden');modal.classList.remove('flex');document.body.classList.remove('overflow-hidden');$('#departmentForm')?.reset();if($('#departmentRecordId'))$('#departmentRecordId').value='';if($('#departmentIcon'))$('#departmentIcon').value='briefcase';}
 function editDepartmentMaster(departmentId){const department=departments.find(item=>Number(item.id)===Number(departmentId));if(department)openDepartmentModal(department);}
 async function handleDepartmentSubmit(event){
     event.preventDefault();if(!hasPermission('department.manage'))return;const button=$('#departmentSubmitButton'),original=button?.innerHTML;
-    const payload={id:Number($('#departmentRecordId').value||0)||null,name:$('#departmentName').value.trim(),icon:$('#departmentIcon').value.trim()||'briefcase',description:$('#departmentDescription').value.trim(),active:true};
+    const payload={id:Number($('#departmentRecordId').value||0)||null,branchId:$('#departmentBranch').value,name:$('#departmentName').value.trim(),icon:$('#departmentIcon').value.trim()||'briefcase',description:$('#departmentDescription').value.trim(),active:true};
+    if(!payload.branchId){showToast('Pilih cabang departemen terlebih dahulu.','error');return;}
     if(!payload.name){showToast('Nama departemen wajib diisi.','error');return;}
     try{if(button){button.disabled=true;button.innerHTML='<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Menyimpan...</span>';}const response=await gasCall('apiSaveDepartment',getSessionToken(),payload);closeDepartmentModal();applyServerResponse(response);showToast(response.message||'Departemen berhasil disimpan.','success');}catch(error){handleServerError(error);}finally{if(button){button.disabled=false;button.innerHTML=original;refreshIcons();}}
 }
-async function deactivateDepartmentMaster(departmentId){if(!hasPermission('department.manage'))return;const department=departments.find(item=>Number(item.id)===Number(departmentId));if(!department)return;if(!confirm(`Nonaktifkan departemen "${department.name}"? Departemen yang masih digunakan karyawan atau SOP tidak dapat dinonaktifkan.`))return;try{const response=await gasCall('apiDeleteDepartment',getSessionToken(),Number(departmentId));applyServerResponse(response);showToast(response.message||'Departemen berhasil dinonaktifkan.','success');}catch(error){handleServerError(error);}}
+async function deactivateDepartmentMaster(departmentId){if(!hasPermission('department.manage'))return;const department=departments.find(item=>Number(item.id)===Number(departmentId));if(!department)return;if(!confirm(`Nonaktifkan departemen "${department.name}" di ${getBranchName(department.branchId)}? Departemen yang masih digunakan karyawan atau SOP tidak dapat dinonaktifkan.`))return;try{const response=await gasCall('apiDeleteDepartment',getSessionToken(),Number(departmentId));applyServerResponse(response);showToast(response.message||'Departemen berhasil dinonaktifkan.','success');}catch(error){handleServerError(error);}}
 
 /* =========================================================
    EMPLOYEE TABLE
@@ -6319,7 +6364,8 @@ function openEmployeeModal(mode = 'add', data = null) {
     $('#empEmail').value = data?.email || '';
     $('#empPhone').value = data?.phone || '';
     $('#empAddress').value = data?.address || '';
-    populateEmployeeDepartmentOptions(data?.department || '');
+    populateEmployeeBranchOptions(data?.branchId || '');
+    populateEmployeeDepartmentOptions(data?.department || '', $('#empBranch').value);
     $('#empDept').value = data?.department || '';
     $('#empPosition').value = data?.position || '';
     $('#empShift').value = data?.shift || 'office';
@@ -6330,7 +6376,6 @@ function openEmployeeModal(mode = 'add', data = null) {
     $('#empEmergencyPhone').value = data?.emergencyContact?.phone || '';
     $('#empEmergencyAddress').value = data?.emergencyContact?.address || '';
     $('#empAvatar').value = data?.avatar || DEFAULT_AVATAR;
-    populateEmployeeBranchOptions(data?.branchId || '');
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
@@ -7010,17 +7055,22 @@ function getScopedSops() {
     });
 }
 
-function populateSopDepartmentOptions() {
+function populateSopDepartmentOptions(selected = '') {
     const formSelect = $('#sopDepartment');
     const filterSelect = $('#sopDepartmentFilter');
-    const names = [...new Set(departments.map(item => item.name))];
+    const branchId = $('#sopBranch')?.value || (currentBranchId !== 'all' ? currentBranchId : 'all');
+    const scopedDepartments = departments.filter(item => item.branchId && (branchId === 'all' || item.branchId === branchId));
+    const names = [...new Set(scopedDepartments.map(item => item.name))];
 
     if (formSelect) {
-        formSelect.innerHTML = names.map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+        formSelect.innerHTML = `<option value="" disabled ${selected ? '' : 'selected'}>${names.length ? 'Pilih departemen' : 'Belum ada departemen'}</option>` + names.map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+        if (selected && names.includes(selected)) formSelect.value = selected;
     }
 
-    if (filterSelect && filterSelect.options.length <= 1) {
-        filterSelect.innerHTML = '<option value="all">Semua Departemen</option>' + names.map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+    if (filterSelect) {
+        const previous = filterSelect.value || 'all';
+        filterSelect.innerHTML = '<option value="all">Semua Departemen</option>' + [...new Set(getScopedDepartments().filter(item => item.branchId).map(item => item.name))].map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+        if ([...filterSelect.options].some(option => option.value === previous)) filterSelect.value = previous;
     }
 }
 
@@ -7124,11 +7174,11 @@ function openSopFormModal(sopId = null) {
     const form = $('#sopForm');
     if (!modal || !form) return;
     form.reset();
-    populateSopDepartmentOptions();
     $('#sopId').value = '';
     $('#sopVersion').value = '1.0';
     $('#sopActive').checked = true;
     populateSopBranchOptions();
+    populateSopDepartmentOptions();
     $('#sopFormModalTitle').textContent = 'Tambah SOP Jabatan';
 
     if (sopId) {
@@ -7146,8 +7196,8 @@ function openSopFormModal(sopId = null) {
         $('#sopId').value = sop.id;
         $('#sopTitle').value = sop.title;
         $('#sopPosition').value = sop.position;
-        $('#sopDepartment').value = sop.department;
         populateSopBranchOptions(sop.branchId);
+        populateSopDepartmentOptions(sop.department);
         $('#sopVersion').value = sop.version;
         $('#sopObjective').value = sop.objective;
         $('#sopResponsibilities').value = (sop.responsibilities || []).join('\n');
@@ -7954,12 +8004,14 @@ async function handleChangePasswordSubmit(event) {
     }
 }
 
-function populateEmployeeDepartmentOptions(selected = '') {
+function populateEmployeeDepartmentOptions(selected = '', branchId = '') {
     const select = $('#empDept');
     if (!select) return;
-    const options = departments.map(item => `<option value="${escapeHTML(item.name)}">${escapeHTML(item.name)}</option>`).join('');
-    select.innerHTML = `<option value="" disabled ${selected ? '' : 'selected'}>Pilih departemen</option>${options}`;
-    if (selected && departments.some(item => item.name === selected)) select.value = selected;
+    const targetBranchId = branchId || $('#empBranch')?.value || '';
+    const available = departments.filter(item => item.branchId && item.branchId === targetBranchId);
+    const options = available.map(item => `<option value="${escapeHTML(item.name)}">${escapeHTML(item.name)}</option>`).join('');
+    select.innerHTML = `<option value="" disabled ${selected ? '' : 'selected'}>${available.length ? 'Pilih departemen' : 'Belum ada departemen di cabang ini'}</option>${options}`;
+    if (selected && available.some(item => item.name === selected)) select.value = selected;
 }
 
 async function handleEmployeeSubmit(event) {
@@ -8316,6 +8368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#profileForm').addEventListener('submit', saveProfile);
     $('#changePasswordForm').addEventListener('submit', handleChangePasswordSubmit);
     $('#branchSelector').addEventListener('change', handleBranchChange);
+    $('#empBranch').addEventListener('change', event => populateEmployeeDepartmentOptions('', event.target.value));
     $('#messRuleForm').addEventListener('submit', handleMessRuleSubmit);
     $('#sopForm').addEventListener('submit', handleSopSubmit);
     $('#inventoryForm').addEventListener('submit', handleInventorySubmit);
@@ -8331,6 +8384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#messSearchInput').addEventListener('input', renderMessRules);
     $('#sopSearchInput').addEventListener('input', renderSops);
     $('#sopDepartmentFilter').addEventListener('change', renderSops);
+    $('#sopBranch').addEventListener('change', () => populateSopDepartmentOptions());
 
     $('#searchInput').addEventListener('input', event => {
         $('#mobileSearchInput').value = event.target.value;
