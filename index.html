@@ -1911,20 +1911,42 @@
             </section>
 
 
-            <!-- DEPARTEMEN -->
+            <!-- DEPARTEMEN & JABATAN -->
             <section id="page-departemen" class="page-view hidden space-y-6">
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-50">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
                         <div>
                             <h3 class="text-lg font-semibold text-slate-800">Departemen Perusahaan</h3>
-                            <p class="text-xs text-slate-500 mt-1">Departemen dibuat per cabang dan digunakan pada Data Karyawan serta SOP.</p>
+                            <p class="text-xs text-slate-500 mt-1">Pilih cabang untuk melihat struktur departemen dan jabatan secara cepat.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span id="departmentPageCount" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold"><i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>0 Departemen</span>
-                            <button id="addDepartmentButton" type="button" onclick="openDepartmentModal()" class="hidden items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Tambah</button>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <div id="departmentPageBranchFilterWrapper" class="hidden min-w-0 sm:min-w-[220px]">
+                                <label for="departmentPageBranchFilter" class="sr-only">Filter cabang departemen</label>
+                                <select id="departmentPageBranchFilter" onchange="handleDepartmentPageBranchFilter(event)" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                                    <option value="all">Semua Cabang</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="departmentPageCount" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold"><i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>0 Departemen</span>
+                                <button id="addDepartmentButton" type="button" onclick="openDepartmentModal()" class="hidden items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Departemen</button>
+                            </div>
                         </div>
                     </div>
                     <div id="deptContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-50">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-semibold text-slate-800">Master Jabatan</h3>
+                                <span id="positionPageCount" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-semibold">0 Jabatan</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Jabatan dibuat per departemen dan dapat menentukan role aplikasi karyawan secara otomatis.</p>
+                        </div>
+                        <button id="addPositionButton" type="button" onclick="openPositionModal()" class="hidden items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Tambah Jabatan</button>
+                    </div>
+                    <div id="positionContainer" class="space-y-3"></div>
                 </div>
             </section>
 
@@ -2920,6 +2942,56 @@
 </div>
 
 <!-- =========================================================
+     MODAL MASTER JABATAN
+========================================================= -->
+<div id="positionModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" onclick="closePositionModal()"></div>
+    <div class="relative z-10 w-full max-w-lg rounded-2xl bg-white border border-slate-100 shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div>
+                <h3 id="positionModalTitle" class="text-base font-semibold text-slate-800">Tambah Jabatan</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">Hubungkan jabatan ke cabang, departemen, dan role aplikasi.</p>
+            </div>
+            <button type="button" onclick="closePositionModal()" class="w-8 h-8 rounded-lg inline-flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <form id="positionForm" onsubmit="handlePositionSubmit(event)" class="p-5 space-y-4">
+            <input type="hidden" id="positionRecordId">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label for="positionBranch" class="block text-xs font-semibold text-slate-700 mb-1.5">Cabang</label>
+                    <select id="positionBranch" required onchange="populatePositionDepartmentOptions('', this.value)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"></select>
+                </div>
+                <div>
+                    <label for="positionDepartment" class="block text-xs font-semibold text-slate-700 mb-1.5">Departemen</label>
+                    <select id="positionDepartment" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"></select>
+                </div>
+            </div>
+            <div>
+                <label for="positionName" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama Jabatan</label>
+                <input id="positionName" type="text" required maxlength="80" autocomplete="off" placeholder="Contoh: Kepala Bar, Kasir, Supervisor" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+            </div>
+            <div>
+                <label for="positionRoleKey" class="block text-xs font-semibold text-slate-700 mb-1.5">Role Aplikasi</label>
+                <select id="positionRoleKey" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                    <option value="employee">Karyawan · akses operasional dasar</option>
+                    <option value="cashier">Kasir · akses kasir / view operasional</option>
+                    <option value="manager">Manajer · kelola operasional cabang</option>
+                </select>
+                <p class="text-[10px] text-slate-400 mt-1">Admin dan Owner tetap dibuat sebagai akun sistem agar hak akses tingkat tinggi tidak diberikan tanpa sengaja.</p>
+            </div>
+            <div>
+                <label for="positionDescription" class="block text-xs font-semibold text-slate-700 mb-1.5">Deskripsi <span class="font-normal text-slate-400">(opsional)</span></label>
+                <textarea id="positionDescription" rows="3" maxlength="300" placeholder="Ringkasan tanggung jawab jabatan" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/30"></textarea>
+            </div>
+            <div class="pt-2 flex justify-end gap-2">
+                <button type="button" onclick="closePositionModal()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100">Batal</button>
+                <button id="positionSubmitButton" type="submit" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold inline-flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Simpan Jabatan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
      MODAL KARYAWAN
 ========================================================= -->
 <div id="employeeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
@@ -3018,32 +3090,32 @@
                             placeholder="Alamat lengkap karyawan"></textarea>
                     </div>
 
+                    <div>
+                        <label for="empBranch" class="block text-sm font-medium text-slate-700 mb-1">Cabang Penempatan</label>
+                        <select id="empBranch" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"></select>
+                        <p id="empBranchHelper" class="text-[11px] text-slate-400 mt-1">Pilih cabang terlebih dahulu. Departemen dan jabatan akan menyesuaikan otomatis.</p>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="empDept" class="block text-sm font-medium text-slate-700 mb-1">Departemen</label>
                             <select id="empDept" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
-                                <option value="" disabled selected>Pilih Dept</option>
-
+                                <option value="" disabled selected>Pilih departemen</option>
                             </select>
                         </div>
 
                         <div>
                             <label for="empPosition" class="block text-sm font-medium text-slate-700 mb-1">Posisi / Jabatan</label>
-                            <input type="text" id="empPosition" required
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                                placeholder="Nama jabatan">
+                            <select id="empPosition" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                                <option value="" disabled selected>Pilih jabatan</option>
+                            </select>
+                            <p id="empPositionRoleHelper" class="text-[11px] text-slate-400 mt-1">Role aplikasi mengikuti master jabatan yang dipilih.</p>
                         </div>
                     </div>
-
-                    <div>
-                        <label for="empBranch" class="block text-sm font-medium text-slate-700 mb-1">Cabang Penempatan</label>
-                        <select id="empBranch" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"></select>
-                        <p id="empBranchHelper" class="text-[11px] text-slate-400 mt-1">Pilih cabang tempat karyawan bekerja.</p>
-                        <p class="text-[11px] text-brand-600 mt-1 flex items-center gap-1">
-                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
-                            Perubahan status dilakukan melalui tombol Status pada tabel Data Karyawan.
-                        </p>
-                    </div>
+                    <p class="text-[11px] text-brand-600 -mt-2 flex items-center gap-1">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        Role login otomatis mengikuti Master Jabatan; Admin/Owner tetap dikelola sebagai akun sistem.
+                    </p>
 
                     <div>
                         <label for="empShift" class="block text-sm font-medium text-slate-700 mb-1">Shift Kerja</label>
@@ -3288,7 +3360,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Jabatan</label>
-                    <input id="sopPosition" type="text" required maxlength="80" placeholder="Nama jabatan" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                    <select id="sopPosition" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                        <option value="" disabled selected>Pilih jabatan</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Departemen</label>
@@ -3372,14 +3446,14 @@ const ROLE_CONFIG = {
     admin: {
         label: 'Admin',
         pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['employee.create', 'employee.edit', 'employee.delete', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage', 'branch.manage', 'department.manage'],
+        permissions: ['employee.create', 'employee.edit', 'employee.delete', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage', 'branch.manage', 'department.manage', 'position.manage'],
         multiBranch: true,
         description: 'Akses penuh ke seluruh fitur dan seluruh cabang perusahaan.'
     },
     owner: {
         label: 'Owner',
         pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['inventory.review', 'branch.manage', 'department.manage'],
+        permissions: ['inventory.review', 'branch.manage', 'department.manage', 'position.manage'],
         multiBranch: true,
         description: 'Memantau seluruh cabang serta mengelola master cabang dan departemen perusahaan.'
     },
@@ -3393,7 +3467,7 @@ const ROLE_CONFIG = {
     cashier: {
         label: 'Kasir',
         pages: ['dasbor', 'karyawan', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'announcements', 'documents', 'help', 'profil'],
-        permissions: [],
+        permissions: ['inventory.check'],
         multiBranch: false,
         description: 'Melihat direktori karyawan dan kehadiran pada cabang tempat bertugas.'
     },
@@ -3431,6 +3505,8 @@ let currentMessGender = 'cowok';
 let messRules = [];
 
 let positionSops = [];
+
+let positions = [];
 
 const HOME_MENU_ITEMS = [
     { page: 'karyawan', label: 'Karyawan', icon: 'users', tone: 'brand' },
@@ -3970,7 +4046,7 @@ function renderSchedule() {
     const teamView = $('#scheduleTeamView');
     if (!personalView || !teamView) return;
 
-    const isEmployeeRole = currentUser?.roleKey === 'employee';
+    const isEmployeeRole = Boolean(currentUser?.employeeRecordId && ['employee', 'cashier'].includes(currentUser?.roleKey));
     const employeeRecord = isEmployeeRole ? getCurrentEmployeeRecord() : null;
 
     if (isEmployeeRole) {
@@ -5730,7 +5806,7 @@ function showApp(resetPage = true) {
     $('#appShell').classList.remove('hidden');
 
     normalizeCurrentBranch();
-    inventoryActiveTab = currentUser?.roleKey === 'employee' && canPerformInventoryShiftCheck() ? 'check' : 'list';
+    inventoryActiveTab = currentUser?.employeeRecordId && canPerformInventoryShiftCheck() ? 'check' : 'list';
     populateProfileUI();
     applyRoleAccess();
     updateDashboardStats();
@@ -5836,7 +5912,7 @@ function switchPage(pageId) {
     if (pageId === 'kehadiran') updateAttendanceStats();
     if (pageId === 'jadwal') renderSchedule();
     if (pageId === 'inventory') {
-        if (currentUser?.roleKey === 'employee' && canPerformInventoryShiftCheck() && inventoryActiveTab === 'list') inventoryActiveTab = 'check';
+        if (currentUser?.employeeRecordId && canPerformInventoryShiftCheck() && inventoryActiveTab === 'list') inventoryActiveTab = 'check';
         setInventoryTab(inventoryActiveTab);
     }
     if (pageId === 'aktivitas') renderActivities();
@@ -6048,10 +6124,100 @@ function getScopedDepartments() {
     });
 }
 
+const POSITION_ROLE_LABELS = {
+    employee: 'Karyawan',
+    cashier: 'Kasir',
+    manager: 'Manajer'
+};
+
+function renderDepartmentPageBranchFilter() {
+    const wrapper = $('#departmentPageBranchFilterWrapper');
+    const select = $('#departmentPageBranchFilter');
+    if (!wrapper || !select || !currentUser) return;
+
+    const show = ['admin', 'owner'].includes(currentUser.roleKey) && canSwitchBranch();
+    wrapper.classList.toggle('hidden', !show);
+    if (!show) return;
+
+    const options = ['<option value="all">Semua Cabang</option>'];
+    getAccessibleBranchIds().forEach(branchId => {
+        const branch = getBranchById(branchId);
+        if (branch) options.push(`<option value="${escapeHTML(branch.id)}">${escapeHTML(branch.code)} · ${escapeHTML(branch.name)}</option>`);
+    });
+    select.innerHTML = options.join('');
+    select.value = currentBranchId;
+}
+
+function handleDepartmentPageBranchFilter(event) {
+    const value = event?.target?.value || 'all';
+    selectBranch(value, false);
+}
+
+function getScopedPositions() {
+    return positions.filter(position => {
+        if (!position.branchId || !canAccessBranch(position.branchId)) return false;
+        if (currentBranchId !== 'all' && position.branchId !== currentBranchId) return false;
+        return true;
+    });
+}
+
+function getPositionRoleBadge(roleKey) {
+    const config = {
+        manager: 'bg-violet-50 text-violet-700 border-violet-200',
+        cashier: 'bg-amber-50 text-amber-700 border-amber-200',
+        employee: 'bg-slate-100 text-slate-600 border-slate-200'
+    };
+    return `<span class="inline-flex items-center px-2 py-1 rounded-full border text-[10px] font-semibold ${config[roleKey] || config.employee}">${escapeHTML(POSITION_ROLE_LABELS[roleKey] || 'Karyawan')}</span>`;
+}
+
+function renderPositions() {
+    const container = $('#positionContainer');
+    if (!container) return;
+
+    const canManage = hasPermission('position.manage');
+    const scopedPositions = getScopedPositions();
+    const countBadge = $('#positionPageCount');
+    const addButton = $('#addPositionButton');
+    if (countBadge) countBadge.textContent = `${scopedPositions.length} Jabatan`;
+    if (addButton) {
+        const canAdd = canManage && getScopedDepartments().some(item => item.branchId);
+        addButton.classList.toggle('hidden', !canAdd);
+        addButton.classList.toggle('inline-flex', canAdd);
+    }
+
+    if (!scopedPositions.length) {
+        container.innerHTML = `<div class="py-10 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="badge-check" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada jabatan</h4><p class="text-xs text-slate-500 mt-1">${canManage ? 'Tambahkan jabatan setelah cabang dan departemen tersedia.' : 'Belum ada jabatan pada cabang Anda.'}</p></div>`;
+        refreshIcons();
+        return;
+    }
+
+    container.innerHTML = scopedPositions.map(position => {
+        const employeeCount = employees.filter(employee => Number(employee.positionId || 0) === Number(position.id) || (employee.branchId === position.branchId && employee.department === position.departmentName && employee.position === position.name)).length;
+        return `
+            <article class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="badge-check" class="w-5 h-5"></i></div>
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h4 class="text-sm font-semibold text-slate-800">${escapeHTML(position.name)}</h4>
+                        ${getPositionRoleBadge(position.roleKey)}
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">${escapeHTML(position.departmentName)} · ${escapeHTML(getBranchName(position.branchId))}</p>
+                    ${position.description ? `<p class="text-[11px] text-slate-400 mt-1 line-clamp-2">${escapeHTML(position.description)}</p>` : ''}
+                </div>
+                <div class="flex items-center justify-between sm:justify-end gap-2 flex-shrink-0">
+                    <span class="text-[11px] font-semibold text-slate-500">${employeeCount} karyawan</span>
+                    ${canManage ? `<button type="button" onclick="editPositionMaster(${Number(position.id)})" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50" title="Edit Jabatan"><i data-lucide="pencil" class="w-4 h-4"></i></button><button type="button" onclick="deactivatePositionMaster(${Number(position.id)})" class="p-2 rounded-lg text-red-600 hover:bg-red-50" title="Hapus/Nonaktifkan Jabatan"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                </div>
+            </article>`;
+    }).join('');
+    refreshIcons();
+}
+
 function renderDepartments() {
     const container = $('#deptContainer');
     if (!container) return;
 
+    renderDepartmentPageBranchFilter();
     const scopedEmployees = getScopedEmployees();
     const canManage = hasPermission('department.manage');
     const scopedDepartments = getScopedDepartments();
@@ -6066,18 +6232,21 @@ function renderDepartments() {
 
     if (!branches.length && canManage) {
         container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-amber-200 bg-amber-50/60"><i data-lucide="building-2" class="w-7 h-7 text-amber-600 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Buat cabang terlebih dahulu</h4><p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">Departemen wajib terhubung ke cabang. Tambahkan cabang terlebih dahulu, lalu kembali ke halaman Departemen.</p><button type="button" onclick="switchPage('cabang')" class="mt-4 px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold inline-flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i>Kelola Cabang</button></div>`;
+        renderPositions();
         refreshIcons();
         return;
     }
 
     if (!scopedDepartments.length) {
         container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="briefcase-business" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada departemen</h4><p class="text-xs text-slate-500 mt-1">${canManage ? 'Pilih cabang lalu tambahkan departemen untuk cabang tersebut.' : 'Belum ada departemen pada cabang Anda.'}</p></div>`;
+        renderPositions();
         refreshIcons();
         return;
     }
 
     container.innerHTML = scopedDepartments.map(department => {
         const count = scopedEmployees.filter(employee => employee.department === department.name && (!department.branchId || employee.branchId === department.branchId)).length;
+        const positionCount = positions.filter(position => position.branchId === department.branchId && Number(position.departmentId) === Number(department.id)).length;
         const branchLabel = department.branchId ? getBranchName(department.branchId) : 'Cabang belum ditentukan';
         const branchBadge = department.branchId
             ? `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold bg-brand-50 text-brand-700 border border-brand-200"><i data-lucide="map-pin" class="w-3 h-3"></i>${escapeHTML(branchLabel)}</span>`
@@ -6087,22 +6256,21 @@ function renderDepartments() {
             <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-50 flex flex-col justify-between">
                 <div>
                     <div class="flex items-start justify-between gap-3 mb-4">
-                        <div class="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-brand-500">
-                            <i data-lucide="${department.icon}" class="w-6 h-6"></i>
-                        </div>
+                        <div class="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-brand-500"><i data-lucide="${department.icon}" class="w-6 h-6"></i></div>
                         ${branchBadge}
                     </div>
                     <h4 class="text-base font-semibold text-slate-800 mb-1">${escapeHTML(department.name)}</h4>
                     <p class="text-xs text-slate-500 mb-4">${escapeHTML(department.desc)}</p>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
-                    <span class="text-slate-500 font-medium text-sm">${count} Karyawan</span>
-                    <button onclick="switchPage('karyawan')" class="text-brand-600 font-medium hover:underline text-xs whitespace-nowrap">Lihat Anggota →</button>
+                <div class="grid grid-cols-2 gap-2 pt-4 border-t border-slate-100 text-center">
+                    <div><p class="text-base font-bold text-slate-800">${count}</p><p class="text-[10px] text-slate-400">Karyawan</p></div>
+                    <div><p class="text-base font-bold text-blue-600">${positionCount}</p><p class="text-[10px] text-slate-400">Jabatan</p></div>
                 </div>
-                ${canManage ? `<div class="mt-3 pt-3 border-t border-slate-100 flex justify-end gap-2"><button type="button" onclick="editDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 inline-flex items-center gap-1.5"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</button><button type="button" onclick="deactivateDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 inline-flex items-center gap-1.5"><i data-lucide="archive-x" class="w-3.5 h-3.5"></i>Nonaktifkan</button></div>` : ''}
+                ${canManage ? `<div class="mt-3 pt-3 border-t border-slate-100 flex justify-end gap-2"><button type="button" onclick="openPositionModal(null, '${escapeHTML(department.branchId || '')}', ${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 inline-flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i>Jabatan</button><button type="button" onclick="editDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 inline-flex items-center gap-1.5"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</button><button type="button" onclick="deactivateDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 inline-flex items-center gap-1.5"><i data-lucide="archive-x" class="w-3.5 h-3.5"></i>Nonaktifkan</button></div>` : ''}
             </div>`;
     }).join('');
 
+    renderPositions();
     refreshIcons();
 }
 
@@ -6167,6 +6335,104 @@ async function handleDepartmentSubmit(event){
     try{if(button){button.disabled=true;button.innerHTML='<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Menyimpan...</span>';}const response=await gasCall('apiSaveDepartment',getSessionToken(),payload);closeDepartmentModal();applyServerResponse(response);showToast(response.message||'Departemen berhasil disimpan.','success');}catch(error){handleServerError(error);}finally{if(button){button.disabled=false;button.innerHTML=original;refreshIcons();}}
 }
 async function deactivateDepartmentMaster(departmentId){if(!hasPermission('department.manage'))return;const department=departments.find(item=>Number(item.id)===Number(departmentId));if(!department)return;if(!confirm(`Nonaktifkan departemen "${department.name}" di ${getBranchName(department.branchId)}? Departemen yang masih digunakan karyawan atau SOP tidak dapat dinonaktifkan.`))return;try{const response=await gasCall('apiDeleteDepartment',getSessionToken(),Number(departmentId));applyServerResponse(response);showToast(response.message||'Departemen berhasil dinonaktifkan.','success');}catch(error){handleServerError(error);}}
+
+
+function populatePositionBranchOptions(selectedBranchId = '') {
+    const select = $('#positionBranch');
+    if (!select) return;
+    const accessible = getAccessibleBranchIds();
+    const preferred = selectedBranchId || (currentBranchId !== 'all' ? currentBranchId : accessible[0] || '');
+    select.innerHTML = `<option value="" disabled ${preferred ? '' : 'selected'}>Pilih cabang</option>` + accessible.map(branchId => {
+        const branch = getBranchById(branchId);
+        return branch ? `<option value="${escapeHTML(branch.id)}">${escapeHTML(branch.code)} · ${escapeHTML(branch.name)}</option>` : '';
+    }).join('');
+    if (preferred && accessible.includes(preferred)) select.value = preferred;
+}
+
+function populatePositionDepartmentOptions(selectedDepartmentId = '', branchId = '') {
+    const select = $('#positionDepartment');
+    if (!select) return;
+    const targetBranch = branchId || $('#positionBranch')?.value || '';
+    const available = departments.filter(item => item.branchId === targetBranch);
+    select.innerHTML = `<option value="" disabled ${selectedDepartmentId ? '' : 'selected'}>${available.length ? 'Pilih departemen' : 'Belum ada departemen di cabang ini'}</option>` + available.map(item => `<option value="${Number(item.id)}">${escapeHTML(item.name)}</option>`).join('');
+    if (selectedDepartmentId && available.some(item => Number(item.id) === Number(selectedDepartmentId))) select.value = String(selectedDepartmentId);
+}
+
+function openPositionModal(position = null, presetBranchId = '', presetDepartmentId = '') {
+    if (!hasPermission('position.manage')) { showToast('Hanya Admin dan Owner yang dapat mengelola jabatan.', 'error'); return; }
+    if (!departments.some(item => item.branchId)) { showToast('Tambahkan departemen terlebih dahulu sebelum membuat jabatan.', 'error'); return; }
+
+    const modal = $('#positionModal');
+    $('#positionRecordId').value = position?.id || '';
+    const branchId = position?.branchId || presetBranchId || (currentBranchId !== 'all' ? currentBranchId : getAccessibleBranchIds()[0] || '');
+    populatePositionBranchOptions(branchId);
+    populatePositionDepartmentOptions(position?.departmentId || presetDepartmentId || '', branchId);
+    $('#positionName').value = position?.name || '';
+    $('#positionRoleKey').value = position?.roleKey || 'employee';
+    $('#positionDescription').value = position?.description || '';
+    $('#positionModalTitle').textContent = position ? 'Edit Jabatan' : 'Tambah Jabatan';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+    refreshIcons();
+}
+
+function closePositionModal() {
+    const modal = $('#positionModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+    $('#positionForm')?.reset();
+    if ($('#positionRecordId')) $('#positionRecordId').value = '';
+}
+
+function editPositionMaster(positionId) {
+    const position = positions.find(item => Number(item.id) === Number(positionId));
+    if (position) openPositionModal(position);
+}
+
+async function handlePositionSubmit(event) {
+    event.preventDefault();
+    if (!hasPermission('position.manage')) return;
+    const button = $('#positionSubmitButton');
+    const original = button?.innerHTML;
+    const payload = {
+        id: Number($('#positionRecordId').value || 0) || null,
+        branchId: $('#positionBranch').value,
+        departmentId: Number($('#positionDepartment').value || 0),
+        name: $('#positionName').value.trim(),
+        roleKey: $('#positionRoleKey').value,
+        description: $('#positionDescription').value.trim()
+    };
+    if (!payload.branchId || !payload.departmentId || !payload.name) { showToast('Cabang, departemen, dan nama jabatan wajib diisi.', 'error'); return; }
+
+    try {
+        if (button) { button.disabled = true; button.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Menyimpan...</span>'; }
+        const response = await gasCall('apiSavePosition', getSessionToken(), payload);
+        closePositionModal();
+        applyServerResponse(response);
+        showToast(response.message || 'Jabatan berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    } finally {
+        if (button) { button.disabled = false; button.innerHTML = original; refreshIcons(); }
+    }
+}
+
+async function deactivatePositionMaster(positionId) {
+    if (!hasPermission('position.manage')) return;
+    const position = positions.find(item => Number(item.id) === Number(positionId));
+    if (!position) return;
+    if (!confirm(`Hapus/nonaktifkan jabatan "${position.name}"? Jabatan yang masih digunakan karyawan atau SOP tidak dapat dihapus.`)) return;
+    try {
+        const response = await gasCall('apiDeletePosition', getSessionToken(), Number(positionId));
+        applyServerResponse(response);
+        showToast(response.message || 'Jabatan berhasil dinonaktifkan.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    }
+}
 
 /* =========================================================
    EMPLOYEE TABLE
@@ -6251,8 +6517,9 @@ function renderTable(data = getScopedEmployees()) {
                     <i data-lucide="lock-keyhole" class="w-3.5 h-3.5"></i>
                     ••••••••
                 </div>
-                <div class="text-[10px] mt-2 ${employee.status === 'Aktif' ? 'text-brand-600' : 'text-slate-400'}">
-                    ${employee.status === 'Aktif' ? 'Akun dapat digunakan' : 'Login dinonaktifkan'}
+                <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                    ${getPositionRoleBadge(employee.accessRoleKey || 'employee')}
+                    <span class="text-[10px] ${employee.status === 'Aktif' ? 'text-brand-600' : 'text-slate-400'}">${employee.status === 'Aktif' ? 'Akun dapat digunakan' : 'Login dinonaktifkan'}</span>
                 </div>
             </td>
 
@@ -6449,7 +6716,7 @@ function openEmployeeModal(mode = 'add', data = null) {
     populateEmployeeBranchOptions(data?.branchId || '');
     populateEmployeeDepartmentOptions(data?.department || '', $('#empBranch').value);
     $('#empDept').value = data?.department || '';
-    $('#empPosition').value = data?.position || '';
+    populateEmployeePositionOptions(data?.positionId || '', $('#empBranch').value, data?.department || '', data?.position || '');
     $('#empShift').value = data?.shift || 'office';
     $('#empSalary').value = data?.salary != null ? formatNominalInput(data.salary) : '';
     $('#empBank').value = data?.bank || '';
@@ -6673,11 +6940,12 @@ function openEmployeeCard(id) {
             <div class="p-5 sm:p-6 space-y-6">
                 <div>
                     <h5 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Akun Login</h5>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         ${employeeCardItem('user-round-key', 'Username', `@${employee.username}`)}
+                        ${employeeCardItem('shield-check', 'Role Aplikasi', POSITION_ROLE_LABELS[employee.accessRoleKey || 'employee'] || 'Karyawan')}
                         ${employeeCardItem('lock-keyhole', 'Password', '••••••••')}
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-2">Password disembunyikan untuk keamanan. Ubah password melalui menu Edit Data.</p>
+                    <p class="text-[11px] text-slate-400 mt-2">Role mengikuti Master Jabatan. Password disembunyikan untuk keamanan.</p>
                 </div>
 
                 <div>
@@ -7156,6 +7424,20 @@ function populateSopDepartmentOptions(selected = '') {
     }
 }
 
+function populateSopPositionOptions(selected = '') {
+    const select = $('#sopPosition');
+    if (!select) return;
+    const branchId = $('#sopBranch')?.value || (currentBranchId !== 'all' ? currentBranchId : 'all');
+    const departmentName = $('#sopDepartment')?.value || '';
+    const availableNames = [...new Set(positions.filter(item => {
+        const branchMatch = branchId === 'all' || item.branchId === branchId;
+        const departmentMatch = !departmentName || item.departmentName === departmentName;
+        return branchMatch && departmentMatch;
+    }).map(item => item.name))];
+    select.innerHTML = `<option value="" disabled ${selected ? '' : 'selected'}>${availableNames.length ? 'Pilih jabatan' : 'Belum ada jabatan'}</option>` + availableNames.map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+    if (selected && availableNames.includes(selected)) select.value = selected;
+}
+
 function renderSops() {
     const grid = $('#sopGrid');
     if (!grid) return;
@@ -7261,6 +7543,7 @@ function openSopFormModal(sopId = null) {
     $('#sopActive').checked = true;
     populateSopBranchOptions();
     populateSopDepartmentOptions();
+    populateSopPositionOptions();
     $('#sopFormModalTitle').textContent = 'Tambah SOP Jabatan';
 
     if (sopId) {
@@ -7277,9 +7560,9 @@ function openSopFormModal(sopId = null) {
         $('#sopFormModalTitle').textContent = 'Edit SOP Jabatan';
         $('#sopId').value = sop.id;
         $('#sopTitle').value = sop.title;
-        $('#sopPosition').value = sop.position;
         populateSopBranchOptions(sop.branchId);
         populateSopDepartmentOptions(sop.department);
+        populateSopPositionOptions(sop.position);
         $('#sopVersion').value = sop.version;
         $('#sopObjective').value = sop.objective;
         $('#sopResponsibilities').value = (sop.responsibilities || []).join('\n');
@@ -7767,6 +8050,7 @@ function clearRuntimeData() {
     inventoryCheckSessions = [];
     messRules = [];
     positionSops = [];
+    positions = [];
     PAYROLL_ALLOWANCES = {};
     internalAnnouncements = [];
     documentArchive = [];
@@ -7841,6 +8125,7 @@ function applyBootstrapData(data = {}) {
     inventoryCheckSessions = Array.isArray(data.inventoryCheckSessions) ? data.inventoryCheckSessions : [];
     messRules = Array.isArray(data.messRules) ? data.messRules : [];
     positionSops = Array.isArray(data.positionSops) ? data.positionSops : [];
+    positions = Array.isArray(data.positions) ? data.positions : [];
     PAYROLL_ALLOWANCES = data.payrollAllowances && typeof data.payrollAllowances === 'object' ? data.payrollAllowances : {};
     internalAnnouncements = Array.isArray(data.internalAnnouncements) ? data.internalAnnouncements : [];
     documentArchive = Array.isArray(data.documentArchive) ? data.documentArchive : [];
@@ -8096,6 +8381,34 @@ function populateEmployeeDepartmentOptions(selected = '', branchId = '') {
     if (selected && available.some(item => item.name === selected)) select.value = selected;
 }
 
+function populateEmployeePositionOptions(selectedPositionId = '', branchId = '', departmentName = '', fallbackPositionName = '') {
+    const select = $('#empPosition');
+    const helper = $('#empPositionRoleHelper');
+    if (!select) return;
+    const targetBranchId = branchId || $('#empBranch')?.value || '';
+    const targetDepartment = departmentName || $('#empDept')?.value || '';
+    const available = positions.filter(item => item.branchId === targetBranchId && item.departmentName === targetDepartment);
+    select.innerHTML = `<option value="" disabled selected>${available.length ? 'Pilih jabatan' : 'Belum ada jabatan di departemen ini'}</option>` + available.map(item => `<option value="${Number(item.id)}">${escapeHTML(item.name)} · ${escapeHTML(POSITION_ROLE_LABELS[item.roleKey] || 'Karyawan')}</option>`).join('');
+
+    let targetId = selectedPositionId ? String(selectedPositionId) : '';
+    if (!targetId && fallbackPositionName) {
+        const matched = available.find(item => item.name === fallbackPositionName);
+        if (matched) targetId = String(matched.id);
+    }
+    if (targetId && available.some(item => String(item.id) === targetId)) select.value = targetId;
+    updateEmployeePositionRoleHelper();
+}
+
+function updateEmployeePositionRoleHelper() {
+    const select = $('#empPosition');
+    const helper = $('#empPositionRoleHelper');
+    if (!select || !helper) return;
+    const position = positions.find(item => String(item.id) === String(select.value));
+    helper.textContent = position
+        ? `Role aplikasi: ${POSITION_ROLE_LABELS[position.roleKey] || 'Karyawan'} · diatur dari Master Jabatan.`
+        : 'Role aplikasi mengikuti master jabatan yang dipilih.';
+}
+
 async function handleEmployeeSubmit(event) {
     event.preventDefault();
     const id = $('#empId').value;
@@ -8127,7 +8440,7 @@ async function handleEmployeeSubmit(event) {
         phone: $('#empPhone').value.trim(),
         address: $('#empAddress').value.trim(),
         department: $('#empDept').value,
-        position: $('#empPosition').value.trim(),
+        positionId: Number($('#empPosition').value || 0),
         shift: $('#empShift').value,
         branchId: $('#empBranch').value,
         salary: parseNominalInput($('#empSalary').value),
@@ -8450,7 +8763,12 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#profileForm').addEventListener('submit', saveProfile);
     $('#changePasswordForm').addEventListener('submit', handleChangePasswordSubmit);
     $('#branchSelector').addEventListener('change', handleBranchChange);
-    $('#empBranch').addEventListener('change', event => populateEmployeeDepartmentOptions('', event.target.value));
+    $('#empBranch').addEventListener('change', event => {
+        populateEmployeeDepartmentOptions('', event.target.value);
+        populateEmployeePositionOptions('', event.target.value, '');
+    });
+    $('#empDept').addEventListener('change', event => populateEmployeePositionOptions('', $('#empBranch').value, event.target.value));
+    $('#empPosition').addEventListener('change', updateEmployeePositionRoleHelper);
     $('#messRuleForm').addEventListener('submit', handleMessRuleSubmit);
     $('#sopForm').addEventListener('submit', handleSopSubmit);
     $('#inventoryForm').addEventListener('submit', handleInventorySubmit);
@@ -8466,7 +8784,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#messSearchInput').addEventListener('input', renderMessRules);
     $('#sopSearchInput').addEventListener('input', renderSops);
     $('#sopDepartmentFilter').addEventListener('change', renderSops);
-    $('#sopBranch').addEventListener('change', () => populateSopDepartmentOptions());
+    $('#sopBranch').addEventListener('change', () => { populateSopDepartmentOptions(); populateSopPositionOptions(); });
+    $('#sopDepartment').addEventListener('change', () => populateSopPositionOptions());
 
     $('#searchInput').addEventListener('input', event => {
         $('#mobileSearchInput').value = event.target.value;
