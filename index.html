@@ -6687,6 +6687,23 @@ function generateEmployeeId() {
     return `KH-${code}-${String(nextNumber).padStart(3, '0')}`;
 }
 
+function toDateInputValue(value) {
+    if (!value) return '';
+
+    // Jika backend sudah mengirim YYYY-MM-DD, pertahankan apa adanya.
+    const raw = String(value).trim();
+    const direct = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (direct) return `${direct[1]}-${direct[2]}-${direct[3]}`;
+
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function openEmployeeModal(mode = 'add', data = null) {
     const requiredPermission = mode === 'edit' ? 'employee.edit' : 'employee.create';
     if (!hasPermission(requiredPermission)) {
@@ -6704,7 +6721,7 @@ function openEmployeeModal(mode = 'add', data = null) {
     $('#modalTitle').textContent = mode === 'edit' ? 'Edit Data Karyawan' : 'Tambah Karyawan Baru';
     $('#empId').value = data?.id || '';
     $('#empEmployeeId').value = data?.employeeId || generateEmployeeId();
-    $('#empJoinDate').value = data?.joinDate || new Date().toISOString().split('T')[0];
+    $('#empJoinDate').value = toDateInputValue(data?.joinDate) || toDateInputValue(new Date());
     $('#empName').value = data?.name || '';
     $('#empUsername').value = data?.username || '';
     $('#empPassword').value = '';
