@@ -6353,7 +6353,7 @@ function populatePositionDepartmentOptions(selectedDepartmentId = '', branchId =
     const select = $('#positionDepartment');
     if (!select) return;
     const targetBranch = branchId || $('#positionBranch')?.value || '';
-    const available = departments.filter(item => item.branchId === targetBranch);
+    const available = departments.filter(item => String(item.branchId || '') === String(targetBranch || ''));
     select.innerHTML = `<option value="" disabled ${selectedDepartmentId ? '' : 'selected'}>${available.length ? 'Pilih departemen' : 'Belum ada departemen di cabang ini'}</option>` + available.map(item => `<option value="${Number(item.id)}">${escapeHTML(item.name)}</option>`).join('');
     if (selectedDepartmentId && available.some(item => Number(item.id) === Number(selectedDepartmentId))) select.value = String(selectedDepartmentId);
 }
@@ -6714,9 +6714,17 @@ function openEmployeeModal(mode = 'add', data = null) {
     $('#empPhone').value = data?.phone || '';
     $('#empAddress').value = data?.address || '';
     populateEmployeeBranchOptions(data?.branchId || '');
-    populateEmployeeDepartmentOptions(data?.department || '', $('#empBranch').value);
-    $('#empDept').value = data?.department || '';
-    populateEmployeePositionOptions(data?.positionId || '', $('#empBranch').value, data?.department || '', data?.position || '');
+    const existingPosition = data?.positionId
+        ? positions.find(item => String(item.id) === String(data.positionId))
+        : null;
+    const selectedDepartmentRef = existingPosition?.departmentId || data?.department || '';
+    populateEmployeeDepartmentOptions(selectedDepartmentRef, $('#empBranch').value);
+    populateEmployeePositionOptions(
+        data?.positionId || '',
+        $('#empBranch').value,
+        selectedDepartmentRef,
+        data?.position || ''
+    );
     $('#empShift').value = data?.shift || 'office';
     $('#empSalary').value = data?.salary != null ? formatNominalInput(data.salary) : '';
     $('#empBank').value = data?.bank || '';
@@ -6768,138 +6776,6 @@ function closeEmployeeModal(force = false) {
 
     force ? close() : setTimeout(close, 300);
 }
-
-function handleEmployeeSubmit(event) {
-    event.preventDefault();
-
-    const requestedPermission = $('#empId').value ? 'employee.edit' : 'employee.create';
-    if (!hasPermission(requestedPermission)) {
-        showToast('Anda tidak memiliki izin untuk menyimpan perubahan ini.', 'error');
-        return;
-    }
-
-    const id = $('#empId').value;
-    const employeeId = $('#empEmployeeId').value.trim().toUpperCase();
-    const joinDate = $('#empJoinDate').value;
-    const name = $('#empName').value.trim();
-    const username = normalizeUsername($('#empUsername').value);
-    const password = $('#empPassword').value;
-    const email = $('#empEmail').value.trim().toLowerCase();
-    const phone = $('#empPhone').value.trim();
-    const address = $('#empAddress').value.trim();
-    const department = $('#empDept').value;
-    const position = $('#empPosition').value.trim();
-    const shift = $('#empShift').value;
-    const branchId = $('#empBranch').value;
-    const existingEmployee = id ? employees.find(employee => String(employee.id) === String(id)) : null;
-    const status = existingEmployee?.status || 'Aktif';
-    const salary = parseNominalInput($('#empSalary').value);
-    const bank = $('#empBank').value.trim();
-    const accountNumber = $('#empAccountNumber').value.trim();
-    const emergencyName = $('#empEmergencyName').value.trim();
-    const emergencyPhone = $('#empEmergencyPhone').value.trim();
-    const emergencyAddress = $('#empEmergencyAddress').value.trim();
-    const avatar = $('#empAvatar').value;
-
-    if (!employeeId || !joinDate || !name || !username || !password || !phone || !address || !department || !position || !shift || !branchId || !bank || !accountNumber || !emergencyName || !emergencyPhone || !emergencyAddress || Number.isNaN(salary) || salary < 0) {
-        showToast('Lengkapi seluruh data wajib karyawan. Email boleh dikosongkan.', 'error');
-        return;
-    }
-
-    if (!isValidUsername(username)) {
-        showToast('Username harus 3-30 karakter dan hanya boleh berisi huruf kecil, angka, titik, garis bawah, atau strip.', 'error');
-        return;
-    }
-
-    if (password.length < 6) {
-        showToast('Password karyawan minimal 6 karakter.', 'error');
-        return;
-    }
-
-    if (!canAccessBranch(branchId)) {
-        showToast('Anda tidak memiliki akses untuk menempatkan karyawan pada cabang tersebut.', 'error');
-        return;
-    }
-
-    const duplicateEmployeeId = employees.some(employee =>
-        String(employee.employeeId).toUpperCase() === employeeId && String(employee.id) !== String(id)
-    );
-    if (duplicateEmployeeId) {
-        showToast('ID karyawan sudah digunakan.', 'error');
-        return;
-    }
-
-    const duplicateUsernameInEmployees = employees.some(employee =>
-        normalizeUsername(employee.username) === username && String(employee.id) !== String(id)
-    );
-    const duplicateUsernameInSystem = users.some(user => normalizeUsername(user.username) === username);
-    if (duplicateUsernameInEmployees || duplicateUsernameInSystem) {
-        showToast('Username login sudah digunakan.', 'error');
-        return;
-    }
-
-    const duplicateEmail = email && employees.some(employee =>
-        String(employee.email || '').toLowerCase() === email && String(employee.id) !== String(id)
-    );
-    if (duplicateEmail) {
-        showToast('Email karyawan sudah terdaftar.', 'error');
-        return;
-    }
-
-    const employeeData = {
-        employeeId,
-        joinDate,
-        name,
-        username,
-        password,
-        email,
-        phone,
-        address,
-        department,
-        position,
-        shift,
-        branchId,
-        status,
-        salary,
-        bank,
-        accountNumber,
-        emergencyContact: {
-            name: emergencyName,
-            phone: emergencyPhone,
-            address: emergencyAddress
-        }
-    };
-
-    if (id) {
-        const index = employees.findIndex(employee => String(employee.id) === String(id));
-        if (index !== -1) {
-            employees[index] = { ...employees[index], ...employeeData };
-            if (currentUser?.source === 'employee' && currentUser.employeeRecordId === employees[index].id) {
-                currentUser = createEmployeeAuthUser(employees[index]);
-                updateLoginSession(currentUser.username);
-                populateProfileUI();
-            }
-            addActivity('employee', 'Data karyawan diperbarui', `${name} diperbarui pada ${getBranchName(branchId)}.`, branchId);
-            showToast('Data karyawan berhasil diperbarui!', 'success');
-        }
-    } else {
-        employees.unshift({
-            id: Date.now(),
-            ...employeeData,
-            avatar
-        });
-        addActivity('employee', 'Karyawan baru ditambahkan', `${name} ditambahkan ke ${getBranchName(branchId)}.`, branchId);
-        showToast('Karyawan baru berhasil ditambahkan!', 'success');
-    }
-
-    clearSearch();
-    renderTable();
-    renderSchedule();
-    renderDepartments();
-    updateDashboardStats();
-    closeEmployeeModal();
-}
-
 
 /* =========================================================
    CARD VIEW KARYAWAN
@@ -8371,32 +8247,120 @@ async function handleChangePasswordSubmit(event) {
     }
 }
 
+function normalizeLookupText(value = '') {
+    return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function getEmployeeDepartmentByRef(departmentRef = '', branchId = '') {
+    const targetBranchId = String(branchId || $('#empBranch')?.value || '');
+    const ref = String(departmentRef || '').trim();
+    if (!targetBranchId || !ref) return null;
+
+    // Prioritas utama memakai ID departemen agar relasi tidak bergantung pada nama.
+    const byId = departments.find(item =>
+        String(item.branchId || '') === targetBranchId &&
+        String(item.id) === ref
+    );
+    if (byId) return byId;
+
+    // Fallback khusus kompatibilitas data lama yang masih menyimpan nama departemen.
+    const normalizedRef = normalizeLookupText(ref);
+    return departments.find(item =>
+        String(item.branchId || '') === targetBranchId &&
+        normalizeLookupText(item.name) === normalizedRef
+    ) || null;
+}
+
+function getSelectedEmployeeDepartment() {
+    const select = $('#empDept');
+    if (!select) return null;
+    return getEmployeeDepartmentByRef(select.value, $('#empBranch')?.value || '');
+}
+
 function populateEmployeeDepartmentOptions(selected = '', branchId = '') {
     const select = $('#empDept');
     if (!select) return;
-    const targetBranchId = branchId || $('#empBranch')?.value || '';
-    const available = departments.filter(item => item.branchId && item.branchId === targetBranchId);
-    const options = available.map(item => `<option value="${escapeHTML(item.name)}">${escapeHTML(item.name)}</option>`).join('');
-    select.innerHTML = `<option value="" disabled ${selected ? '' : 'selected'}>${available.length ? 'Pilih departemen' : 'Belum ada departemen di cabang ini'}</option>${options}`;
-    if (selected && available.some(item => item.name === selected)) select.value = selected;
+
+    const targetBranchId = String(branchId || $('#empBranch')?.value || '');
+    const available = departments
+        .filter(item => item.branchId && String(item.branchId) === targetBranchId)
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'id'));
+
+    const selectedDepartment = getEmployeeDepartmentByRef(selected, targetBranchId);
+    const selectedId = selectedDepartment ? String(selectedDepartment.id) : '';
+
+    select.innerHTML = `
+        <option value="" disabled ${selectedId ? '' : 'selected'}>
+            ${available.length ? 'Pilih departemen' : 'Belum ada departemen di cabang ini'}
+        </option>
+        ${available.map(item => `<option value="${escapeHTML(String(item.id))}">${escapeHTML(item.name)}</option>`).join('')}
+    `;
+
+    if (selectedId && available.some(item => String(item.id) === selectedId)) {
+        select.value = selectedId;
+    }
 }
 
-function populateEmployeePositionOptions(selectedPositionId = '', branchId = '', departmentName = '', fallbackPositionName = '') {
+function populateEmployeePositionOptions(selectedPositionId = '', branchId = '', departmentRef = '', fallbackPositionName = '') {
     const select = $('#empPosition');
     const helper = $('#empPositionRoleHelper');
     if (!select) return;
-    const targetBranchId = branchId || $('#empBranch')?.value || '';
-    const targetDepartment = departmentName || $('#empDept')?.value || '';
-    const available = positions.filter(item => item.branchId === targetBranchId && item.departmentName === targetDepartment);
-    select.innerHTML = `<option value="" disabled selected>${available.length ? 'Pilih jabatan' : 'Belum ada jabatan di departemen ini'}</option>` + available.map(item => `<option value="${Number(item.id)}">${escapeHTML(item.name)} · ${escapeHTML(POSITION_ROLE_LABELS[item.roleKey] || 'Karyawan')}</option>`).join('');
+
+    const targetBranchId = String(branchId || $('#empBranch')?.value || '');
+    const department = getEmployeeDepartmentByRef(
+        departmentRef || $('#empDept')?.value || '',
+        targetBranchId
+    );
+
+    if (!department) {
+        select.innerHTML = '<option value="" disabled selected>Pilih departemen terlebih dahulu</option>';
+        if (helper) helper.textContent = 'Pilih departemen untuk menampilkan jabatan yang tersedia.';
+        return;
+    }
+
+    const departmentId = Number(department.id || 0);
+    const normalizedDepartmentName = normalizeLookupText(department.name);
+
+    const available = positions
+        .filter(item => {
+            if (String(item.branchId || '') !== targetBranchId) return false;
+
+            // Relasi utama: branchId + departmentId.
+            if (Number(item.departmentId || 0) === departmentId) return true;
+
+            // Fallback kompatibilitas data lama bila departmentId pada master jabatan belum terisi.
+            return !Number(item.departmentId || 0) &&
+                normalizeLookupText(item.departmentName) === normalizedDepartmentName;
+        })
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'id'));
+
+    select.innerHTML = `
+        <option value="" disabled selected>
+            ${available.length ? 'Pilih jabatan' : 'Belum ada jabatan di departemen ini'}
+        </option>
+        ${available.map(item => `
+            <option value="${Number(item.id)}">
+                ${escapeHTML(item.name)} · ${escapeHTML(POSITION_ROLE_LABELS[item.roleKey] || 'Karyawan')}
+            </option>
+        `).join('')}
+    `;
 
     let targetId = selectedPositionId ? String(selectedPositionId) : '';
     if (!targetId && fallbackPositionName) {
-        const matched = available.find(item => item.name === fallbackPositionName);
+        const normalizedFallback = normalizeLookupText(fallbackPositionName);
+        const matched = available.find(item => normalizeLookupText(item.name) === normalizedFallback);
         if (matched) targetId = String(matched.id);
     }
-    if (targetId && available.some(item => String(item.id) === targetId)) select.value = targetId;
-    updateEmployeePositionRoleHelper();
+
+    if (targetId && available.some(item => String(item.id) === targetId)) {
+        select.value = targetId;
+    }
+
+    if (helper && !available.length) {
+        helper.textContent = `Belum ada jabatan aktif untuk departemen ${department.name}. Tambahkan dari Master Jabatan.`;
+    } else {
+        updateEmployeePositionRoleHelper();
+    }
 }
 
 function updateEmployeePositionRoleHelper() {
@@ -8429,6 +8393,27 @@ async function handleEmployeeSubmit(event) {
         return;
     }
 
+    const selectedDepartment = getSelectedEmployeeDepartment();
+    const selectedPositionId = Number($('#empPosition').value || 0);
+    const selectedPosition = positions.find(item => Number(item.id) === selectedPositionId) || null;
+
+    if (!selectedDepartment) {
+        showToast('Pilih departemen yang valid.', 'error');
+        return;
+    }
+    if (!selectedPositionId || !selectedPosition) {
+        showToast('Pilih jabatan yang tersedia pada departemen tersebut.', 'error');
+        return;
+    }
+    if (
+        String(selectedPosition.branchId || '') !== String($('#empBranch').value || '') ||
+        Number(selectedPosition.departmentId || 0) !== Number(selectedDepartment.id)
+    ) {
+        showToast('Jabatan tidak sesuai dengan cabang/departemen yang dipilih. Silakan pilih ulang jabatan.', 'error');
+        populateEmployeePositionOptions('', $('#empBranch').value, selectedDepartment.id);
+        return;
+    }
+
     const payload = {
         id: editing ? Number(id) : null,
         employeeId: $('#empEmployeeId').value.trim().toUpperCase(),
@@ -8439,8 +8424,8 @@ async function handleEmployeeSubmit(event) {
         email: $('#empEmail').value.trim().toLowerCase(),
         phone: $('#empPhone').value.trim(),
         address: $('#empAddress').value.trim(),
-        department: $('#empDept').value,
-        positionId: Number($('#empPosition').value || 0),
+        department: selectedDepartment.name,
+        positionId: selectedPositionId,
         shift: $('#empShift').value,
         branchId: $('#empBranch').value,
         salary: parseNominalInput($('#empSalary').value),
@@ -8767,7 +8752,9 @@ document.addEventListener('DOMContentLoaded', () => {
         populateEmployeeDepartmentOptions('', event.target.value);
         populateEmployeePositionOptions('', event.target.value, '');
     });
-    $('#empDept').addEventListener('change', event => populateEmployeePositionOptions('', $('#empBranch').value, event.target.value));
+    $('#empDept').addEventListener('change', event => {
+        populateEmployeePositionOptions('', $('#empBranch').value, event.target.value);
+    });
     $('#empPosition').addEventListener('change', updateEmployeePositionRoleHelper);
     $('#messRuleForm').addEventListener('submit', handleMessRuleSubmit);
     $('#sopForm').addEventListener('submit', handleSopSubmit);
@@ -8786,6 +8773,9 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#sopDepartmentFilter').addEventListener('change', renderSops);
     $('#sopBranch').addEventListener('change', () => { populateSopDepartmentOptions(); populateSopPositionOptions(); });
     $('#sopDepartment').addEventListener('change', () => populateSopPositionOptions());
+    $('#positionBranch').addEventListener('change', event => {
+        populatePositionDepartmentOptions('', event.target.value);
+    });
 
     $('#searchInput').addEventListener('input', event => {
         $('#mobileSearchInput').value = event.target.value;
