@@ -1833,7 +1833,19 @@
 
             <!-- DEPARTEMEN -->
             <section id="page-departemen" class="page-view hidden space-y-6">
-                <div id="deptContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-50">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-800">Departemen Perusahaan</h3>
+                            <p class="text-xs text-slate-500 mt-1">Kelola master departemen yang digunakan pada Data Karyawan dan SOP.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="departmentPageCount" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold"><i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>0 Departemen</span>
+                            <button id="addDepartmentButton" type="button" onclick="openDepartmentModal()" class="hidden items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Tambah</button>
+                        </div>
+                    </div>
+                    <div id="deptContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
             </section>
 
 
@@ -1979,10 +1991,10 @@
                             <h3 class="text-lg font-semibold text-slate-800">Daftar Cabang</h3>
                             <p id="branchPageHelper" class="text-xs text-slate-500 mt-1">Cabang yang dapat diakses oleh akun Anda.</p>
                         </div>
-                        <span id="branchPageCount" class="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 border border-brand-200 text-xs font-semibold">
-                            <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-                            0 Cabang
-                        </span>
+                        <div class="flex items-center gap-2 self-start sm:self-auto">
+                            <span id="branchPageCount" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-50 text-brand-600 border border-brand-200 text-xs font-semibold"><i data-lucide="building-2" class="w-3.5 h-3.5"></i>0 Cabang</span>
+                            <button id="addBranchButton" type="button" onclick="openBranchModal()" class="hidden items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Tambah</button>
+                        </div>
                     </div>
                     <div id="branchPageGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
                 </div>
@@ -2788,6 +2800,39 @@
 </div>
 
 <!-- =========================================================
+     MODAL MASTER CABANG
+========================================================= -->
+<div id="branchModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" onclick="closeBranchModal()"></div>
+    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white border border-slate-100 shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><div><h3 id="branchModalTitle" class="text-base font-semibold text-slate-800">Tambah Cabang</h3><p class="text-[11px] text-slate-500 mt-0.5">Tersimpan langsung ke Google Sheet.</p></div><button type="button" onclick="closeBranchModal()" class="w-8 h-8 rounded-lg inline-flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <form id="branchForm" onsubmit="handleBranchSubmit(event)" class="p-5 space-y-4">
+            <input type="hidden" id="branchRecordId">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label for="branchCode" class="block text-xs font-semibold text-slate-700 mb-1.5">Kode Cabang</label><input id="branchCode" type="text" maxlength="12" required autocomplete="off" placeholder="JKT01" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"></div><div><label for="branchName" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama Cabang</label><input id="branchName" type="text" required autocomplete="off" placeholder="Jakarta Pusat" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"></div></div>
+            <div><label for="branchAddress" class="block text-xs font-semibold text-slate-700 mb-1.5">Alamat</label><textarea id="branchAddress" rows="3" placeholder="Alamat lengkap cabang" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/30"></textarea></div>
+            <div class="pt-2 flex justify-end gap-2"><button type="button" onclick="closeBranchModal()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100">Batal</button><button id="branchSubmitButton" type="submit" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold inline-flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Simpan Cabang</button></div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL MASTER DEPARTEMEN
+========================================================= -->
+<div id="departmentModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" onclick="closeDepartmentModal()"></div>
+    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white border border-slate-100 shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><div><h3 id="departmentModalTitle" class="text-base font-semibold text-slate-800">Tambah Departemen</h3><p class="text-[11px] text-slate-500 mt-0.5">Dipakai pada Data Karyawan dan SOP.</p></div><button type="button" onclick="closeDepartmentModal()" class="w-8 h-8 rounded-lg inline-flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <form id="departmentForm" onsubmit="handleDepartmentSubmit(event)" class="p-5 space-y-4">
+            <input type="hidden" id="departmentRecordId">
+            <div><label for="departmentName" class="block text-xs font-semibold text-slate-700 mb-1.5">Nama Departemen</label><input id="departmentName" type="text" required autocomplete="off" placeholder="Human Resources" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"></div>
+            <div><label for="departmentIcon" class="block text-xs font-semibold text-slate-700 mb-1.5">Ikon Lucide</label><input id="departmentIcon" type="text" value="briefcase" autocomplete="off" placeholder="briefcase" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30"><p class="text-[10px] text-slate-400 mt-1">Contoh: briefcase, users, wallet, cpu, megaphone.</p></div>
+            <div><label for="departmentDescription" class="block text-xs font-semibold text-slate-700 mb-1.5">Deskripsi</label><textarea id="departmentDescription" rows="3" placeholder="Deskripsi singkat fungsi departemen" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/30"></textarea></div>
+            <div class="pt-2 flex justify-end gap-2"><button type="button" onclick="closeDepartmentModal()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100">Batal</button><button id="departmentSubmitButton" type="submit" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold inline-flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Simpan Departemen</button></div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
      MODAL KARYAWAN
 ========================================================= -->
 <div id="employeeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
@@ -3240,16 +3285,16 @@ const ROLE_CONFIG = {
     admin: {
         label: 'Admin',
         pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['employee.create', 'employee.edit', 'employee.delete', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage'],
+        permissions: ['employee.create', 'employee.edit', 'employee.delete', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage', 'branch.manage', 'department.manage'],
         multiBranch: true,
         description: 'Akses penuh ke seluruh fitur dan seluruh cabang perusahaan.'
     },
     owner: {
         label: 'Owner',
         pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['inventory.review'],
+        permissions: ['inventory.review', 'branch.manage', 'department.manage'],
         multiBranch: true,
-        description: 'Memantau seluruh cabang, karyawan, departemen, dan operasional dalam mode baca-saja.'
+        description: 'Memantau seluruh cabang serta mengelola master cabang dan departemen perusahaan.'
     },
     manager: {
         label: 'Manajer',
@@ -5275,6 +5320,9 @@ function renderBranchesPage() {
     if (!grid || !currentUser) return;
 
     const accessible = getAccessibleBranchIds();
+    const canManage = hasPermission('branch.manage');
+    const addButton = $('#addBranchButton');
+    if (addButton) { addButton.classList.toggle('hidden', !canManage); addButton.classList.toggle('inline-flex', canManage); }
     if (countBadge) countBadge.innerHTML = `<i data-lucide="building-2" class="w-3.5 h-3.5"></i>${accessible.length} Cabang`;
     if (helper) {
         helper.textContent = canSwitchBranch()
@@ -5283,7 +5331,7 @@ function renderBranchesPage() {
     }
 
     if (!accessible.length) {
-        grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="building-2" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada cabang</h4><p class="text-xs text-slate-500 mt-1">Tambahkan cabang pertama dari menu KaryaHub pada Google Sheet.</p></div>`;
+        grid.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="building-2" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada cabang</h4><p class="text-xs text-slate-500 mt-1">Admin atau Owner dapat menambahkan cabang langsung dari tombol Tambah.</p></div>`;
         refreshIcons();
         return;
     }
@@ -5324,6 +5372,7 @@ function renderBranchesPage() {
                     <span class="inline-flex items-center gap-1.5"><i data-lucide="clock-3" class="w-3.5 h-3.5 text-amber-500"></i>${attendance.late} terlambat</span>
                     <span class="inline-flex items-center gap-1.5"><i data-lucide="user-x" class="w-3.5 h-3.5 text-red-500"></i>${attendance.absent} alpha</span>
                 </div>
+                ${canManage ? `<div class="mt-3 flex justify-end gap-2"><button type="button" onclick="editBranchMaster('${escapeHTML(branch.id)}')" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 inline-flex items-center gap-1.5"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</button><button type="button" onclick="deactivateBranchMaster('${escapeHTML(branch.id)}')" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 inline-flex items-center gap-1.5"><i data-lucide="archive-x" class="w-3.5 h-3.5"></i>Nonaktifkan</button></div>` : ''}
             </article>`;
     }).join('');
 
@@ -5906,9 +5955,14 @@ function renderDepartments() {
     if (!container) return;
 
     const scopedEmployees = getScopedEmployees();
+    const canManage = hasPermission('department.manage');
+    const countBadge = $('#departmentPageCount');
+    const addButton = $('#addDepartmentButton');
+    if (countBadge) countBadge.innerHTML = `<i data-lucide="briefcase-business" class="w-3.5 h-3.5"></i>${departments.length} Departemen`;
+    if (addButton) { addButton.classList.toggle('hidden', !canManage); addButton.classList.toggle('inline-flex', canManage); }
 
     if (!departments.length) {
-        container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="briefcase-business" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada departemen</h4><p class="text-xs text-slate-500 mt-1">Tambahkan master departemen dari Google Sheet / menu KaryaHub.</p></div>`;
+        container.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-slate-50"><i data-lucide="briefcase-business" class="w-7 h-7 text-slate-400 mx-auto"></i><h4 class="text-sm font-semibold text-slate-800 mt-3">Belum ada departemen</h4><p class="text-xs text-slate-500 mt-1">Admin atau Owner dapat menambahkan departemen langsung dari tombol Tambah.</p></div>`;
         refreshIcons();
         return;
     }
@@ -5932,15 +5986,11 @@ function renderDepartments() {
                     </p>
                 </div>
 
-                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <span class="text-slate-500 font-medium text-sm">
-                        ${count} Karyawan
-                    </span>
-
-                    <button onclick="switchPage('karyawan')" class="text-brand-600 font-medium hover:underline text-xs">
-                        Lihat Anggota →
-                    </button>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
+                    <span class="text-slate-500 font-medium text-sm">${count} Karyawan</span>
+                    <button onclick="switchPage('karyawan')" class="text-brand-600 font-medium hover:underline text-xs whitespace-nowrap">Lihat Anggota →</button>
                 </div>
+                ${canManage ? `<div class="mt-3 pt-3 border-t border-slate-100 flex justify-end gap-2"><button type="button" onclick="editDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 inline-flex items-center gap-1.5"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>Edit</button><button type="button" onclick="deactivateDepartmentMaster(${Number(department.id)})" class="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 inline-flex items-center gap-1.5"><i data-lucide="archive-x" class="w-3.5 h-3.5"></i>Nonaktifkan</button></div>` : ''}
             </div>
         `;
     }).join('');
@@ -5948,6 +5998,48 @@ function renderDepartments() {
     refreshIcons();
 }
 
+
+/* =========================================================
+   MASTER CABANG & DEPARTEMEN
+========================================================= */
+function openBranchModal(branch = null) {
+    if (!hasPermission('branch.manage')) { showToast('Hanya Admin dan Owner yang dapat mengelola cabang.', 'error'); return; }
+    $('#branchRecordId').value = branch?.id || '';
+    $('#branchCode').value = branch?.code || '';
+    $('#branchName').value = branch?.name || '';
+    $('#branchAddress').value = branch?.address || '';
+    $('#branchModalTitle').textContent = branch ? 'Edit Cabang' : 'Tambah Cabang';
+    const modal = $('#branchModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.classList.add('overflow-hidden'); refreshIcons();
+}
+function closeBranchModal() { const modal=$('#branchModal'); if(!modal)return; modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.classList.remove('overflow-hidden'); $('#branchForm')?.reset(); if($('#branchRecordId')) $('#branchRecordId').value=''; }
+function editBranchMaster(branchId) { const branch=branches.find(item=>String(item.id)===String(branchId)); if(branch) openBranchModal(branch); }
+async function handleBranchSubmit(event) {
+    event.preventDefault(); if(!hasPermission('branch.manage')) return;
+    const button=$('#branchSubmitButton'), original=button?.innerHTML;
+    const payload={id:$('#branchRecordId').value.trim(),code:$('#branchCode').value.trim().toUpperCase(),name:$('#branchName').value.trim(),address:$('#branchAddress').value.trim(),active:true};
+    if(!payload.code||!payload.name){showToast('Kode dan nama cabang wajib diisi.','error');return;}
+    try { if(button){button.disabled=true;button.innerHTML='<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Menyimpan...</span>';} const response=await gasCall('apiSaveBranch',getSessionToken(),payload); closeBranchModal(); applyServerResponse(response); showToast(response.message||'Cabang berhasil disimpan.','success'); }
+    catch(error){handleServerError(error);} finally {if(button){button.disabled=false;button.innerHTML=original;refreshIcons();}}
+}
+async function deactivateBranchMaster(branchId) {
+    if(!hasPermission('branch.manage')) return; const branch=branches.find(item=>String(item.id)===String(branchId)); if(!branch)return;
+    if(!confirm(`Nonaktifkan cabang "${branch.name}"? Cabang yang masih memiliki karyawan atau inventaris tidak dapat dinonaktifkan.`)) return;
+    try { const response=await gasCall('apiDeleteBranch',getSessionToken(),branchId); applyServerResponse(response); showToast(response.message||'Cabang berhasil dinonaktifkan.','success'); } catch(error){handleServerError(error);}
+}
+function openDepartmentModal(department = null) {
+    if(!hasPermission('department.manage')){showToast('Hanya Admin dan Owner yang dapat mengelola departemen.','error');return;}
+    $('#departmentRecordId').value=department?.id||''; $('#departmentName').value=department?.name||''; $('#departmentIcon').value=department?.icon||'briefcase'; $('#departmentDescription').value=department?.desc||''; $('#departmentModalTitle').textContent=department?'Edit Departemen':'Tambah Departemen';
+    const modal=$('#departmentModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.classList.add('overflow-hidden'); refreshIcons();
+}
+function closeDepartmentModal(){const modal=$('#departmentModal');if(!modal)return;modal.classList.add('hidden');modal.classList.remove('flex');document.body.classList.remove('overflow-hidden');$('#departmentForm')?.reset();if($('#departmentRecordId'))$('#departmentRecordId').value='';if($('#departmentIcon'))$('#departmentIcon').value='briefcase';}
+function editDepartmentMaster(departmentId){const department=departments.find(item=>Number(item.id)===Number(departmentId));if(department)openDepartmentModal(department);}
+async function handleDepartmentSubmit(event){
+    event.preventDefault();if(!hasPermission('department.manage'))return;const button=$('#departmentSubmitButton'),original=button?.innerHTML;
+    const payload={id:Number($('#departmentRecordId').value||0)||null,name:$('#departmentName').value.trim(),icon:$('#departmentIcon').value.trim()||'briefcase',description:$('#departmentDescription').value.trim(),active:true};
+    if(!payload.name){showToast('Nama departemen wajib diisi.','error');return;}
+    try{if(button){button.disabled=true;button.innerHTML='<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Menyimpan...</span>';}const response=await gasCall('apiSaveDepartment',getSessionToken(),payload);closeDepartmentModal();applyServerResponse(response);showToast(response.message||'Departemen berhasil disimpan.','success');}catch(error){handleServerError(error);}finally{if(button){button.disabled=false;button.innerHTML=original;refreshIcons();}}
+}
+async function deactivateDepartmentMaster(departmentId){if(!hasPermission('department.manage'))return;const department=departments.find(item=>Number(item.id)===Number(departmentId));if(!department)return;if(!confirm(`Nonaktifkan departemen "${department.name}"? Departemen yang masih digunakan karyawan atau SOP tidak dapat dinonaktifkan.`))return;try{const response=await gasCall('apiDeleteDepartment',getSessionToken(),Number(departmentId));applyServerResponse(response);showToast(response.message||'Departemen berhasil dinonaktifkan.','success');}catch(error){handleServerError(error);}}
 
 /* =========================================================
    EMPLOYEE TABLE
