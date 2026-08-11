@@ -724,6 +724,92 @@
             align-self: center;
         }
 
+
+        /* Database connection indicator — ring halus di foto profil. */
+        #databaseConnectionIndicator {
+            --db-status-color: #f59e0b;
+            --db-status-shadow: rgba(245, 158, 11, .28);
+            position: relative;
+            flex-shrink: 0;
+            border-radius: 9999px;
+        }
+
+        #databaseConnectionIndicator #topbarAvatar {
+            border-color: var(--db-status-color) !important;
+            box-shadow: 0 0 0 2px var(--db-status-shadow);
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        #databaseConnectionIndicator .database-status-dot {
+            position: absolute;
+            right: -1px;
+            bottom: 0;
+            width: 9px;
+            height: 9px;
+            border-radius: 9999px;
+            background: var(--db-status-color);
+            border: 2px solid var(--color-surface-elevated);
+            box-sizing: content-box;
+            pointer-events: none;
+        }
+
+        #databaseConnectionIndicator.database-status-online {
+            --db-status-color: #16a34a;
+            --db-status-shadow: rgba(22, 163, 74, .28);
+        }
+
+        #databaseConnectionIndicator.database-status-syncing {
+            --db-status-color: #f59e0b;
+            --db-status-shadow: rgba(245, 158, 11, .30);
+        }
+
+        #databaseConnectionIndicator.database-status-error {
+            --db-status-color: #dc2626;
+            --db-status-shadow: rgba(220, 38, 38, .32);
+        }
+
+        #databaseConnectionIndicator.database-status-idle {
+            --db-status-color: #94a3b8;
+            --db-status-shadow: rgba(148, 163, 184, .22);
+        }
+
+        #databaseConnectionIndicator.database-status-online #topbarAvatar,
+        #databaseConnectionIndicator.database-status-online .database-status-dot {
+            animation: dbStatusPulseOnline 2.2s ease-in-out infinite;
+        }
+
+        #databaseConnectionIndicator.database-status-syncing #topbarAvatar,
+        #databaseConnectionIndicator.database-status-syncing .database-status-dot {
+            animation: dbStatusPulseSyncing 1.15s ease-in-out infinite;
+        }
+
+        #databaseConnectionIndicator.database-status-error #topbarAvatar,
+        #databaseConnectionIndicator.database-status-error .database-status-dot {
+            animation: dbStatusPulseError .9s ease-in-out infinite;
+        }
+
+        @keyframes dbStatusPulseOnline {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 2px rgba(22, 163, 74, .22); }
+            50% { opacity: .82; box-shadow: 0 0 0 4px rgba(22, 163, 74, .10); }
+        }
+
+        @keyframes dbStatusPulseSyncing {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 2px rgba(245, 158, 11, .22); }
+            50% { opacity: .68; box-shadow: 0 0 0 4px rgba(245, 158, 11, .12); }
+        }
+
+        @keyframes dbStatusPulseError {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 2px rgba(220, 38, 38, .25); }
+            50% { opacity: .62; box-shadow: 0 0 0 5px rgba(220, 38, 38, .12); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #databaseConnectionIndicator #topbarAvatar,
+            #databaseConnectionIndicator .database-status-dot {
+                animation: none !important;
+            }
+        }
+
         #toastContainer > * {
             max-width: min(17rem, calc(100vw - 1.5rem)) !important;
             background-color: var(--color-surface-elevated) !important;
@@ -1598,11 +1684,20 @@
                         onclick="toggleProfileDropdown(event)"
                         class="flex items-center self-center space-x-2 sm:space-x-3 border-l border-slate-200 pl-3 sm:pl-4 cursor-pointer hover:bg-slate-50 rounded-xl py-1 pr-1 transition-colors">
 
-                        <img
-                            id="topbarAvatar"
-                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E"
-                            alt="Admin"
-                            class="w-9 h-9 rounded-full border-2 border-brand-500 object-cover">
+                        <span
+                            id="databaseConnectionIndicator"
+                            class="database-status-idle"
+                            role="status"
+                            aria-live="polite"
+                            aria-label="Status database belum diperiksa"
+                            title="Status database belum diperiksa">
+                            <img
+                                id="topbarAvatar"
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E"
+                                alt="Admin"
+                                class="w-9 h-9 rounded-full border-2 object-cover">
+                            <span class="database-status-dot" aria-hidden="true"></span>
+                        </span>
 
                         <div class="hidden lg:block text-left text-sm">
                             <p id="topbarName" class="font-medium text-slate-800">
@@ -7872,36 +7967,46 @@ function ensureGasBridge() {
 }
 
 async function gasCall(method, ...args) {
-    await ensureGasBridge();
+    beginDatabaseRequest();
 
-    if (!gasBridgeWindow) {
-        throw new Error('Apps Script bridge belum siap. Silakan coba lagi.');
-    }
+    try {
+        await ensureGasBridge();
 
-    return new Promise((resolve, reject) => {
-        const id = `rpc_${Date.now()}_${++gasBridgeSequence}`;
-        const timeoutId = setTimeout(() => {
-            gasBridgePending.delete(id);
-            reject(new Error('Koneksi ke Google Sheets terlalu lama. Coba lagi.'));
-        }, 30000);
-
-        gasBridgePending.set(id, { resolve, reject, timeoutId });
-
-        try {
-            gasBridgeWindow.postMessage({
-                channel: GAS_BRIDGE_CHANNEL,
-                client: gasBridgeNonce,
-                type: 'call',
-                id,
-                action: method,
-                args
-            }, gasBridgeOrigin || '*');
-        } catch (error) {
-            clearTimeout(timeoutId);
-            gasBridgePending.delete(id);
-            reject(new Error('Gagal mengirim request ke Google Apps Script.'));
+        if (!gasBridgeWindow) {
+            throw new Error('Apps Script bridge belum siap. Silakan coba lagi.');
         }
-    });
+
+        const result = await new Promise((resolve, reject) => {
+            const id = `rpc_${Date.now()}_${++gasBridgeSequence}`;
+            const timeoutId = setTimeout(() => {
+                gasBridgePending.delete(id);
+                reject(new Error('Koneksi ke Google Sheets terlalu lama. Coba lagi.'));
+            }, 30000);
+
+            gasBridgePending.set(id, { resolve, reject, timeoutId });
+
+            try {
+                gasBridgeWindow.postMessage({
+                    channel: GAS_BRIDGE_CHANNEL,
+                    client: gasBridgeNonce,
+                    type: 'call',
+                    id,
+                    action: method,
+                    args
+                }, gasBridgeOrigin || '*');
+            } catch (error) {
+                clearTimeout(timeoutId);
+                gasBridgePending.delete(id);
+                reject(new Error('Gagal mengirim request ke Google Apps Script.'));
+            }
+        });
+
+        finishDatabaseRequest(true);
+        return result;
+    } catch (error) {
+        finishDatabaseRequest(false, error?.message || 'Koneksi gagal');
+        throw error;
+    }
 }
 
 function getSessionToken() {
@@ -7956,23 +8061,54 @@ function applyAuthenticatedUser(user) {
     currentUser = user ? { ...user, avatar: normalizeAvatar(user.avatar) } : null;
 }
 
+let databaseRequestCount = 0;
+let databaseRequestBatchFailed = false;
+let databaseConnectionState = 'idle';
+
+function setDatabaseConnectionStatus(state = 'idle', detail = '') {
+    const indicator = document.getElementById('databaseConnectionIndicator');
+    databaseConnectionState = state;
+    if (!indicator) return;
+
+    const states = ['idle', 'online', 'syncing', 'error'];
+    indicator.classList.remove(...states.map(item => `database-status-${item}`));
+    indicator.classList.add(`database-status-${states.includes(state) ? state : 'idle'}`);
+
+    const labels = {
+        idle: 'Status database belum diperiksa',
+        online: 'Database terhubung dan sinkronisasi normal',
+        syncing: 'Sedang menyinkronkan data dengan database',
+        error: 'Koneksi database bermasalah'
+    };
+    const label = detail ? `${labels[state] || labels.idle}: ${detail}` : (labels[state] || labels.idle);
+    indicator.setAttribute('aria-label', label);
+    indicator.setAttribute('title', label);
+}
+
+function beginDatabaseRequest() {
+    if (databaseRequestCount === 0) databaseRequestBatchFailed = false;
+    databaseRequestCount += 1;
+    setDatabaseConnectionStatus('syncing');
+}
+
+function finishDatabaseRequest(success, errorMessage = '') {
+    if (!success) databaseRequestBatchFailed = true;
+    databaseRequestCount = Math.max(0, databaseRequestCount - 1);
+    if (databaseRequestCount > 0) return;
+
+    if (databaseRequestBatchFailed) {
+        setDatabaseConnectionStatus('error', errorMessage || 'Request terakhir gagal');
+    } else {
+        setDatabaseConnectionStatus('online');
+    }
+}
+
 function setBootstrapLoading(active) {
-    let indicator = document.getElementById('bootstrapLoadingIndicator');
-    if (active) {
-        if (!indicator) {
-            indicator = document.createElement('div');
-            indicator.id = 'bootstrapLoadingIndicator';
-            indicator.setAttribute('role', 'status');
-            indicator.innerHTML = `
-                <span class="inline-block w-3 h-3 rounded-full border-2 border-brand-500/30 border-t-brand-500 animate-spin"></span>
-                <span>Menyinkronkan data...</span>
-            `;
-            indicator.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid var(--border-color);border-radius:999px;background:var(--bg-elevated);color:var(--text-secondary);font-size:11px;font-weight:600;box-shadow:var(--shadow-soft);';
-            document.body.appendChild(indicator);
-        }
-        indicator.classList.remove('hidden');
-    } else if (indicator) {
-        indicator.classList.add('hidden');
+    // Tidak lagi menampilkan banner status sinkronisasi di navbar.
+    // Status sinkronisasi ditunjukkan oleh ring/titik pada foto profil.
+    if (active) setDatabaseConnectionStatus('syncing');
+    else if (databaseRequestCount === 0 && databaseConnectionState === 'syncing') {
+        setDatabaseConnectionStatus(databaseRequestBatchFailed ? 'error' : 'online');
     }
 }
 
@@ -8136,6 +8272,9 @@ async function logoutUser() {
         setBootstrapLoading(false);
         currentUser = null;
         currentBranchId = 'all';
+        databaseRequestCount = 0;
+        databaseRequestBatchFailed = false;
+        setDatabaseConnectionStatus('idle');
         showLogin();
         showToast('Berhasil keluar dari sesi.', 'success');
     }
