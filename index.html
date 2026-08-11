@@ -7189,66 +7189,171 @@ function showToast(message, type = 'success') {
 
 
 /* =========================================================
-   GOOGLE SHEETS DATABASE VIA VERCEL API
-   Semua array di atas hanya cache UI, bukan database permanen.
+   GOOGLE SHEETS DATABASE VIA APPS SCRIPT BRIDGE
+
+   ARSITEKTUR FINAL:
+   GitHub/Vercel (index.html statis)
+        -> hidden Apps Script bridge
+        -> google.script.run
+        -> Code.gs
+        -> Google Sheets
+
+   Hanya isi URL Web App Apps Script yang berakhiran /exec.
 ========================================================= */
 const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23E2E8F0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394A3B8'/%3E%3Cpath d='M20 88c4-20 16-30 30-30s26 10 30 30' fill='%2394A3B8'/%3E%3C/svg%3E";
 
-const API_ENDPOINT = window.KARYAHUB_API_ENDPOINT || '/api/karyahub';
+// WAJIB: tempel URL deployment Web App Apps Script yang berakhiran /exec.
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw9TTFJ_GfDyMtBVDqkX1uBUw1WNrKqw6DvkK1NKzDVVH7Cn1RkyzVUK8onPTqLM3KcTQ/exec';
+
+const GAS_BRIDGE_CHANNEL = 'KARYAHUB_GAS_BRIDGE_V1';
+let gasBridgeFrame = null;
+let gasBridgeReadyPromise = null;
+let gasBridgeReadyResolve = null;
+let gasBridgeReadyReject = null;
+let gasBridgeSequence = 0;
+const gasBridgePending = new Map();
+
+function isGasUrlConfigured() {
+    const value = String(GAS_WEB_APP_URL || '').trim();
+    return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(value);
+}
+
+function gasBridgeUrl() {
+    const separator = GAS_WEB_APP_URL.includes('?') ? '&' : '?';
+    return `${GAS_WEB_APP_URL}${separator}bridge=1`;
+}
 
 function hasGasRuntime() {
-    // Dipertahankan agar fungsi lama tidak perlu dirombak.
-    // Pada hosting Vercel, komunikasi database menggunakan Fetch API.
-    return typeof window.fetch === 'function';
+    return isGasUrlConfigured() && typeof window.postMessage === 'function';
+}
+
+function handleGasBridgeMessage(event) {
+    if (!gasBridgeFrame || event.source !== gasBridgeFrame.contentWindow) return;
+
+    const message = event.data;
+    if (!message || message.channel !== GAS_BRIDGE_CHANNEL) return;
+
+    if (message.type === 'ready') {
+        if (gasBridgeReadyResolve) {
+            gasBridgeReadyResolve(true);
+            gasBridgeReadyResolve = null;
+            gasBridgeReadyReject = null;
+        }
+        return;
+    }
+
+    if (!message.id || !gasBridgePending.has(message.id)) return;
+
+    const pending = gasBridgePending.get(message.id);
+    gasBridgePending.delete(message.id);
+    clearTimeout(pending.timeoutId);
+
+    if (message.type === 'error') {
+        const error = new Error(message.error?.message || 'Terjadi kesalahan pada Google Apps Script.');
+        error.code = message.error?.code || 'GAS_BRIDGE_ERROR';
+        pending.reject(error);
+        return;
+    }
+
+    const payload = message.payload;
+    if (payload?.ok === false) {
+        const error = new Error(payload?.error?.message || payload?.message || 'Terjadi kesalahan pada database.');
+        error.code = payload?.error?.code || 'API_ERROR';
+        pending.reject(error);
+        return;
+    }
+
+    pending.resolve(payload);
+}
+
+window.addEventListener('message', handleGasBridgeMessage);
+
+function ensureGasBridge() {
+    if (!isGasUrlConfigured()) {
+        return Promise.reject(new Error(
+            'GAS_WEB_APP_URL belum diisi. Tempel URL Web App Apps Script yang berakhiran /exec pada index.html.'
+        ));
+    }
+
+    if (gasBridgeReadyPromise) return gasBridgeReadyPromise;
+
+    gasBridgeReadyPromise = new Promise((resolve, reject) => {
+        gasBridgeReadyResolve = resolve;
+        gasBridgeReadyReject = reject;
+
+        const frame = document.createElement('iframe');
+        frame.id = 'karyahubGasBridge';
+        frame.src = gasBridgeUrl();
+        frame.tabIndex = -1;
+        frame.setAttribute('aria-hidden', 'true');
+        frame.setAttribute('title', 'KaryaHub Database Bridge');
+        frame.style.position = 'fixed';
+        frame.style.width = '1px';
+        frame.style.height = '1px';
+        frame.style.opacity = '0';
+        frame.style.pointerEvents = 'none';
+        frame.style.border = '0';
+        frame.style.left = '-9999px';
+        frame.style.top = '-9999px';
+
+        frame.addEventListener('load', () => {
+            // Apps Script bridge juga mengirim ready sendiri. Ping ini hanya fallback.
+            try {
+                frame.contentWindow?.postMessage({
+                    channel: GAS_BRIDGE_CHANNEL,
+                    type: 'ping'
+                }, '*');
+            } catch (error) {}
+        });
+
+        frame.addEventListener('error', () => {
+            reject(new Error('Apps Script bridge gagal dimuat. Periksa URL deployment /exec.'));
+        });
+
+        gasBridgeFrame = frame;
+        document.body.appendChild(frame);
+
+        setTimeout(() => {
+            if (gasBridgeReadyResolve) {
+                gasBridgeReadyPromise = null;
+                gasBridgeReadyResolve = null;
+                gasBridgeReadyReject = null;
+                reject(new Error(
+                    'Apps Script bridge tidak merespons. Pastikan deployment Web App menggunakan Execute as: Me dan Who has access: Anyone, lalu gunakan URL /exec terbaru.'
+                ));
+            }
+        }, 20000);
+    });
+
+    return gasBridgeReadyPromise;
 }
 
 async function gasCall(method, ...args) {
-    if (!hasGasRuntime()) {
-        throw new Error('Browser ini tidak mendukung koneksi API.');
-    }
+    await ensureGasBridge();
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    return new Promise((resolve, reject) => {
+        const id = `rpc_${Date.now()}_${++gasBridgeSequence}`;
+        const timeoutId = setTimeout(() => {
+            gasBridgePending.delete(id);
+            reject(new Error('Koneksi ke Google Sheets terlalu lama. Coba lagi.'));
+        }, 30000);
 
-    try {
-        const response = await fetch(API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            credentials: 'same-origin',
-            cache: 'no-store',
-            signal: controller.signal,
-            body: JSON.stringify({
+        gasBridgePending.set(id, { resolve, reject, timeoutId });
+
+        try {
+            gasBridgeFrame.contentWindow.postMessage({
+                channel: GAS_BRIDGE_CHANNEL,
+                type: 'call',
+                id,
                 action: method,
                 args
-            })
-        });
-
-        let payload;
-        try {
-            payload = await response.json();
+            }, '*');
         } catch (error) {
-            throw new Error('Respons API tidak valid.');
+            clearTimeout(timeoutId);
+            gasBridgePending.delete(id);
+            reject(new Error('Gagal mengirim request ke Google Apps Script.'));
         }
-
-        if (!response.ok || payload?.ok === false) {
-            const message = payload?.error?.message || payload?.message || `API error (${response.status})`;
-            const apiError = new Error(message);
-            apiError.code = payload?.error?.code || `HTTP_${response.status}`;
-            throw apiError;
-        }
-
-        return payload;
-    } catch (error) {
-        if (error?.name === 'AbortError') {
-            throw new Error('Koneksi ke database terlalu lama. Coba lagi.');
-        }
-        throw error;
-    } finally {
-        clearTimeout(timeoutId);
-    }
+    });
 }
 
 function getSessionToken() {
