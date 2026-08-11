@@ -1555,6 +1555,15 @@
                                 <i data-lucide="chevron-right" class="w-4 h-4"></i>
                             </button>
 
+                            <button onclick="openChangePasswordModal()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                                <span class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="key-round" class="w-4 h-4"></i>
+                                </span>
+
+                                <span class="flex-1 text-left">Ganti Kata Sandi</span>
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+
                             <button
                                 id="darkModeButton"
                                 type="button"
@@ -2506,6 +2515,24 @@
                         </button>
                     </form>
                 </div>
+
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-50 max-w-3xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-start gap-3 min-w-0">
+                            <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h3 class="text-base font-semibold text-slate-800">Keamanan Akun</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">Ubah kata sandi secara berkala. Setelah diganti, sesi akun di perangkat lain akan otomatis dikeluarkan.</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="openChangePasswordModal()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-brand-200 bg-brand-50 text-brand-600 text-sm font-semibold hover:bg-brand-100 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="key-round" class="w-4 h-4"></i>
+                            Ganti Kata Sandi
+                        </button>
+                    </div>
+                </div>
             </section>
 
             <footer class="mt-8 pb-4 text-center text-sm text-slate-400">
@@ -2698,6 +2725,64 @@
                 </div>
                 <div id="inventoryAreaList" class="space-y-2"></div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL GANTI KATA SANDI
+========================================================= -->
+<div id="changePasswordModal" class="fixed inset-0 z-[58] hidden items-center justify-center p-4">
+    <div id="changePasswordBackdrop" onclick="closeChangePasswordModal()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-200"></div>
+
+    <div id="changePasswordContent" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="changePasswordTitle" class="bg-white rounded-2xl shadow-xl w-full max-w-md relative z-10 transform scale-95 opacity-0 transition-all duration-200 flex flex-col max-h-[90vh]">
+        <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+            <div class="min-w-0">
+                <h3 id="changePasswordTitle" class="text-base font-semibold text-slate-800">Ganti Kata Sandi</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">Masukkan kata sandi saat ini untuk verifikasi.</p>
+            </div>
+            <button type="button" onclick="closeChangePasswordModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Tutup">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div class="p-5 overflow-y-auto">
+            <form id="changePasswordForm" class="space-y-4">
+                <div>
+                    <label for="currentPassword" class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi Saat Ini</label>
+                    <input type="password" id="currentPassword" required maxlength="72" autocomplete="current-password"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                        placeholder="Masukkan kata sandi saat ini">
+                </div>
+
+                <div>
+                    <label for="newPassword" class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi Baru</label>
+                    <input type="password" id="newPassword" required minlength="8" maxlength="72" autocomplete="new-password"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                        placeholder="Minimal 8 karakter">
+                    <p class="text-[11px] text-slate-400 mt-1">Gunakan minimal 8 karakter dan hindari kata sandi lama.</p>
+                </div>
+
+                <div>
+                    <label for="confirmNewPassword" class="block text-sm font-medium text-slate-700 mb-1">Konfirmasi Kata Sandi Baru</label>
+                    <input type="password" id="confirmNewPassword" required minlength="8" maxlength="72" autocomplete="new-password"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                        placeholder="Ulangi kata sandi baru">
+                </div>
+
+                <div class="rounded-xl border border-brand-200 bg-brand-50/60 px-3.5 py-3 flex items-start gap-2.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-brand-600 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-[11px] leading-relaxed text-slate-600">Perangkat yang sedang digunakan tetap masuk. Sesi akun pada perangkat lain akan dikeluarkan setelah kata sandi berhasil diganti.</p>
+                </div>
+            </form>
+        </div>
+
+        <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2.5 bg-slate-50/50 rounded-b-2xl">
+            <button type="button" onclick="closeChangePasswordModal()" class="px-4 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-xl text-sm transition-colors">Batal</button>
+            <button id="changePasswordSubmitBtn" type="submit" form="changePasswordForm" class="px-4 py-2 bg-brand-500 text-white font-semibold rounded-xl hover:bg-brand-600 shadow-glow text-sm flex items-center gap-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+                <i data-lucide="key-round" class="w-4 h-4"></i>
+                <span>Simpan Kata Sandi</span>
+            </button>
         </div>
     </div>
 </div>
@@ -7446,6 +7531,76 @@ function normalizeAvatar(value) {
     return String(value || '').trim() || DEFAULT_AVATAR;
 }
 
+let bootstrapLoadSequence = 0;
+
+function clearRuntimeData() {
+    branches = [];
+    employees = [];
+    attendanceByBranch = {};
+    activityLogs = [];
+    inventoryAreas = [];
+    inventories = [];
+    inventoryCheckSessions = [];
+    messRules = [];
+    positionSops = [];
+    PAYROLL_ALLOWANCES = {};
+    internalAnnouncements = [];
+    documentArchive = [];
+    helpGuides = [];
+    helpFaqs = [];
+    departments = [];
+}
+
+function applyAuthenticatedUser(user) {
+    currentUser = user ? { ...user, avatar: normalizeAvatar(user.avatar) } : null;
+}
+
+function setBootstrapLoading(active) {
+    let indicator = document.getElementById('bootstrapLoadingIndicator');
+    if (active) {
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'bootstrapLoadingIndicator';
+            indicator.setAttribute('role', 'status');
+            indicator.innerHTML = `
+                <span class="inline-block w-3 h-3 rounded-full border-2 border-brand-500/30 border-t-brand-500 animate-spin"></span>
+                <span>Menyinkronkan data...</span>
+            `;
+            indicator.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid var(--border-color);border-radius:999px;background:var(--bg-elevated);color:var(--text-secondary);font-size:11px;font-weight:600;box-shadow:var(--shadow-soft);';
+            document.body.appendChild(indicator);
+        }
+        indicator.classList.remove('hidden');
+    } else if (indicator) {
+        indicator.classList.add('hidden');
+    }
+}
+
+async function loadBootstrapAfterAuth({ silent = false } = {}) {
+    const token = getSessionToken();
+    if (!token || !currentUser) return;
+
+    const sequence = ++bootstrapLoadSequence;
+    const startedAt = performance.now();
+    setBootstrapLoading(true);
+
+    try {
+        const response = await gasCall('apiBootstrap', token);
+        if (sequence !== bootstrapLoadSequence || token !== getSessionToken()) return;
+
+        applyBootstrapData(response.data);
+        currentBranchId = getRoleConfig(currentUser)?.multiBranch
+            ? 'all'
+            : (getAccessibleBranchIds(currentUser)[0] || currentBranchId || 'all');
+        showApp(false);
+        console.info(`[KaryaHub] Data aplikasi dimuat dalam ${Math.round(performance.now() - startedAt)} ms`);
+    } catch (error) {
+        if (!silent) handleServerError(error, 'Data aplikasi belum berhasil dimuat.');
+        else console.warn('[KaryaHub] Bootstrap gagal:', error);
+    } finally {
+        if (sequence === bootstrapLoadSequence) setBootstrapLoading(false);
+    }
+}
+
 function applyBootstrapData(data = {}) {
     currentUser = data.currentUser ? { ...data.currentUser, avatar: normalizeAvatar(data.currentUser.avatar) } : null;
     branches = Array.isArray(data.branches) ? data.branches : [];
@@ -7487,6 +7642,8 @@ function handleServerError(error, fallback = 'Terjadi kesalahan saat menyimpan d
     const message = error?.message || fallback;
     if (isSessionErrorMessage(message)) {
         clearLoginSession();
+        bootstrapLoadSequence++;
+        setBootstrapLoading(false);
         currentUser = null;
         showLogin();
     }
@@ -7507,13 +7664,21 @@ async function handleLogin(event) {
     }
 
     try {
+        const startedAt = performance.now();
         const response = await gasCall('apiLogin', username, password, rememberMe);
         saveLoginSession(response.token, rememberMe);
-        applyBootstrapData(response.data);
-        currentBranchId = getRoleConfig(currentUser)?.multiBranch ? 'all' : (getAccessibleBranchIds(currentUser)[0] || 'all');
+
+        // Masuk ke aplikasi SEGERA setelah autentikasi. Data lain menyusul di background.
+        clearRuntimeData();
+        applyAuthenticatedUser(response.user);
+        currentBranchId = getRoleConfig(currentUser)?.multiBranch ? 'all' : 'all';
         $('#loginForm').reset();
         showApp();
         showToast(`Selamat datang, ${currentUser.name}!`, 'success');
+        console.info(`[KaryaHub] Autentikasi selesai dalam ${Math.round(performance.now() - startedAt)} ms`);
+
+        // Jangan await: pemuatan Sheets lengkap tidak lagi menahan layar login.
+        loadBootstrapAfterAuth();
     } catch (error) {
         handleServerError(error, 'Login gagal.');
     } finally {
@@ -7542,11 +7707,15 @@ async function checkSession() {
 
     try {
         const response = await gasCall('apiResume', token);
-        applyBootstrapData(response.data);
-        currentBranchId = getRoleConfig(currentUser)?.multiBranch ? 'all' : (getAccessibleBranchIds(currentUser)[0] || 'all');
+        clearRuntimeData();
+        applyAuthenticatedUser(response.user);
+        currentBranchId = getRoleConfig(currentUser)?.multiBranch ? 'all' : 'all';
         showApp(false);
+        loadBootstrapAfterAuth({ silent: true });
     } catch (error) {
         clearLoginSession();
+        bootstrapLoadSequence++;
+        setBootstrapLoading(false);
         currentUser = null;
         showLogin();
         handleServerError(error, 'Sesi tidak dapat dipulihkan.');
@@ -7561,6 +7730,8 @@ async function logoutUser() {
         console.warn(error);
     } finally {
         clearLoginSession();
+        bootstrapLoadSequence++;
+        setBootstrapLoading(false);
         currentUser = null;
         currentBranchId = 'all';
         showLogin();
@@ -7585,6 +7756,109 @@ async function saveProfile(event) {
         showToast(response.message || 'Profil berhasil disimpan.', 'success');
     } catch (error) {
         handleServerError(error);
+    }
+}
+
+function openChangePasswordModal() {
+    if (!currentUser || !getSessionToken()) {
+        showToast('Sesi login tidak tersedia.', 'error');
+        return;
+    }
+
+    closeProfileDropdown();
+    const modal = $('#changePasswordModal');
+    const backdrop = $('#changePasswordBackdrop');
+    const content = $('#changePasswordContent');
+    const form = $('#changePasswordForm');
+    if (!modal || !backdrop || !content || !form) return;
+
+    form.reset();
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        content.classList.remove('opacity-0', 'scale-95');
+        content.classList.add('opacity-100', 'scale-100');
+    });
+
+    // Jangan memicu keyboard virtual HP saat modal baru dibuka.
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+    }
+    setTimeout(() => content.focus({ preventScroll: true }), 30);
+    refreshIcons();
+}
+
+function closeChangePasswordModal(force = false) {
+    const modal = $('#changePasswordModal');
+    const backdrop = $('#changePasswordBackdrop');
+    const content = $('#changePasswordContent');
+    if (!modal || modal.classList.contains('hidden')) return;
+
+    backdrop.classList.remove('opacity-100');
+    backdrop.classList.add('opacity-0');
+    content.classList.remove('opacity-100', 'scale-100');
+    content.classList.add('opacity-0', 'scale-95');
+
+    const finish = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        $('#changePasswordForm')?.reset();
+        setChangePasswordSubmitting(false);
+    };
+
+    if (force) finish();
+    else setTimeout(finish, 200);
+}
+
+function setChangePasswordSubmitting(isSubmitting) {
+    const button = $('#changePasswordSubmitBtn');
+    if (!button) return;
+    button.disabled = Boolean(isSubmitting);
+    const label = button.querySelector('span');
+    if (label) label.textContent = isSubmitting ? 'Menyimpan...' : 'Simpan Kata Sandi';
+}
+
+async function handleChangePasswordSubmit(event) {
+    event.preventDefault();
+    if (!currentUser) return;
+
+    const currentPassword = $('#currentPassword').value;
+    const newPassword = $('#newPassword').value;
+    const confirmPassword = $('#confirmNewPassword').value;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showToast('Semua field kata sandi wajib diisi.', 'error');
+        return;
+    }
+    if (newPassword.length < 8) {
+        showToast('Kata sandi baru minimal 8 karakter.', 'error');
+        return;
+    }
+    if (newPassword.length > 72) {
+        showToast('Kata sandi baru maksimal 72 karakter.', 'error');
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        showToast('Konfirmasi kata sandi baru tidak sama.', 'error');
+        return;
+    }
+    if (currentPassword === newPassword) {
+        showToast('Kata sandi baru harus berbeda dari kata sandi saat ini.', 'error');
+        return;
+    }
+
+    setChangePasswordSubmitting(true);
+    try {
+        const response = await gasCall('apiChangePassword', getSessionToken(), currentPassword, newPassword);
+        closeChangePasswordModal(true);
+        showToast(response.message || 'Kata sandi berhasil diubah.', 'success');
+    } catch (error) {
+        handleServerError(error, 'Kata sandi tidak dapat diubah.');
+    } finally {
+        setChangePasswordSubmitting(false);
     }
 }
 
@@ -7937,6 +8211,7 @@ document.addEventListener('keydown', event => {
         closeInventoryModal();
         closeInventoryAreaModal();
         closeInventoryCheckDetailModal();
+        closeChangePasswordModal();
     }
 });
 
@@ -7947,6 +8222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#togglePasswordBtn').addEventListener('click', togglePasswordVisibility);
     $('#employeeForm').addEventListener('submit', handleEmployeeSubmit);
     $('#profileForm').addEventListener('submit', saveProfile);
+    $('#changePasswordForm').addEventListener('submit', handleChangePasswordSubmit);
     $('#branchSelector').addEventListener('change', handleBranchChange);
     $('#messRuleForm').addEventListener('submit', handleMessRuleSubmit);
     $('#sopForm').addEventListener('submit', handleSopSubmit);
