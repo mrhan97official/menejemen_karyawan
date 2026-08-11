@@ -1573,6 +1573,11 @@
                 Data Karyawan
             </button>
 
+            <button onclick="switchPage('roles')" data-target="roles" class="nav-btn-desktop w-full flex items-center px-4 py-3 rounded-xl font-medium transition-colors">
+                <i data-lucide="shield-check" class="w-5 h-5 mr-3"></i>
+                Role & Akses
+            </button>
+
             <button onclick="switchPage('departemen')" data-target="departemen" class="nav-btn-desktop w-full flex items-center px-4 py-3 rounded-xl font-medium transition-colors">
                 <i data-lucide="briefcase" class="w-5 h-5 mr-3"></i>
                 Departemen
@@ -2026,6 +2031,27 @@
             </section>
 
 
+            <!-- ROLE & AKSES -->
+            <section id="page-roles" class="page-view hidden space-y-5 sm:space-y-6">
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-50">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-10 h-10 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                                <div><h2 class="text-lg sm:text-xl font-semibold text-slate-800">Role & Akses Tambahan</h2><p class="text-xs text-slate-500 mt-0.5">Role jabatan tetap menjadi akses default. Admin/Owner dapat menambahkan izin tertentu tanpa mengubah role utama.</p></div>
+                            </div>
+                        </div>
+                        <div class="relative w-full lg:w-72 flex-shrink-0"><i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i><input id="roleAccessSearchInput" type="search" placeholder="Cari nama, ID, jabatan..." class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40"></div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-soft border border-slate-50">
+                    <div class="flex items-center justify-between gap-3 mb-4"><div><h3 class="text-sm sm:text-base font-semibold text-slate-800">Pilih Karyawan</h3><p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">Klik karyawan untuk mengatur checkbox akses tambahan.</p></div><span id="roleAccessEmployeeCount" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-semibold">0 Karyawan</span></div>
+                    <div id="roleAccessEmployeeGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+                    <div id="roleAccessEmpty" class="hidden py-12 text-center"><i data-lucide="user-round-search" class="w-8 h-8 text-slate-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-3">Karyawan tidak ditemukan</p><p class="text-xs text-slate-500 mt-1">Coba ubah pencarian atau cabang aktif.</p></div>
+                </div>
+            </section>
+
+
             <!-- DEPARTEMEN & JABATAN -->
             <section id="page-departemen" class="page-view hidden space-y-6">
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-50">
@@ -2280,6 +2306,19 @@
 
                 <!-- Team schedule: shown to management/non-employee roles -->
                 <div id="scheduleTeamView" class="hidden space-y-4 sm:space-y-6">
+                    <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-soft border border-slate-50">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                            <div>
+                                <h3 class="text-base sm:text-lg font-semibold text-slate-800">Master Shift</h3>
+                                <p class="text-[11px] sm:text-xs text-slate-500 mt-1">Atur nama shift, jam kerja, dan hari kerja opsional per cabang.</p>
+                            </div>
+                            <button id="addShiftButton" type="button" onclick="openShiftModal()" class="hidden items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4"></i>Tambah Shift
+                            </button>
+                        </div>
+                        <div id="scheduleShiftMasterList" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+                    </div>
+
                     <div id="scheduleShiftSummary" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"></div>
 
                     <div class="bg-white rounded-2xl shadow-soft border border-slate-50 overflow-hidden">
@@ -2678,20 +2717,15 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center"><i data-lucide="clipboard-check" class="w-5 h-5"></i></div>
-                                    <div><h3 class="text-base sm:text-lg font-semibold text-slate-800">Pemeriksaan Inventaris Shift</h3><p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Cek jumlah dan kondisi inventaris pada area kerja Anda setiap shift.</p></div>
+                                    <div><h3 class="text-base sm:text-lg font-semibold text-slate-800">Pemeriksaan Inventaris Shift</h3><p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Cek jumlah dan kondisi seluruh inventaris cabang Anda setiap shift.</p></div>
                                 </div>
                             </div>
                             <div id="inventoryCheckIdentity" class="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 text-[11px] text-slate-600"></div>
                         </div>
 
-                        <div class="mt-5 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-3 items-end">
-                            <div>
-                                <label for="inventoryCheckArea" class="block text-xs font-medium text-slate-700 mb-1.5">Area yang diperiksa</label>
-                                <select id="inventoryCheckArea" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
-                                    <option value="">Pilih area</option>
-                                </select>
-                            </div>
-                            <div id="inventoryCheckTodayStatus" class="text-[11px] text-slate-500 pb-2"></div>
+                        <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-3">
+                            <div class="min-w-0"><p class="text-xs font-semibold text-slate-700">Pemeriksaan otomatis mengikuti daftar inventaris</p><p class="text-[10px] text-slate-500 mt-0.5">Area sudah ditentukan saat inventaris didaftarkan. Semua barang pada cabang Anda langsung dikelompokkan per area.</p></div>
+                            <div id="inventoryCheckTodayStatus" class="text-[11px] text-slate-500 flex-shrink-0"></div>
                         </div>
                     </div>
 
@@ -2926,6 +2960,16 @@
 <!-- =========================================================
      MODAL INVENTARIS
 ========================================================= -->
+<!-- ROLE ACCESS MODAL -->
+<div id="roleAccessModal" class="fixed inset-0 z-[58] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeRoleAccessModal()"></div>
+    <div id="roleAccessModalPanel" tabindex="-1" class="relative z-10 w-full max-w-2xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-start justify-between gap-3 bg-slate-50/70"><div class="min-w-0"><h3 class="text-base sm:text-lg font-semibold text-slate-800">Atur Role & Akses</h3><p id="roleAccessModalSubtitle" class="text-[10px] sm:text-xs text-slate-500 mt-0.5">-</p></div><button type="button" onclick="closeRoleAccessModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+        <form id="roleAccessForm" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5"><input id="roleAccessEmployeeId" type="hidden"><div id="roleAccessEmployeeSummary" class="rounded-2xl bg-slate-50 border border-slate-100 p-4"></div><div><div class="flex items-center justify-between gap-3 mb-3"><div><h4 class="text-sm font-semibold text-slate-800">Akses Fitur</h4><p class="text-[10px] text-slate-500 mt-0.5">Checkbox bertanda Default berasal dari role jabatan dan tidak dapat dimatikan dari sini.</p></div><button type="button" onclick="clearEmployeeExtraAccess()" class="text-[10px] sm:text-xs font-semibold text-red-600 hover:text-red-700">Hapus akses tambahan</button></div><div id="roleAccessPermissionList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div></div></form>
+        <div class="px-5 sm:px-6 py-4 border-t border-slate-100 bg-slate-50/60 flex justify-end gap-2"><button type="button" onclick="closeRoleAccessModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-200">Batal</button><button type="submit" form="roleAccessForm" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold inline-flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Simpan Akses</button></div>
+    </div>
+</div>
+
 <div id="inventoryModal" class="fixed inset-0 z-[56] hidden items-center justify-center p-4">
     <div onclick="closeInventoryModal()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
     <div id="inventoryModalPanel" tabindex="-1" class="relative z-10 w-full max-w-2xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
@@ -3194,6 +3238,7 @@
                 <select id="positionRoleKey" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30">
                     <option value="employee">Karyawan · akses operasional dasar</option>
                     <option value="cashier">Kasir · akses kasir / view operasional</option>
+                    <option value="supervisor">Supervisor · kelola jadwal & shift cabang</option>
                     <option value="manager">Manajer · kelola operasional cabang</option>
                 </select>
                 <p class="text-[10px] text-slate-400 mt-1">Admin dan Owner tetap dibuat sebagai akun sistem agar hak akses tingkat tinggi tidak diberikan tanpa sengaja.</p>
@@ -3338,13 +3383,8 @@
 
                     <div>
                         <label for="empShift" class="block text-sm font-medium text-slate-700 mb-1">Shift Kerja</label>
-                        <select id="empShift" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
-                            <option value="shift1">Shift 1 · Pagi (07:00 - 15:00)</option>
-                            <option value="shift2">Shift 2 · Siang (15:00 - 23:00)</option>
-                            <option value="shift3">Shift 3 · Malam (23:00 - 07:00)</option>
-                            <option value="office">Non-Shift · Office (08:00 - 17:00)</option>
-                        </select>
-                        <p class="text-[11px] text-slate-400 mt-1">Shift ini akan tampil pada halaman Jadwal karyawan.</p>
+                        <select id="empShift" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"></select>
+                        <p id="empShiftHelper" class="text-[11px] text-slate-400 mt-1">Shift mengikuti master shift pada cabang penempatan.</p>
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
@@ -3650,6 +3690,63 @@
 </div>
 
 
+<!-- SHIFT MASTER MODAL -->
+<div id="shiftModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div id="shiftModalBackdrop" onclick="closeShiftModal()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-200"></div>
+    <div id="shiftModalContent" tabindex="-1" class="bg-white rounded-2xl shadow-xl w-full max-w-lg relative z-10 transform scale-95 opacity-0 transition-all duration-200 flex flex-col max-h-[90dvh]">
+        <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-wider text-brand-600">Jadwal & Shift</p>
+                <h3 id="shiftModalTitle" class="text-base sm:text-lg font-semibold text-slate-800 mt-0.5">Tambah Shift</h3>
+            </div>
+            <button type="button" onclick="closeShiftModal()" class="p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div class="p-5 sm:p-6 overflow-y-auto">
+            <form id="shiftForm" class="space-y-4">
+                <input type="hidden" id="shiftId">
+                <div>
+                    <label for="shiftBranch" class="block text-sm font-medium text-slate-700 mb-1">Cabang</label>
+                    <select id="shiftBranch" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"></select>
+                </div>
+                <div>
+                    <label for="shiftName" class="block text-sm font-medium text-slate-700 mb-1">Nama Shift</label>
+                    <input id="shiftName" type="text" required maxlength="60" placeholder="Contoh: Shift 1" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="shiftStartTime" class="block text-sm font-medium text-slate-700 mb-1">Jam Mulai</label>
+                        <input id="shiftStartTime" type="time" required class="w-full min-w-0 max-w-full px-3 sm:px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                    </div>
+                    <div>
+                        <label for="shiftEndTime" class="block text-sm font-medium text-slate-700 mb-1">Jam Selesai</label>
+                        <input id="shiftEndTime" type="time" required class="w-full min-w-0 max-w-full px-3 sm:px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                        <label class="block text-sm font-medium text-slate-700">Hari Kerja <span class="font-normal text-slate-400">(opsional)</span></label>
+                        <button type="button" onclick="clearShiftWorkDays()" class="text-[11px] font-semibold text-brand-600 hover:underline">Kosongkan</button>
+                    </div>
+                    <div id="shiftWorkDays" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Senin" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Senin</label>
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Selasa" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Selasa</label>
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Rabu" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Rabu</label>
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Kamis" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Kamis</label>
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Jumat" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Jumat</label>
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Sabtu" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Sabtu</label>
+                        <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-700 cursor-pointer"><input type="checkbox" name="shiftWorkDay" value="Minggu" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">Minggu</label>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-2">Jika tidak ada hari dipilih, shift dianggap fleksibel dan tidak dibatasi hari tertentu.</p>
+                </div>
+            </form>
+        </div>
+        <div class="px-5 sm:px-6 py-4 border-t border-slate-100 flex justify-end gap-2 bg-slate-50/50 rounded-b-2xl">
+            <button type="button" onclick="closeShiftModal()" class="px-4 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-xl text-sm">Batal</button>
+            <button id="shiftSubmitButton" type="submit" form="shiftForm" class="px-4 py-2 bg-brand-600 text-white font-semibold rounded-xl hover:bg-brand-700 shadow-glow text-sm inline-flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Simpan Shift</button>
+        </div>
+    </div>
+</div>
+
 <!-- TOAST -->
 <div id="toastContainer" class="fixed bottom-20 md:bottom-4 right-3 md:right-4 z-[60] flex flex-col items-end gap-2"></div>
 
@@ -3664,24 +3761,31 @@ const THEME_KEY = 'karyahub_theme';
 const ROLE_CONFIG = {
     admin: {
         label: 'Admin',
-        pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['employee.create', 'employee.edit', 'employee.delete', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage', 'branch.manage', 'department.manage', 'position.manage'],
+        pages: ['dasbor', 'karyawan', 'roles', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
+        permissions: ['employee.create', 'employee.edit', 'employee.delete', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage', 'branch.manage', 'department.manage', 'position.manage', 'shift.manage', 'role.manage'],
         multiBranch: true,
         description: 'Akses penuh ke seluruh fitur dan seluruh cabang perusahaan.'
     },
     owner: {
         label: 'Owner',
-        pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['inventory.review', 'branch.manage', 'department.manage', 'position.manage'],
+        pages: ['dasbor', 'karyawan', 'roles', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
+        permissions: ['inventory.review', 'branch.manage', 'department.manage', 'position.manage', 'shift.manage', 'role.manage'],
         multiBranch: true,
         description: 'Memantau seluruh cabang serta mengelola master cabang dan departemen perusahaan.'
     },
     manager: {
         label: 'Manajer',
         pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'payroll', 'reports', 'announcements', 'documents', 'help', 'profil'],
-        permissions: ['employee.create', 'employee.edit', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage'],
+        permissions: ['employee.create', 'employee.edit', 'employee.status', 'inventory.manage', 'inventory.review', 'mess.manage', 'sop.manage', 'shift.manage'],
         multiBranch: false,
         description: 'Mengelola karyawan dan operasional pada cabang yang ditugaskan, tanpa izin menghapus.'
+    },
+    supervisor: {
+        label: 'Supervisor',
+        pages: ['dasbor', 'karyawan', 'departemen', 'cabang', 'kehadiran', 'jadwal', 'inventory', 'aktivitas', 'mess', 'sop', 'announcements', 'documents', 'help', 'profil'],
+        permissions: ['shift.manage'],
+        multiBranch: false,
+        description: 'Mengawasi jadwal dan shift operasional pada cabang yang ditugaskan.'
     },
     cashier: {
         label: 'Kasir',
@@ -3698,6 +3802,24 @@ const ROLE_CONFIG = {
         description: 'Akses personal ke dasbor, kehadiran, jadwal, pemeriksaan inventaris shift, dan profil pada cabang tempat bekerja.'
     }
 };
+
+const EXTRA_ACCESS_CATALOG = [
+    { permission: 'employee.directory.view', label: 'Lihat Direktori Karyawan', description: 'Melihat data karyawan pada cabang yang dapat diakses.', page: 'karyawan', icon: 'users' },
+    { permission: 'employee.create', label: 'Tambah Karyawan', description: 'Menambahkan data karyawan baru.', page: 'karyawan', icon: 'user-plus' },
+    { permission: 'employee.edit', label: 'Edit Karyawan', description: 'Mengubah informasi karyawan.', page: 'karyawan', icon: 'user-round-pen' },
+    { permission: 'employee.status', label: 'Ubah Status Karyawan', description: 'Mengubah status Aktif, Resign, atau Blacklist.', page: 'karyawan', icon: 'badge-check' },
+    { permission: 'department.view', label: 'Lihat Departemen & Jabatan', description: 'Membuka struktur departemen dan jabatan.', page: 'departemen', icon: 'briefcase-business' },
+    { permission: 'activity.view', label: 'Lihat Aktivitas', description: 'Melihat riwayat aktivitas operasional.', page: 'aktivitas', icon: 'activity' },
+    { permission: 'inventory.check', label: 'Cek Inventaris Shift', description: 'Melakukan pemeriksaan inventaris pada shift aktif.', page: 'inventory', icon: 'clipboard-check' },
+    { permission: 'inventory.review', label: 'Review Hasil Inventaris', description: 'Melihat dan meninjau hasil pemeriksaan inventaris.', page: 'inventory', icon: 'scan-search' },
+    { permission: 'inventory.manage', label: 'Kelola Inventaris', description: 'Tambah, edit, hapus inventaris dan area.', page: 'inventory', icon: 'package-cog' },
+    { permission: 'shift.manage', label: 'Kelola Jadwal & Shift', description: 'Tambah, edit, dan hapus master shift.', page: 'jadwal', icon: 'calendar-cog' },
+    { permission: 'mess.manage', label: 'Kelola Aturan Mess', description: 'Tambah dan ubah aturan mess.', page: 'mess', icon: 'house-cog' },
+    { permission: 'sop.manage', label: 'Kelola SOP Jabatan', description: 'Tambah dan ubah SOP jabatan.', page: 'sop', icon: 'clipboard-pen' },
+    { permission: 'payroll.view', label: 'Lihat Penggajian', description: 'Melihat ringkasan gaji dan tunjangan.', page: 'payroll', icon: 'wallet-cards' },
+    { permission: 'reports.view', label: 'Lihat Laporan & Statistik', description: 'Melihat halaman laporan dan statistik.', page: 'reports', icon: 'chart-no-axes-combined' }
+];
+let employeeAccessOverrides = {};
 
 let branches = [];
 
@@ -3729,6 +3851,7 @@ let positions = [];
 
 const HOME_MENU_ITEMS = [
     { page: 'karyawan', label: 'Karyawan', icon: 'users', tone: 'brand' },
+    { page: 'roles', label: 'Role & Akses', icon: 'shield-check', tone: 'violet' },
     { page: 'departemen', label: 'Departemen', icon: 'briefcase-business', tone: 'blue' },
     { page: 'cabang', label: 'Cabang', icon: 'building-2', tone: 'blue' },
     { page: 'kehadiran', label: 'Kehadiran', icon: 'calendar-check-2', tone: 'violet' },
@@ -3749,7 +3872,11 @@ let inventoryCheckSessions = [];
 
 let inventoryActiveTab = 'list';
 
-const SHIFT_CONFIG = {
+let shifts = [];
+
+const SHIFT_DAY_NAMES = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+const LEGACY_SHIFT_CONFIG = {
     shift1: {
         label: 'Shift 1',
         name: 'Pagi',
@@ -3806,6 +3933,10 @@ const pageMeta = {
     karyawan: {
         title: 'Data Karyawan',
         subtitle: 'Kelola seluruh informasi dan data pegawai.'
+    },
+    roles: {
+        title: 'Role & Akses',
+        subtitle: 'Atur akses tambahan karyawan di luar role default jabatan.'
     },
     departemen: {
         title: 'Departemen Perusahaan',
@@ -3869,6 +4000,7 @@ const pageMeta = {
 const topbarPageConfig = {
     dasbor: { branch: false, search: false },
     karyawan: { branch: true, search: true },
+    roles: { branch: true, search: false },
     departemen: { branch: true, search: false },
     cabang: { branch: false, search: false },
     kehadiran: { branch: true, search: false },
@@ -4161,12 +4293,45 @@ function getEmployeeAllowance(employee) {
     return Number(PAYROLL_ALLOWANCES[employee.id] || 0);
 }
 
-function getShiftConfig(shiftKey) {
-    return SHIFT_CONFIG[shiftKey] || SHIFT_CONFIG.office;
+function getShiftMasterById(shiftKey, branchId = '') {
+    const key = String(shiftKey ?? '').trim();
+    if (!key) return null;
+    return shifts.find(item => String(item.id) === key && (!branchId || String(item.branchId) === String(branchId))) || null;
 }
 
-function getShiftBadgeHTML(shiftKey, compact = false) {
-    const shift = getShiftConfig(shiftKey);
+function getShiftConfig(shiftKey, branchId = '') {
+    const master = getShiftMasterById(shiftKey, branchId) || getShiftMasterById(shiftKey);
+    if (master) {
+        const numericId = Number(master.id || 0);
+        const tones = ['brand', 'blue', 'amber', 'violet'];
+        const icons = ['clock-3', 'sunrise', 'sun', 'moon-star'];
+        return {
+            id: master.id,
+            displayName: master.name || `Shift ${master.id}`,
+            label: master.name || `Shift ${master.id}`,
+            name: '',
+            time: `${master.startTime || '--:--'} - ${master.endTime || '--:--'}`,
+            shortTime: `${master.startTime || '--:--'}–${master.endTime || '--:--'}`,
+            startTime: master.startTime || '',
+            endTime: master.endTime || '',
+            icon: icons[Math.abs(numericId) % icons.length],
+            tone: tones[Math.abs(numericId) % tones.length],
+            workDays: Array.isArray(master.workDays) ? master.workDays : [],
+            branchId: master.branchId || branchId || '',
+            isMaster: true
+        };
+    }
+
+    const legacy = LEGACY_SHIFT_CONFIG[shiftKey] || LEGACY_SHIFT_CONFIG.office;
+    return { ...legacy, displayName: `${legacy.label}${legacy.name ? ` · ${legacy.name}` : ''}`, isMaster: false };
+}
+
+function getShiftDisplayName(shiftKey, branchId = '') {
+    return getShiftConfig(shiftKey, branchId).displayName;
+}
+
+function getShiftBadgeHTML(shiftKey, compact = false, branchId = '') {
+    const shift = getShiftConfig(shiftKey, branchId);
     const toneClasses = {
         brand: 'bg-brand-50 text-brand-600 border-brand-100',
         amber: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -4174,7 +4339,7 @@ function getShiftBadgeHTML(shiftKey, compact = false) {
         blue: 'bg-blue-50 text-blue-600 border-blue-200'
     };
     const classes = toneClasses[shift.tone] || toneClasses.blue;
-    return `<span class="inline-flex items-center gap-1.5 ${compact ? 'px-2 py-1 text-[10px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg border font-semibold ${classes}"><i data-lucide="${escapeHTML(shift.icon)}" class="w-3.5 h-3.5"></i>${escapeHTML(shift.label)} · ${escapeHTML(shift.name)}</span>`;
+    return `<span class="inline-flex items-center gap-1.5 ${compact ? 'px-2 py-1 text-[10px]' : 'px-2.5 py-1.5 text-xs'} rounded-lg border font-semibold ${classes}"><i data-lucide="${escapeHTML(shift.icon)}" class="w-3.5 h-3.5"></i>${escapeHTML(shift.displayName)}</span>`;
 }
 
 function getCurrentEmployeeRecord() {
@@ -4193,55 +4358,122 @@ function getCurrentEmployeeRecord() {
 }
 
 function renderPersonalSchedule(employee) {
-    const shift = getShiftConfig(employee.shift);
+    const shift = getShiftConfig(employee.shift, employee.branchId);
     const today = new Date();
     const todayLabel = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
     $('#scheduleMyName').textContent = employee.name;
     $('#scheduleMyBranch').textContent = getBranchName(employee.branchId);
-    $('#scheduleMyShiftLabel').textContent = `${shift.label} · ${shift.name}`;
+    $('#scheduleMyShiftLabel').textContent = shift.displayName;
     $('#scheduleMyTime').textContent = shift.time;
     $('#scheduleMyToday').textContent = `${todayLabel} · Jadwal mengikuti shift penempatan Anda.`;
 
     const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
     $('#scheduleMyWeeklyGrid').innerHTML = days.map(day => {
-        const working = shift.workDays.includes(day);
+        const flexibleDays = !Array.isArray(shift.workDays) || shift.workDays.length === 0;
+        const working = flexibleDays || shift.workDays.includes(day);
         return `
             <div class="rounded-2xl border ${working ? 'border-slate-100 bg-slate-50' : 'border-slate-100 bg-white'} p-3 text-center min-w-0">
                 <p class="text-[10px] font-medium text-slate-500">${day}</p>
                 <div class="mt-2 w-8 h-8 mx-auto rounded-xl ${working ? getMenuToneClasses(shift.tone) : 'bg-slate-100 text-slate-400'} flex items-center justify-center">
                     <i data-lucide="${working ? escapeHTML(shift.icon) : 'coffee'}" class="w-4 h-4"></i>
                 </div>
-                <p class="mt-2 text-[10px] font-semibold ${working ? 'text-slate-700' : 'text-slate-400'}">${working ? escapeHTML(shift.label) : 'Libur'}</p>
+                <p class="mt-2 text-[10px] font-semibold ${working ? 'text-slate-700' : 'text-slate-400'}">${working ? escapeHTML(flexibleDays ? 'Fleksibel' : shift.displayName) : 'Libur'}</p>
                 <p class="text-[9px] text-slate-400 mt-0.5">${working ? escapeHTML(shift.shortTime) : '—'}</p>
             </div>
         `;
     }).join('');
 }
 
+function isCurrentUserSupervisor() {
+    if (!currentUser?.employeeRecordId) return false;
+    const employee = employees.find(item => String(item.id) === String(currentUser.employeeRecordId));
+    if (!employee) return false;
+    const masterPosition = positions.find(item => String(item.id) === String(employee.positionId || ''));
+    const label = String(masterPosition?.name || employee.position || '');
+    return /\bsupervisor\b/i.test(label);
+}
+
+function canManageShiftMaster() {
+    return hasPermission('shift.manage') || isCurrentUserSupervisor();
+}
+
+function getScopedShifts() {
+    const accessible = getAccessibleBranchIds(currentUser);
+    return shifts.filter(shift => {
+        if (!accessible.includes(String(shift.branchId))) return false;
+        return currentBranchId === 'all' || String(shift.branchId) === String(currentBranchId);
+    });
+}
+
+function formatShiftWorkDays(days = []) {
+    return Array.isArray(days) && days.length ? days.join(', ') : 'Fleksibel · hari tidak dibatasi';
+}
+
+function renderShiftMasterList() {
+    const container = $('#scheduleShiftMasterList');
+    const addButton = $('#addShiftButton');
+    if (!container || !addButton) return;
+
+    const canManage = canManageShiftMaster();
+    addButton.classList.toggle('hidden', !canManage);
+    addButton.classList.toggle('inline-flex', canManage);
+
+    const rows = getScopedShifts().sort((a, b) => {
+        const branchCompare = getBranchName(a.branchId).localeCompare(getBranchName(b.branchId), 'id');
+        return branchCompare || String(a.startTime || '').localeCompare(String(b.startTime || '')) || String(a.name || '').localeCompare(String(b.name || ''), 'id');
+    });
+
+    container.innerHTML = rows.length ? rows.map(shift => {
+        const config = getShiftConfig(shift.id, shift.branchId);
+        const branchShifts = shifts.filter(item => String(item.branchId) === String(shift.branchId));
+        return `
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 min-w-0">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0 flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl ${getMenuToneClasses(config.tone)} flex items-center justify-center flex-shrink-0"><i data-lucide="${escapeHTML(config.icon)}" class="w-4 h-4"></i></div>
+                        <div class="min-w-0">
+                            <h4 class="text-sm font-semibold text-slate-800 truncate">${escapeHTML(shift.name)}</h4>
+                            <p class="text-[10px] text-slate-500 mt-0.5 truncate">${escapeHTML(getBranchName(shift.branchId))}</p>
+                        </div>
+                    </div>
+                    ${canManage ? `<div class="flex items-center gap-1 flex-shrink-0"><button type="button" onclick="openShiftModal(${Number(shift.id)})" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50" title="Edit shift"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button type="button" onclick="deleteShiftMaster(${Number(shift.id)})" class="p-2 rounded-lg text-red-500 hover:bg-red-50 ${branchShifts.length <= 1 ? 'opacity-40 cursor-not-allowed' : ''}" title="Hapus shift" ${branchShifts.length <= 1 ? 'disabled' : ''}><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>` : ''}
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <div class="rounded-xl border border-slate-100 bg-white px-3 py-2"><p class="text-[9px] uppercase tracking-wide text-slate-400">Jam Kerja</p><p class="text-xs font-semibold text-slate-700 mt-0.5">${escapeHTML(config.time)}</p></div>
+                    <div class="rounded-xl border border-slate-100 bg-white px-3 py-2"><p class="text-[9px] uppercase tracking-wide text-slate-400">Karyawan</p><p class="text-xs font-semibold text-slate-700 mt-0.5">${employees.filter(emp => emp.status === 'Aktif' && String(emp.branchId) === String(shift.branchId) && String(emp.shift) === String(shift.id)).length}</p></div>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-3 leading-relaxed">${escapeHTML(formatShiftWorkDays(shift.workDays))}</p>
+            </div>`;
+    }).join('') : `<div class="col-span-full rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center"><i data-lucide="clock-3" class="w-6 h-6 text-slate-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-2">Belum ada shift</p><p class="text-[11px] text-slate-500 mt-1">Sistem akan mempertahankan minimal satu shift pada setiap cabang.</p></div>`;
+}
+
 function renderTeamSchedule() {
     const scopedEmployees = getScopedEmployees().filter(employee => employee.status === 'Aktif');
-    const summary = Object.entries(SHIFT_CONFIG).map(([key, shift]) => ({
-        key,
+    const scopedShifts = getScopedShifts();
+    const summary = scopedShifts.map(shift => ({
         shift,
-        count: scopedEmployees.filter(employee => (employee.shift || 'office') === key).length
+        config: getShiftConfig(shift.id, shift.branchId),
+        count: scopedEmployees.filter(employee => String(employee.shift) === String(shift.id) && String(employee.branchId) === String(shift.branchId)).length
     }));
+
+    renderShiftMasterList();
 
     $('#scheduleShiftSummary').innerHTML = summary.map(item => `
         <div class="bg-white rounded-2xl border border-slate-50 shadow-soft p-4 min-w-0">
             <div class="flex items-center justify-between gap-3">
-                <div class="w-9 h-9 rounded-xl ${getMenuToneClasses(item.shift.tone)} flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="${escapeHTML(item.shift.icon)}" class="w-4 h-4"></i>
+                <div class="w-9 h-9 rounded-xl ${getMenuToneClasses(item.config.tone)} flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="${escapeHTML(item.config.icon)}" class="w-4 h-4"></i>
                 </div>
                 <span class="text-xl font-bold text-slate-800">${item.count}</span>
             </div>
-            <p class="text-xs font-semibold text-slate-700 mt-3">${escapeHTML(item.shift.label)} · ${escapeHTML(item.shift.name)}</p>
-            <p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(item.shift.time)}</p>
+            <p class="text-xs font-semibold text-slate-700 mt-3">${escapeHTML(item.shift.name)}</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(item.config.time)}</p>
         </div>
     `).join('');
 
     $('#scheduleRosterBody').innerHTML = scopedEmployees.length ? scopedEmployees.map(employee => {
-        const shift = getShiftConfig(employee.shift);
+        const shift = getShiftConfig(employee.shift, employee.branchId);
         return `
             <tr class="hover:bg-slate-50/70 transition-colors">
                 <td class="px-5 py-4">
@@ -4252,9 +4484,9 @@ function renderTeamSchedule() {
                 </td>
                 <td class="px-5 py-4 text-xs text-slate-600">${escapeHTML(getBranchName(employee.branchId))}</td>
                 <td class="px-5 py-4"><p class="text-xs font-medium text-slate-700">${escapeHTML(employee.position)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(employee.department)}</p></td>
-                <td class="px-5 py-4">${getShiftBadgeHTML(employee.shift, true)}</td>
+                <td class="px-5 py-4">${getShiftBadgeHTML(employee.shift, true, employee.branchId)}</td>
                 <td class="px-5 py-4 text-xs font-medium text-slate-700 whitespace-nowrap">${escapeHTML(shift.time)}</td>
-                <td class="px-5 py-4 text-[11px] text-slate-500 min-w-[190px]">${escapeHTML(shift.workDays.join(', '))}</td>
+                <td class="px-5 py-4 text-[11px] text-slate-500 min-w-[190px]">${escapeHTML(formatShiftWorkDays(shift.workDays))}</td>
             </tr>
         `;
     }).join('') : `<tr><td colspan="6" class="px-5 py-10 text-center text-sm text-slate-500">Tidak ada karyawan aktif pada ruang kerja ini.</td></tr>`;
@@ -4265,7 +4497,7 @@ function renderSchedule() {
     const teamView = $('#scheduleTeamView');
     if (!personalView || !teamView) return;
 
-    const isEmployeeRole = Boolean(currentUser?.employeeRecordId && ['employee', 'cashier'].includes(currentUser?.roleKey));
+    const isEmployeeRole = Boolean(currentUser?.employeeRecordId && ['employee', 'cashier'].includes(currentUser?.roleKey) && !canManageShiftMaster());
     const employeeRecord = isEmployeeRole ? getCurrentEmployeeRecord() : null;
 
     if (isEmployeeRole) {
@@ -4288,6 +4520,114 @@ function renderSchedule() {
         renderTeamSchedule();
     }
     refreshIcons();
+}
+
+function populateShiftBranchOptions(selectedBranchId = '') {
+    const select = $('#shiftBranch');
+    if (!select) return;
+    const accessible = getAccessibleBranchIds(currentUser);
+    const preferred = selectedBranchId || (currentBranchId !== 'all' ? currentBranchId : accessible[0] || '');
+    select.innerHTML = accessible.map(branchId => `<option value="${escapeHTML(branchId)}">${escapeHTML(getBranchName(branchId))}</option>`).join('');
+    if (accessible.includes(String(preferred))) select.value = String(preferred);
+    const lock = !getRoleConfig(currentUser)?.multiBranch;
+    select.disabled = lock;
+    select.classList.toggle('opacity-70', lock);
+    select.classList.toggle('cursor-not-allowed', lock);
+}
+
+function clearShiftWorkDays() {
+    document.querySelectorAll('input[name="shiftWorkDay"]').forEach(input => { input.checked = false; });
+}
+
+function openShiftModal(shiftId = null) {
+    if (!canManageShiftMaster()) {
+        showToast('Anda tidak memiliki izin mengelola shift.', 'error');
+        return;
+    }
+    const shift = shiftId ? shifts.find(item => Number(item.id) === Number(shiftId)) : null;
+    const modal = $('#shiftModal');
+    const backdrop = $('#shiftModalBackdrop');
+    const content = $('#shiftModalContent');
+    $('#shiftForm').reset();
+    $('#shiftId').value = shift?.id || '';
+    $('#shiftModalTitle').textContent = shift ? 'Edit Shift' : 'Tambah Shift';
+    populateShiftBranchOptions(shift?.branchId || '');
+    $('#shiftName').value = shift?.name || (getScopedShifts().length ? `Shift ${getScopedShifts().length + 1}` : 'Shift 1');
+    $('#shiftStartTime').value = shift?.startTime || '08:00';
+    $('#shiftEndTime').value = shift?.endTime || '17:00';
+    const selectedDays = new Set(Array.isArray(shift?.workDays) ? shift.workDays : []);
+    document.querySelectorAll('input[name="shiftWorkDay"]').forEach(input => { input.checked = selectedDays.has(input.value); });
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        content.classList.remove('opacity-0', 'scale-95');
+        content.classList.add('opacity-100', 'scale-100');
+        content.focus({ preventScroll: true });
+    });
+    refreshIcons();
+}
+
+function closeShiftModal() {
+    const modal = $('#shiftModal');
+    const backdrop = $('#shiftModalBackdrop');
+    const content = $('#shiftModalContent');
+    if (!modal || modal.classList.contains('hidden')) return;
+    backdrop.classList.remove('opacity-100');
+    backdrop.classList.add('opacity-0');
+    content.classList.remove('opacity-100', 'scale-100');
+    content.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 180);
+}
+
+async function handleShiftSubmit(event) {
+    event.preventDefault();
+    if (!canManageShiftMaster()) return;
+    const button = $('#shiftSubmitButton');
+    const original = button.innerHTML;
+    const workDays = Array.from(document.querySelectorAll('input[name="shiftWorkDay"]:checked')).map(input => input.value);
+    const payload = {
+        id: $('#shiftId').value ? Number($('#shiftId').value) : null,
+        branchId: $('#shiftBranch').value,
+        name: $('#shiftName').value.trim(),
+        startTime: $('#shiftStartTime').value,
+        endTime: $('#shiftEndTime').value,
+        workDays
+    };
+    if (!payload.branchId || !payload.name || !payload.startTime || !payload.endTime) {
+        showToast('Lengkapi cabang, nama shift, jam mulai, dan jam selesai.', 'error');
+        return;
+    }
+    try {
+        button.disabled = true;
+        button.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span><span>Menyimpan...</span>';
+        const response = await gasCall('apiSaveShift', getSessionToken(), payload);
+        closeShiftModal();
+        closeRoleAccessModal();
+        applyServerResponse(response);
+        showToast(response.message || 'Shift berhasil disimpan.', 'success');
+    } catch (error) {
+        handleServerError(error, 'Shift tidak dapat disimpan.');
+    } finally {
+        button.disabled = false;
+        button.innerHTML = original;
+        refreshIcons();
+    }
+}
+
+async function deleteShiftMaster(shiftId) {
+    if (!canManageShiftMaster()) return;
+    const shift = shifts.find(item => Number(item.id) === Number(shiftId));
+    if (!shift) return;
+    if (!confirm(`Hapus shift "${shift.name}"? Shift yang masih digunakan karyawan atau merupakan shift terakhir cabang tidak dapat dihapus.`)) return;
+    try {
+        const response = await gasCall('apiDeleteShift', getSessionToken(), Number(shiftId));
+        applyServerResponse(response);
+        showToast(response.message || 'Shift berhasil dihapus.', 'success');
+    } catch (error) {
+        handleServerError(error, 'Shift tidak dapat dihapus.');
+    }
 }
 
 function renderPayroll() {
@@ -4472,111 +4812,62 @@ function getEmployeeInventoryCheckContext() {
     return {
         employee,
         branchId: employee.branchId,
-        shift: employee.shift || 'office',
-        shiftConfig: getShiftConfig(employee.shift || 'office')
+        shift: employee.shift || shifts.find(item => String(item.branchId) === String(employee.branchId))?.id || '',
+        shiftConfig: getShiftConfig(employee.shift, employee.branchId)
     };
+}
+
+function buildInventoryCheckItemCard(item, index, previous) {
+    const actualQty = previous?.actualQuantity ?? item.quantity;
+    const actualCondition = previous?.actualCondition || 'Baik';
+    const note = previous?.note || '';
+    const expected = Number(item.quantity || 0);
+    const qtyOk = Number(actualQty) === expected;
+    const conditionOk = actualCondition === 'Baik';
+    const rowOk = qtyOk && conditionOk;
+    return `<div class="bg-white rounded-2xl p-4 sm:p-5 shadow-soft border ${rowOk ? 'border-slate-50' : 'border-amber-200'}" data-inventory-check-row="${item.id}" data-check-expected="${expected}" data-check-area="${escapeHTML(item.area || '')}">
+        <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-amber-50 text-amber-700'} flex items-center justify-center flex-shrink-0" data-check-index-badge><span class="text-xs font-bold">${index + 1}</span></div>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-start justify-between gap-2"><div class="min-w-0"><div class="flex flex-wrap items-center gap-1.5"><p class="text-sm font-semibold text-slate-800 truncate">${escapeHTML(item.name)}</p><span class="px-1.5 py-0.5 rounded-md bg-violet-50 text-violet-700 text-[8px] font-bold">${escapeHTML(item.area || 'Tanpa Area')}</span></div><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(item.code || 'Tanpa kode')} · ${escapeHTML(item.location)}</p></div><button type="button" onclick="markInventoryCheckItemOk(${item.id})" class="flex-shrink-0 px-2.5 py-1.5 rounded-lg ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-slate-100 text-slate-600'} text-[10px] font-semibold inline-flex items-center gap-1" data-check-ok-button><i data-lucide="check" class="w-3 h-3"></i> Sesuai</button></div>
+                <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-3"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Jumlah</p><span data-check-qty-status class="text-[10px] font-semibold ${qtyOk ? 'text-brand-600' : 'text-amber-700'}">${qtyOk ? 'Lengkap' : 'Ada selisih'}</span></div><div class="flex items-center gap-2"><button type="button" onclick="adjustInventoryCheckQty(${item.id}, -1)" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="minus" class="w-4 h-4"></i></button><div class="flex-1 relative"><input data-check-qty type="number" inputmode="numeric" min="0" step="1" value="${Number(actualQty)}" oninput="updateInventoryCheckRowState(this.closest('[data-inventory-check-row]'))" class="w-full h-9 px-2 pr-10 text-center bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50"><span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-slate-400">${escapeHTML(item.unit)}</span></div><button type="button" onclick="adjustInventoryCheckQty(${item.id}, 1)" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4"></i></button></div><p class="text-[9px] text-slate-400 text-center mt-1.5">Seharusnya ${expected.toLocaleString('id-ID')} ${escapeHTML(item.unit)}</p></div>
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-3"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Kondisi</p><span data-check-condition-status class="text-[10px] font-semibold ${conditionOk ? 'text-brand-600' : 'text-amber-700'}">${escapeHTML(actualCondition)}</span></div><input type="hidden" data-check-condition value="${escapeHTML(actualCondition)}"><div class="grid grid-cols-2 gap-1.5">${['Baik','Perlu Perbaikan','Rusak','Hilang'].map(condition => { const selected = condition === actualCondition; return `<button type="button" onclick="setInventoryCheckCondition(${item.id}, '${condition}')" data-check-condition-button="${condition}" class="px-2 py-2 rounded-lg border text-[9px] sm:text-[10px] font-semibold transition-colors ${selected ? (condition === 'Baik' ? 'bg-brand-50 border-brand-200 text-brand-600' : 'bg-amber-50 border-amber-200 text-amber-700') : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100'}">${condition}</button>`; }).join('')}</div></div>
+                </div>
+                <div class="mt-3"><textarea data-check-note rows="1" placeholder="Catatan bila ada masalah (opsional)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50">${escapeHTML(note)}</textarea></div>
+            </div>
+        </div>
+    </div>`;
 }
 
 function renderInventoryShiftCheck() {
     const container = $('#inventoryCheckItems');
-    const areaSelect = $('#inventoryCheckArea');
     const submitWrap = $('#inventoryCheckSubmitWrap');
     const toolbar = $('#inventoryCheckToolbar');
-    if (!container || !areaSelect || !submitWrap) return;
-
+    if (!container || !submitWrap) return;
     const ctx = getEmployeeInventoryCheckContext();
     if (!ctx || !canPerformInventoryShiftCheck()) {
-        $('#inventoryCheckIdentity').innerHTML = '<span class="text-red-600">Akun ini belum terhubung dengan data karyawan aktif.</span>';
-        areaSelect.innerHTML = '<option value="">Area tidak tersedia</option>';
-        container.innerHTML = '<div class="bg-white rounded-2xl border border-slate-50 p-8 text-center shadow-soft"><i data-lucide="user-round-x" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-3">Pemeriksaan belum tersedia</p><p class="text-xs text-slate-500 mt-1">Hubungi Admin atau Manajer agar akun Anda terhubung dengan Data Karyawan aktif.</p></div>';
-        submitWrap.classList.add('hidden');
-        toolbar?.classList.add('hidden');
-        refreshIcons();
-        return;
+        $('#inventoryCheckIdentity').innerHTML = '<span class="text-red-600">Akun ini belum terhubung dengan data karyawan aktif atau belum memiliki akses cek inventaris.</span>';
+        container.innerHTML = '<div class="bg-white rounded-2xl border border-slate-50 p-8 text-center shadow-soft"><i data-lucide="user-round-x" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-3">Pemeriksaan belum tersedia</p><p class="text-xs text-slate-500 mt-1">Hubungi Admin atau Owner untuk memastikan akun dan akses pemeriksaan Anda aktif.</p></div>';
+        submitWrap.classList.add('hidden'); toolbar?.classList.add('hidden'); refreshIcons(); return;
     }
-
-    $('#inventoryCheckIdentity').innerHTML = `<span class="font-semibold text-slate-700">${escapeHTML(ctx.employee.name)}</span><span class="mx-1.5 text-slate-300">•</span>${escapeHTML(getBranchName(ctx.branchId))}<br><span class="text-slate-500">${escapeHTML(ctx.shiftConfig.label)} · ${escapeHTML(ctx.shiftConfig.name)} · ${escapeHTML(ctx.shiftConfig.time)}</span>`;
-
-    const areas = getInventoryAreasForBranch(ctx.branchId).filter(area => inventories.some(item => item.branchId === ctx.branchId && item.area === area.name));
-    const currentArea = areaSelect.value;
-    areaSelect.innerHTML = '<option value="">Pilih area</option>' + areas.map(area => `<option value="${escapeHTML(area.name)}">${escapeHTML(area.name)}</option>`).join('');
-    if (areas.some(area => area.name === currentArea)) areaSelect.value = currentArea;
-
-    const selectedArea = areaSelect.value;
+    $('#inventoryCheckIdentity').innerHTML = `<span class="font-semibold text-slate-700">${escapeHTML(ctx.employee.name)}</span><span class="mx-1.5 text-slate-300">•</span>${escapeHTML(getBranchName(ctx.branchId))}<br><span class="text-slate-500">${escapeHTML(ctx.shiftConfig.displayName)} · ${escapeHTML(ctx.shiftConfig.time)}</span>`;
     const todayKey = getJakartaDateKey();
-    if (!selectedArea) {
-        container.innerHTML = '<div class="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center"><i data-lucide="map-pin-check" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-medium text-slate-700 mt-3">Pilih area yang akan diperiksa</p><p class="text-xs text-slate-500 mt-1">Semua inventaris pada area tersebut akan tampil sekaligus.</p></div>';
-        submitWrap.classList.add('hidden');
-        toolbar?.classList.add('hidden');
-        $('#inventoryCheckTodayStatus').textContent = '';
-        refreshIcons();
-        return;
-    }
-
-    const existing = inventoryCheckSessions.find(session => session.dateKey === todayKey && session.branchId === ctx.branchId && session.shift === ctx.shift && session.area === selectedArea && String(session.employeeRecordId) === String(ctx.employee.id));
-    $('#inventoryCheckTodayStatus').innerHTML = existing
-        ? `<span class="inline-flex items-center gap-1 text-brand-600 font-semibold"><i data-lucide="circle-check" class="w-3.5 h-3.5"></i>Laporan shift sudah tersimpan</span>`
-        : '<span class="text-slate-500">Belum disimpan pada shift ini</span>';
-
-    const items = inventories.filter(item => item.branchId === ctx.branchId && item.area === selectedArea);
+    const existing = inventoryCheckSessions.find(session => session.dateKey === todayKey && session.branchId === ctx.branchId && session.shift === ctx.shift && session.area === 'Semua Area' && String(session.employeeRecordId) === String(ctx.employee.id));
+    $('#inventoryCheckTodayStatus').innerHTML = existing ? `<span class="inline-flex items-center gap-1 text-brand-600 font-semibold"><i data-lucide="circle-check" class="w-3.5 h-3.5"></i>Laporan shift sudah tersimpan</span>` : '<span class="text-slate-500">Belum disimpan pada shift ini</span>';
+    const items = inventories.filter(item => item.branchId === ctx.branchId).sort((a,b) => String(a.area || '').localeCompare(String(b.area || ''), 'id') || String(a.name || '').localeCompare(String(b.name || ''), 'id'));
     if (!items.length) {
-        container.innerHTML = '<div class="bg-white rounded-2xl border border-slate-50 p-8 text-center"><p class="text-sm text-slate-600">Belum ada inventaris pada area ini.</p></div>';
-        submitWrap.classList.add('hidden');
-        toolbar?.classList.add('hidden');
-        return;
+        container.innerHTML = '<div class="bg-white rounded-2xl border border-slate-50 p-8 text-center"><i data-lucide="package-search" class="w-7 h-7 text-slate-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-3">Belum ada inventaris</p><p class="text-xs text-slate-500 mt-1">Daftar inventaris cabang ini masih kosong.</p></div>';
+        submitWrap.classList.add('hidden'); toolbar?.classList.add('hidden'); refreshIcons(); return;
     }
-
-    container.innerHTML = items.map((item, index) => {
-        const previous = existing?.items?.find(row => Number(row.inventoryId) === Number(item.id));
-        const actualQty = previous?.actualQuantity ?? item.quantity;
-        const actualCondition = previous?.actualCondition || 'Baik';
-        const note = previous?.note || '';
-        const expected = Number(item.quantity || 0);
-        const qtyOk = Number(actualQty) === expected;
-        const conditionOk = actualCondition === 'Baik';
-        const rowOk = qtyOk && conditionOk;
-        return `<div class="bg-white rounded-2xl p-4 sm:p-5 shadow-soft border ${rowOk ? 'border-slate-50' : 'border-amber-200'}" data-inventory-check-row="${item.id}" data-check-expected="${expected}">
-            <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-amber-50 text-amber-700'} flex items-center justify-center flex-shrink-0" data-check-index-badge><span class="text-xs font-bold">${index + 1}</span></div>
-                <div class="min-w-0 flex-1">
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="min-w-0"><p class="text-sm font-semibold text-slate-800 truncate">${escapeHTML(item.name)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(item.code || 'Tanpa kode')} · ${escapeHTML(item.location)}</p></div>
-                        <button type="button" onclick="markInventoryCheckItemOk(${item.id})" class="flex-shrink-0 px-2.5 py-1.5 rounded-lg ${rowOk ? 'bg-brand-50 text-brand-600' : 'bg-slate-100 text-slate-600'} text-[10px] font-semibold inline-flex items-center gap-1" data-check-ok-button><i data-lucide="check" class="w-3 h-3"></i> Sesuai</button>
-                    </div>
-
-                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3">
-                            <div class="flex items-center justify-between gap-2 mb-2"><p class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Jumlah</p><span data-check-qty-status class="text-[10px] font-semibold ${qtyOk ? 'text-brand-600' : 'text-amber-700'}">${qtyOk ? 'Lengkap' : 'Ada selisih'}</span></div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="adjustInventoryCheckQty(${item.id}, -1)" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="minus" class="w-4 h-4"></i></button>
-                                <div class="flex-1 relative"><input data-check-qty type="number" inputmode="numeric" min="0" step="1" value="${Number(actualQty)}" oninput="updateInventoryCheckRowState(this.closest('[data-inventory-check-row]'))" class="w-full h-9 px-2 pr-10 text-center bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50"><span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-slate-400">${escapeHTML(item.unit)}</span></div>
-                                <button type="button" onclick="adjustInventoryCheckQty(${item.id}, 1)" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 inline-flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                            </div>
-                            <p class="text-[9px] text-slate-400 text-center mt-1.5">Seharusnya ${expected.toLocaleString('id-ID')} ${escapeHTML(item.unit)}</p>
-                        </div>
-
-                        <div class="rounded-xl bg-slate-50 border border-slate-100 p-3">
-                            <div class="flex items-center justify-between gap-2 mb-2"><p class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Kondisi</p><span data-check-condition-status class="text-[10px] font-semibold ${conditionOk ? 'text-brand-600' : 'text-amber-700'}">${escapeHTML(actualCondition)}</span></div>
-                            <input type="hidden" data-check-condition value="${escapeHTML(actualCondition)}">
-                            <div class="grid grid-cols-2 gap-1.5">
-                                ${['Baik','Perlu Perbaikan','Rusak','Hilang'].map(condition => {
-                                    const selected = condition === actualCondition;
-                                    return `<button type="button" onclick="setInventoryCheckCondition(${item.id}, '${condition}')" data-check-condition-button="${condition}" class="px-2 py-2 rounded-lg border text-[9px] sm:text-[10px] font-semibold transition-colors ${selected ? (condition === 'Baik' ? 'bg-brand-50 border-brand-200 text-brand-600' : 'bg-amber-50 border-amber-200 text-amber-700') : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100'}">${condition}</button>`;
-                                }).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3"><textarea data-check-note rows="1" placeholder="Catatan bila ada masalah (opsional)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50">${escapeHTML(note)}</textarea></div>
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-    toolbar?.classList.remove('hidden');
-    submitWrap.classList.remove('hidden');
-    submitWrap.querySelector('button[type="submit"]').innerHTML = existing ? '<i data-lucide="refresh-cw" class="w-4 h-4"></i> Perbarui 1 Laporan Shift' : '<i data-lucide="save" class="w-4 h-4"></i> Simpan 1 Laporan Shift';
-    updateInventoryCheckProgress();
-    refreshIcons();
+    let globalIndex = 0;
+    const grouped = new Map();
+    items.forEach(item => { const area = item.area || 'Tanpa Area'; if (!grouped.has(area)) grouped.set(area, []); grouped.get(area).push(item); });
+    container.innerHTML = [...grouped.entries()].map(([area, areaItems]) => `<section class="space-y-3"><div class="flex items-center gap-2 px-1 pt-1"><div class="w-7 h-7 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center"><i data-lucide="map-pinned" class="w-3.5 h-3.5"></i></div><div><p class="text-xs font-bold text-slate-700">${escapeHTML(area)}</p><p class="text-[9px] text-slate-500">${areaItems.length} item</p></div></div>${areaItems.map(item => { const previous = existing?.items?.find(row => Number(row.inventoryId) === Number(item.id)); return buildInventoryCheckItemCard(item, globalIndex++, previous); }).join('')}</section>`).join('');
+    toolbar?.classList.remove('hidden'); submitWrap.classList.remove('hidden');
+    const submitButton = submitWrap.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.innerHTML = existing ? '<i data-lucide="refresh-cw" class="w-4 h-4"></i> Perbarui Pemeriksaan Shift' : '<i data-lucide="save" class="w-4 h-4"></i> Simpan Pemeriksaan Shift';
+    updateInventoryCheckProgress(); refreshIcons();
 }
 
 function getInventoryCheckRowById(id) {
@@ -4678,56 +4969,6 @@ function updateInventoryCheckProgress() {
         : `Semua ${rows.length} item sesuai. Siap disimpan sebagai 1 laporan shift.`;
 }
 
-function handleInventoryShiftCheckSubmit(event) {
-    event.preventDefault();
-    const ctx = getEmployeeInventoryCheckContext();
-    const area = $('#inventoryCheckArea')?.value || '';
-    if (!ctx || !canPerformInventoryShiftCheck() || !area) {
-        showToast('Pilih area inventaris yang akan diperiksa.', 'error');
-        return;
-    }
-    const rows = [...$$('[data-inventory-check-row]')];
-    if (!rows.length) {
-        showToast('Tidak ada inventaris yang dapat diperiksa pada area ini.', 'error');
-        return;
-    }
-    const items = rows.map(row => {
-        const inventoryId = Number(row.dataset.inventoryCheckRow);
-        const master = inventories.find(item => Number(item.id) === inventoryId);
-        return {
-            inventoryId,
-            name: master?.name || 'Inventaris',
-            unit: master?.unit || 'unit',
-            expectedQuantity: Number(master?.quantity || 0),
-            actualQuantity: Math.max(0, Number(row.querySelector('[data-check-qty]')?.value || 0)),
-            actualCondition: row.querySelector('[data-check-condition]')?.value || 'Baik',
-            note: row.querySelector('[data-check-note]')?.value.trim() || ''
-        };
-    });
-    const dateKey = getJakartaDateKey();
-    const existingIndex = inventoryCheckSessions.findIndex(session => session.dateKey === dateKey && session.branchId === ctx.branchId && session.shift === ctx.shift && session.area === area && String(session.employeeRecordId) === String(ctx.employee.id));
-    const session = {
-        id: existingIndex >= 0 ? inventoryCheckSessions[existingIndex].id : Date.now(),
-        branchId: ctx.branchId,
-        area,
-        shift: ctx.shift,
-        checkerName: ctx.employee.name,
-        checkerUsername: ctx.employee.username,
-        employeeRecordId: ctx.employee.id,
-        timestamp: new Date().toISOString(),
-        dateKey,
-        items
-    };
-    if (existingIndex >= 0) inventoryCheckSessions[existingIndex] = session;
-    else inventoryCheckSessions.unshift(session);
-    const summary = getInventoryCheckSessionSummary(session);
-    addActivity('inventory', existingIndex >= 0 ? 'Hasil cek inventaris diperbarui' : 'Pemeriksaan inventaris shift', `${ctx.employee.name} memeriksa area ${area} · ${summary.ok ? 'semua sesuai' : `${summary.issueCount} temuan`}.`, ctx.branchId);
-    showToast(summary.ok ? 'Pemeriksaan inventaris berhasil dikirim. Semua sesuai.' : `Pemeriksaan terkirim dengan ${summary.issueCount} temuan.`, summary.ok ? 'success' : 'error');
-    renderInventoryShiftCheck();
-    renderInventoryCheckHistory();
-    renderActivities();
-}
-
 function getScopedInventoryCheckSessions() {
     const accessible = getAccessibleBranchIds();
     let sessions = inventoryCheckSessions.filter(session => accessible.includes(session.branchId) && (currentBranchId === 'all' || session.branchId === currentBranchId));
@@ -4746,7 +4987,7 @@ function renderInventoryCheckHistory() {
     const sessions = getScopedInventoryCheckSessions();
     const currentArea = filter.value || 'all';
     const areas = [...new Set(sessions.map(session => session.area).filter(Boolean))].sort((a,b) => a.localeCompare(b,'id'));
-    filter.innerHTML = '<option value="all">Semua Area</option>' + areas.map(area => `<option value="${escapeHTML(area)}">${escapeHTML(area)}</option>`).join('');
+    filter.innerHTML = '<option value="all">Semua Laporan</option>' + areas.map(area => `<option value="${escapeHTML(area)}">${escapeHTML(area)}</option>`).join('');
     filter.value = areas.includes(currentArea) ? currentArea : 'all';
     const filtered = sessions.filter(session => filter.value === 'all' || session.area === filter.value);
 
@@ -4755,11 +4996,11 @@ function renderInventoryCheckHistory() {
     $('#inventoryHistorySubtitle').textContent = reviewer ? 'Pantau hasil cek jumlah dan kondisi inventaris dari setiap shift.' : 'Riwayat cek inventaris yang sudah Anda kirim.';
 
     tbody.innerHTML = filtered.map(session => {
-        const shift = getShiftConfig(session.shift);
+        const shift = getShiftConfig(session.shift, session.branchId);
         const summary = getInventoryCheckSessionSummary(session);
         return `<tr class="hover:bg-slate-50/70 transition-colors">
             <td class="px-5 py-4"><p class="text-xs font-semibold text-slate-700">${escapeHTML(formatCheckTimestamp(session.timestamp))}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(session.dateKey)}</p></td>
-            <td class="px-5 py-4"><p class="text-xs font-semibold text-slate-700">${escapeHTML(session.checkerName)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(shift.label)} · ${escapeHTML(shift.name)}</p></td>
+            <td class="px-5 py-4"><p class="text-xs font-semibold text-slate-700">${escapeHTML(session.checkerName)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(shift.displayName)}</p></td>
             <td class="px-5 py-4"><p class="text-xs font-medium text-slate-700">${escapeHTML(getBranchName(session.branchId))}</p><p class="text-[10px] text-violet-600 font-semibold mt-0.5">${escapeHTML(session.area)}</p></td>
             <td class="px-5 py-4">${getInventoryCheckStatusBadge(session)}<p class="text-[10px] text-slate-500 mt-1"><span class="font-semibold text-brand-600">${summary.okCount}/${summary.total} sesuai</span>${summary.issueCount ? ` · ${summary.issueCount} perlu perhatian` : ''}</p></td>
             <td class="px-5 py-4 text-right"><button type="button" onclick="openInventoryCheckDetailModal(${session.id})" class="px-3 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-[11px] font-semibold inline-flex items-center gap-1.5"><i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail</button></td>
@@ -4784,9 +5025,9 @@ function openInventoryCheckDetailModal(id) {
         showToast('Anda tidak memiliki akses ke hasil pemeriksaan tersebut.', 'error');
         return;
     }
-    const shift = getShiftConfig(session.shift);
+    const shift = getShiftConfig(session.shift, session.branchId);
     const summary = getInventoryCheckSessionSummary(session);
-    $('#inventoryCheckDetailMeta').textContent = `${session.checkerName} · ${getBranchName(session.branchId)} · ${session.area} · ${shift.label} · ${formatCheckTimestamp(session.timestamp)}`;
+    $('#inventoryCheckDetailMeta').textContent = `${session.checkerName} · ${getBranchName(session.branchId)} · ${session.area} · ${shift.displayName} · ${formatCheckTimestamp(session.timestamp)}`;
     $('#inventoryCheckDetailContent').innerHTML = `
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div class="rounded-xl bg-slate-50 border border-slate-100 p-3"><p class="text-[10px] text-slate-500">Item Diperiksa</p><p class="text-lg font-bold text-slate-800 mt-0.5">${summary.total}</p></div>
@@ -4803,7 +5044,7 @@ function openInventoryCheckDetailModal(id) {
             const qtyMismatch = Number(item.actualQuantity) !== Number(item.expectedQuantity);
             const conditionIssue = item.actualCondition !== 'Baik';
             return `<div class="rounded-xl border ${qtyMismatch || conditionIssue ? 'border-amber-200 bg-amber-50/40' : 'border-slate-100 bg-slate-50'} p-3.5">
-                <div class="flex items-start justify-between gap-3"><div><p class="text-sm font-semibold text-slate-800">${escapeHTML(item.name)}</p><p class="text-[10px] text-slate-500 mt-0.5">Tercatat ${Number(item.expectedQuantity).toLocaleString('id-ID')} ${escapeHTML(item.unit)} → Aktual <span class="font-semibold ${qtyMismatch ? 'text-amber-700' : 'text-slate-700'}">${Number(item.actualQuantity).toLocaleString('id-ID')} ${escapeHTML(item.unit)}</span></p></div>${getInventoryConditionBadge(item.actualCondition)}</div>
+                <div class="flex items-start justify-between gap-3"><div><div class="flex flex-wrap items-center gap-1.5"><p class="text-sm font-semibold text-slate-800">${escapeHTML(item.name)}</p>${item.area ? `<span class="px-1.5 py-0.5 rounded bg-violet-50 text-violet-700 text-[8px] font-bold">${escapeHTML(item.area)}</span>` : ''}</div><p class="text-[10px] text-slate-500 mt-0.5">Tercatat ${Number(item.expectedQuantity).toLocaleString('id-ID')} ${escapeHTML(item.unit)} → Aktual <span class="font-semibold ${qtyMismatch ? 'text-amber-700' : 'text-slate-700'}">${Number(item.actualQuantity).toLocaleString('id-ID')} ${escapeHTML(item.unit)}</span></p></div>${getInventoryConditionBadge(item.actualCondition)}</div>
                 ${item.note ? `<p class="text-[11px] text-slate-600 mt-2 pt-2 border-t border-slate-100"><span class="font-semibold">Catatan:</span> ${escapeHTML(item.note)}</p>` : ''}
             </div>`;
         }).join('')}</div>`;
@@ -5219,6 +5460,136 @@ function renderHelp() {
 }
 
 /* =========================================================
+   ROLE & EXTRA ACCESS MANAGEMENT
+========================================================= */
+function getDefaultPermissionSet(roleKey) {
+    const role = ROLE_CONFIG[roleKey];
+    return new Set(role?.permissions || []);
+}
+
+function getEmployeeExtraAccess(employeeId) {
+    const raw = employeeAccessOverrides?.[employeeId] ?? employeeAccessOverrides?.[String(employeeId)] ?? [];
+    return Array.isArray(raw) ? raw : [];
+}
+
+function renderRoleAccessPage() {
+    const grid = $('#roleAccessEmployeeGrid');
+    const empty = $('#roleAccessEmpty');
+    const count = $('#roleAccessEmployeeCount');
+    if (!grid || !empty || !count) return;
+    if (!hasPermission('role.manage')) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        empty.innerHTML = '<i data-lucide="shield-x" class="w-8 h-8 text-red-400 mx-auto"></i><p class="text-sm font-semibold text-slate-700 mt-3">Akses tidak tersedia</p><p class="text-xs text-slate-500 mt-1">Hanya Admin dan Owner yang dapat mengatur akses tambahan.</p>';
+        refreshIcons();
+        return;
+    }
+
+    const query = ($('#roleAccessSearchInput')?.value || '').trim().toLowerCase();
+    const rows = getScopedEmployees().filter(employee => {
+        const haystack = [employee.employeeId, employee.name, employee.username, employee.position, employee.department].join(' ').toLowerCase();
+        return !query || haystack.includes(query);
+    }).sort((a, b) => a.name.localeCompare(b.name, 'id'));
+
+    count.textContent = `${rows.length} Karyawan`;
+    grid.innerHTML = rows.map(employee => {
+        const extras = getEmployeeExtraAccess(employee.id);
+        const roleLabel = POSITION_ROLE_LABELS[employee.accessRoleKey || 'employee'] || ROLE_CONFIG[employee.accessRoleKey]?.label || 'Karyawan';
+        return `<button type="button" onclick="openRoleAccessModal(${Number(employee.id)})" class="w-full text-left rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 hover:border-brand-200 transition-colors p-4 min-w-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <img src="${escapeHTML(normalizeAvatar(employee.avatar))}" alt="${escapeHTML(employee.name)}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 flex-shrink-0">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 truncate">${escapeHTML(employee.name)}</p>
+                    <p class="text-[10px] text-slate-500 truncate mt-0.5">${escapeHTML(employee.employeeId)} · ${escapeHTML(employee.position || '-')}</p>
+                    <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[9px] font-semibold">${escapeHTML(roleLabel)}</span>
+                        <span class="px-2 py-0.5 rounded-full ${extras.length ? 'bg-violet-50 text-violet-700' : 'bg-brand-50 text-brand-700'} text-[9px] font-semibold">${extras.length ? `${extras.length} akses tambahan` : 'Akses default'}</span>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+            </div>
+        </button>`;
+    }).join('');
+
+    const hasRows = rows.length > 0;
+    empty.classList.toggle('hidden', hasRows);
+    grid.classList.toggle('hidden', !hasRows);
+    refreshIcons();
+}
+
+function openRoleAccessModal(employeeId) {
+    if (!hasPermission('role.manage')) return;
+    const employee = employees.find(item => Number(item.id) === Number(employeeId));
+    if (!employee || !canAccessBranch(employee.branchId)) {
+        showToast('Karyawan berada di luar akses cabang Anda.', 'error');
+        return;
+    }
+    const roleKey = employee.accessRoleKey || 'employee';
+    const roleLabel = POSITION_ROLE_LABELS[roleKey] || ROLE_CONFIG[roleKey]?.label || 'Karyawan';
+    const defaults = getDefaultPermissionSet(roleKey);
+    const extras = new Set(getEmployeeExtraAccess(employee.id));
+
+    $('#roleAccessEmployeeId').value = employee.id;
+    $('#roleAccessModalSubtitle').textContent = `${employee.name} · ${getBranchName(employee.branchId)}`;
+    $('#roleAccessEmployeeSummary').innerHTML = `<div class="flex items-center gap-3">
+        <img src="${escapeHTML(normalizeAvatar(employee.avatar))}" alt="${escapeHTML(employee.name)}" class="w-12 h-12 rounded-xl object-cover border border-slate-200 flex-shrink-0">
+        <div class="min-w-0 flex-1"><p class="text-sm font-semibold text-slate-800 truncate">${escapeHTML(employee.name)}</p><p class="text-[10px] text-slate-500 mt-0.5">${escapeHTML(employee.department || '-')} · ${escapeHTML(employee.position || '-')}</p><div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-semibold"><i data-lucide="shield" class="w-3 h-3"></i>Role default: ${escapeHTML(roleLabel)}</div></div>
+    </div>`;
+
+    $('#roleAccessPermissionList').innerHTML = EXTRA_ACCESS_CATALOG.map(item => {
+        const isDefault = defaults.has(item.permission);
+        const isExtra = extras.has(item.permission);
+        const checked = isDefault || isExtra;
+        return `<label class="relative flex items-start gap-3 rounded-xl border ${checked ? 'border-brand-200 bg-brand-50/40' : 'border-slate-200 bg-white'} p-3.5 ${isDefault ? 'cursor-default' : 'cursor-pointer hover:border-brand-200'}">
+            <input type="checkbox" data-role-access-permission="${escapeHTML(item.permission)}" ${checked ? 'checked' : ''} ${isDefault ? 'disabled' : ''} class="mt-0.5 w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+            <span class="w-8 h-8 rounded-lg ${checked ? 'bg-brand-50 text-brand-600' : 'bg-slate-100 text-slate-500'} flex items-center justify-center flex-shrink-0"><i data-lucide="${escapeHTML(item.icon)}" class="w-3.5 h-3.5"></i></span>
+            <span class="min-w-0 flex-1"><span class="flex flex-wrap items-center gap-1.5"><span class="text-xs font-semibold text-slate-800">${escapeHTML(item.label)}</span>${isDefault ? '<span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[8px] font-bold">DEFAULT</span>' : ''}</span><span class="block text-[10px] text-slate-500 leading-relaxed mt-0.5">${escapeHTML(item.description)}</span></span>
+        </label>`;
+    }).join('');
+
+    const modal = $('#roleAccessModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+    requestAnimationFrame(() => $('#roleAccessModalPanel')?.focus({ preventScroll: true }));
+    refreshIcons();
+}
+
+function closeRoleAccessModal() {
+    const modal = $('#roleAccessModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+}
+
+function clearEmployeeExtraAccess() {
+    $$('#roleAccessPermissionList input[type="checkbox"]:not(:disabled)').forEach(input => { input.checked = false; });
+}
+
+async function handleRoleAccessSubmit(event) {
+    event.preventDefault();
+    if (!hasPermission('role.manage')) return;
+    const employeeId = Number($('#roleAccessEmployeeId')?.value || 0);
+    if (!employeeId) return;
+    const permissions = [...$$('#roleAccessPermissionList input[data-role-access-permission]:checked:not(:disabled)')].map(input => input.dataset.roleAccessPermission);
+    const submit = event.currentTarget.closest('#roleAccessModal')?.querySelector('button[type="submit"]');
+    const previous = submit?.innerHTML;
+    if (submit) { submit.disabled = true; submit.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span>Menyimpan'; }
+    try {
+        const response = await gasCall('apiSaveEmployeeAccess', getSessionToken(), employeeId, permissions);
+        applyBootstrapData(response.data);
+        renderRoleAccessPage();
+        closeRoleAccessModal();
+        showToast(response.message || 'Akses tambahan berhasil diperbarui.', 'success');
+    } catch (error) {
+        handleServerError(error);
+    } finally {
+        if (submit) { submit.disabled = false; submit.innerHTML = previous; refreshIcons(); }
+    }
+}
+
+/* =========================================================
    AUTHENTICATION & ROLE ACCESS
 ========================================================= */
 function getRoleConfig(user = currentUser) {
@@ -5449,6 +5820,7 @@ function selectBranch(nextBranch, notify = true) {
     renderInventory();
     renderDepartments();
     renderTable();
+    renderRoleAccessPage();
     renderBranchOverview();
     renderBranchesPage();
     renderActivities();
@@ -5931,14 +6303,18 @@ function addActivity(type, title, detail, branchId = 'all') {
     renderActivities();
 }
 
-function canAccessPage(pageId) {
-    const role = getRoleConfig();
-    return Boolean(role && role.pages.includes(pageId));
-}
-
 function hasPermission(permission) {
     const role = getRoleConfig();
-    return Boolean(role && role.permissions.includes(permission));
+    if (!role) return false;
+    if (role.permissions.includes(permission)) return true;
+    return Array.isArray(currentUser?.extraPermissions) && currentUser.extraPermissions.includes(permission);
+}
+
+function canAccessPage(pageId) {
+    const role = getRoleConfig();
+    if (!role) return false;
+    if (role.pages.includes(pageId)) return true;
+    return EXTRA_ACCESS_CATALOG.some(item => item.page === pageId && hasPermission(item.permission));
 }
 
 function getDefaultPage() {
@@ -6045,12 +6421,12 @@ function applyRoleAccess() {
     const role = getRoleConfig();
 
     $$('.nav-btn-desktop, .nav-btn-mobile').forEach(button => {
-        const allowed = role.pages.includes(button.dataset.target);
+        const allowed = canAccessPage(button.dataset.target);
         button.classList.toggle('hidden', !allowed);
     });
 
     $$('.mobile-home-menu-btn[data-target]').forEach(button => {
-        const allowed = role.pages.includes(button.dataset.target);
+        const allowed = canAccessPage(button.dataset.target);
         button.classList.toggle('hidden', !allowed);
     });
 
@@ -6109,6 +6485,7 @@ function showApp(resetPage = true) {
     renderSchedule();
     renderInventory();
     renderTable();
+    renderRoleAccessPage();
     renderDepartments();
     renderBranchOverview();
     renderBranchesPage();
@@ -6144,6 +6521,7 @@ function showLogin() {
     closeAllMenuModal();
     closeInventoryModal();
     closeInventoryCheckDetailModal();
+    closeRoleAccessModal();
 
     $('#appShell').classList.add('hidden');
     $('#loginScreen').classList.remove('hidden');
@@ -6202,6 +6580,7 @@ function switchPage(pageId) {
     updateNavigationState(pageId);
 
     if (pageId === 'karyawan') applySearch();
+    if (pageId === 'roles') renderRoleAccessPage();
     if (pageId === 'departemen') renderDepartments();
     if (pageId === 'cabang') renderBranchesPage();
     if (pageId === 'kehadiran') updateAttendanceStats();
@@ -6244,6 +6623,7 @@ function updateNavigationState(pageId) {
     const mobileParentMap = {
         dasbor: 'dasbor',
         karyawan: 'karyawan',
+        roles: 'dasbor',
         kehadiran: 'kehadiran',
         jadwal: 'dasbor',
         inventory: 'dasbor',
@@ -6422,6 +6802,7 @@ function getScopedDepartments() {
 const POSITION_ROLE_LABELS = {
     employee: 'Karyawan',
     cashier: 'Kasir',
+    supervisor: 'Supervisor',
     manager: 'Manajer'
 };
 
@@ -6459,6 +6840,7 @@ function getScopedPositions() {
 function getPositionRoleBadge(roleKey) {
     const config = {
         manager: 'bg-violet-50 text-violet-700 border-violet-200',
+        supervisor: 'bg-blue-50 text-blue-700 border-blue-200',
         cashier: 'bg-amber-50 text-amber-700 border-amber-200',
         employee: 'bg-slate-100 text-slate-600 border-slate-200'
     };
@@ -6841,7 +7223,7 @@ function renderTable(data = getScopedEmployees()) {
 
             <td class="px-6 py-4 min-w-[175px]">
                 ${getShiftBadgeHTML(employee.shift)}
-                <div class="text-[10px] text-slate-400 mt-1.5">${escapeHTML(getShiftConfig(employee.shift).time)}</div>
+                <div class="text-[10px] text-slate-400 mt-1.5">${escapeHTML(getShiftConfig(employee.shift, employee.branchId).time)}</div>
             </td>
 
             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
@@ -6915,9 +7297,8 @@ function applySearch() {
             employee.address,
             employee.position,
             employee.department,
-            getShiftConfig(employee.shift).label,
-            getShiftConfig(employee.shift).name,
-            getShiftConfig(employee.shift).time,
+            getShiftConfig(employee.shift, employee.branchId).displayName,
+            getShiftConfig(employee.shift, employee.branchId).time,
             employee.status,
             employee.bank,
             employee.accountNumber,
@@ -6966,6 +7347,28 @@ function populateEmployeeBranchOptions(selectedBranchId = '') {
             ? `Penempatan dikunci ke ${getBranchName(select.value)} sesuai akses role.`
             : 'Pilih cabang tempat karyawan bekerja.';
     }
+}
+
+function populateEmployeeShiftOptions(selectedShiftId = '', branchId = '') {
+    const select = $('#empShift');
+    const helper = $('#empShiftHelper');
+    if (!select) return;
+    const targetBranchId = String(branchId || $('#empBranch')?.value || '');
+    const available = shifts
+        .filter(item => String(item.branchId) === targetBranchId)
+        .sort((a, b) => String(a.startTime || '').localeCompare(String(b.startTime || '')) || String(a.name || '').localeCompare(String(b.name || ''), 'id'));
+
+    select.innerHTML = available.length
+        ? available.map(item => `<option value="${escapeHTML(String(item.id))}">${escapeHTML(item.name)} · ${escapeHTML(item.startTime)} - ${escapeHTML(item.endTime)}</option>`).join('')
+        : '<option value="" selected disabled>Belum ada shift pada cabang ini</option>';
+
+    const selected = String(selectedShiftId || '');
+    if (selected && available.some(item => String(item.id) === selected)) select.value = selected;
+    else if (available.length) select.value = String(available[0].id);
+
+    if (helper) helper.textContent = available.length
+        ? `${available.length} shift aktif tersedia di ${getBranchName(targetBranchId)}.`
+        : 'Belum ada shift. Admin/Owner/Manajer/Supervisor dapat menambahkannya dari halaman Jadwal.';
 }
 
 function canManageEmployee(employee, permission) {
@@ -7037,7 +7440,7 @@ function openEmployeeModal(mode = 'add', data = null) {
         selectedDepartmentRef,
         data?.position || ''
     );
-    $('#empShift').value = data?.shift || 'office';
+    populateEmployeeShiftOptions(data?.shift || '', $('#empBranch').value);
     $('#empSalary').value = data?.salary != null ? formatNominalInput(data.salary) : '';
     $('#empBank').value = data?.bank || '';
     $('#empAccountNumber').value = data?.accountNumber || '';
@@ -7151,8 +7554,8 @@ function openEmployeeCard(id) {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         ${employeeCardItem('briefcase-business', 'Jabatan', employee.position)}
                         ${employeeCardItem('building-2', 'Departemen', employee.department)}
-                        ${employeeCardItem(getShiftConfig(employee.shift).icon, 'Shift Kerja', `${getShiftConfig(employee.shift).label} · ${getShiftConfig(employee.shift).name}`)}
-                        ${employeeCardItem('clock-3', 'Jam Kerja', getShiftConfig(employee.shift).time)}
+                        ${employeeCardItem(getShiftConfig(employee.shift, employee.branchId).icon, 'Shift Kerja', getShiftConfig(employee.shift, employee.branchId).displayName)}
+                        ${employeeCardItem('clock-3', 'Jam Kerja', getShiftConfig(employee.shift, employee.branchId).time)}
                     </div>
                 </div>
 
@@ -8249,12 +8652,14 @@ function clearRuntimeData() {
     messRules = [];
     positionSops = [];
     positions = [];
+    shifts = [];
     PAYROLL_ALLOWANCES = {};
     internalAnnouncements = [];
     documentArchive = [];
     helpGuides = [];
     helpFaqs = [];
     departments = [];
+    employeeAccessOverrides = {};
 }
 
 function applyAuthenticatedUser(user) {
@@ -8355,12 +8760,14 @@ function applyBootstrapData(data = {}) {
     messRules = Array.isArray(data.messRules) ? data.messRules : [];
     positionSops = Array.isArray(data.positionSops) ? data.positionSops : [];
     positions = Array.isArray(data.positions) ? data.positions : [];
+    shifts = Array.isArray(data.shifts) ? data.shifts : [];
     PAYROLL_ALLOWANCES = data.payrollAllowances && typeof data.payrollAllowances === 'object' ? data.payrollAllowances : {};
     internalAnnouncements = Array.isArray(data.internalAnnouncements) ? data.internalAnnouncements : [];
     documentArchive = Array.isArray(data.documentArchive) ? data.documentArchive : [];
     helpGuides = Array.isArray(data.helpGuides) ? data.helpGuides : [];
     helpFaqs = Array.isArray(data.helpFaqs) ? data.helpFaqs : [];
     departments = Array.isArray(data.departments) ? data.departments : [];
+    employeeAccessOverrides = data.employeeAccessOverrides && typeof data.employeeAccessOverrides === 'object' ? data.employeeAccessOverrides : {};
 
     normalizeCurrentBranch();
 }
@@ -8939,40 +9346,19 @@ async function deleteInventory(id) {
 async function handleInventoryShiftCheckSubmit(event) {
     event.preventDefault();
     const ctx = getEmployeeInventoryCheckContext();
-    const area = $('#inventoryCheckArea')?.value || '';
-    if (!ctx || !canPerformInventoryShiftCheck() || !area) {
-        showToast('Pilih area inventaris yang akan diperiksa.', 'error');
-        return;
-    }
+    if (!ctx || !canPerformInventoryShiftCheck()) { showToast('Pemeriksaan inventaris belum tersedia untuk akun ini.', 'error'); return; }
     const rows = [...$$('[data-inventory-check-row]')];
-    if (!rows.length) {
-        showToast('Tidak ada inventaris pada area ini.', 'error');
-        return;
-    }
+    if (!rows.length) { showToast('Tidak ada inventaris yang dapat diperiksa pada cabang ini.', 'error'); return; }
     const items = rows.map(row => {
         const inventoryId = Number(row.dataset.inventoryCheckRow);
         const master = inventories.find(item => Number(item.id) === inventoryId);
-        return {
-            inventoryId,
-            name: master?.name || 'Inventaris',
-            unit: master?.unit || 'unit',
-            expectedQuantity: Number(master?.quantity || 0),
-            actualQuantity: Math.max(0, Number(row.querySelector('[data-check-qty]')?.value || 0)),
-            actualCondition: row.querySelector('[data-check-condition]')?.value || 'Baik',
-            note: row.querySelector('[data-check-note]')?.value.trim() || ''
-        };
+        return { inventoryId, name: master?.name || 'Inventaris', area: master?.area || row.dataset.checkArea || '', unit: master?.unit || 'unit', expectedQuantity: Number(master?.quantity || 0), actualQuantity: Math.max(0, Number(row.querySelector('[data-check-qty]')?.value || 0)), actualCondition: row.querySelector('[data-check-condition]')?.value || 'Baik', note: row.querySelector('[data-check-note]')?.value.trim() || '' };
     });
-
     try {
-        const response = await gasCall('apiSaveInventoryCheck', getSessionToken(), { area, items });
-        applyBootstrapData(response.data);
-        renderInventoryShiftCheck();
-        renderInventoryCheckHistory();
-        renderActivities();
+        const response = await gasCall('apiSaveInventoryCheck', getSessionToken(), { items });
+        applyBootstrapData(response.data); renderInventoryShiftCheck(); renderInventoryCheckHistory(); renderActivities();
         showToast(response.message || 'Pemeriksaan inventaris berhasil disimpan.', response.message?.includes('temuan') ? 'error' : 'success');
-    } catch (error) {
-        handleServerError(error);
-    }
+    } catch (error) { handleServerError(error); }
 }
 
 async function handleMessRuleSubmit(event) {
@@ -9092,6 +9478,7 @@ document.addEventListener('keydown', event => {
         closeInventoryAreaModal();
         closeInventoryCheckDetailModal();
         closeChangePasswordModal();
+        closeShiftModal();
     }
 });
 
@@ -9103,10 +9490,14 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#employeeForm').addEventListener('submit', handleEmployeeSubmit);
     $('#profileForm').addEventListener('submit', saveProfile);
     $('#changePasswordForm').addEventListener('submit', handleChangePasswordSubmit);
+    $('#shiftForm').addEventListener('submit', handleShiftSubmit);
+    $('#roleAccessForm').addEventListener('submit', handleRoleAccessSubmit);
+    $('#roleAccessSearchInput').addEventListener('input', renderRoleAccessPage);
     $('#branchSelector').addEventListener('change', handleBranchChange);
     $('#empBranch').addEventListener('change', event => {
         populateEmployeeDepartmentOptions('', event.target.value);
         populateEmployeePositionOptions('', event.target.value, '');
+        populateEmployeeShiftOptions('', event.target.value);
     });
     $('#empDept').addEventListener('change', event => {
         populateEmployeePositionOptions('', $('#empBranch').value, event.target.value);
@@ -9116,7 +9507,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#sopForm').addEventListener('submit', handleSopSubmit);
     $('#inventoryForm').addEventListener('submit', handleInventorySubmit);
     $('#inventoryShiftCheckForm').addEventListener('submit', handleInventoryShiftCheckSubmit);
-    $('#inventoryCheckArea').addEventListener('change', renderInventoryShiftCheck);
     $('#inventoryCheckHistoryAreaFilter').addEventListener('change', renderInventoryCheckHistory);
     $('#inventorySearchInput').addEventListener('input', renderInventory);
     $('#inventoryAreaFilter').addEventListener('change', renderInventory);
