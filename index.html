@@ -7205,13 +7205,26 @@ const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 // WAJIB: tempel URL deployment Web App Apps Script yang berakhiran /exec.
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw9TTFJ_GfDyMtBVDqkX1uBUw1WNrKqw6DvkK1NKzDVVH7Cn1RkyzVUK8onPTqLM3KcTQ/exec';
 
-const GAS_BRIDGE_CHANNEL = 'KARYAHUB_GAS_BRIDGE_V1';
+const GAS_BRIDGE_CHANNEL = 'KARYAHUB_GAS_BRIDGE_V2';
+const GAS_BRIDGE_TIMEOUT_MS = 20000;
 let gasBridgeFrame = null;
+let gasBridgeWindow = null;
+let gasBridgeOrigin = '*';
+let gasBridgeNonce = '';
 let gasBridgeReadyPromise = null;
 let gasBridgeReadyResolve = null;
 let gasBridgeReadyReject = null;
 let gasBridgeSequence = 0;
 const gasBridgePending = new Map();
+
+function createBridgeNonce() {
+    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+        const bytes = new Uint32Array(4);
+        window.crypto.getRandomValues(bytes);
+        return Array.from(bytes, value => value.toString(16).padStart(8, '0')).join('');
+    }
+    return `${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}_${Math.random().toString(36).slice(2)}`;
+}
 
 function isGasUrlConfigured() {
     const value = String(GAS_WEB_APP_URL || '').trim();
@@ -7219,21 +7232,62 @@ function isGasUrlConfigured() {
 }
 
 function gasBridgeUrl() {
+    if (!gasBridgeNonce) gasBridgeNonce = createBridgeNonce();
     const separator = GAS_WEB_APP_URL.includes('?') ? '&' : '?';
-    return `${GAS_WEB_APP_URL}${separator}bridge=1`;
+    return `${GAS_WEB_APP_URL}${separator}bridge=1&client=${encodeURIComponent(gasBridgeNonce)}&v=2`;
 }
 
 function hasGasRuntime() {
     return isGasUrlConfigured() && typeof window.postMessage === 'function';
 }
 
-function handleGasBridgeMessage(event) {
-    if (!gasBridgeFrame || event.source !== gasBridgeFrame.contentWindow) return;
+function isTrustedGasBridgeOrigin(origin) {
+    try {
+        const url = new URL(origin);
+        return url.protocol === 'https:' && (
+            url.hostname === 'script.google.com' ||
+            url.hostname.endsWith('.googleusercontent.com') ||
+            url.hostname === 'script.googleusercontent.com'
+        );
+    } catch (error) {
+        return false;
+    }
+}
 
+function resetGasBridge(reason = '') {
+    if (gasBridgeFrame) {
+        try { gasBridgeFrame.remove(); } catch (error) {}
+    }
+    gasBridgeFrame = null;
+    gasBridgeWindow = null;
+    gasBridgeOrigin = '*';
+    gasBridgeNonce = '';
+    gasBridgeReadyPromise = null;
+    gasBridgeReadyResolve = null;
+    gasBridgeReadyReject = null;
+
+    for (const [id, pending] of gasBridgePending.entries()) {
+        clearTimeout(pending.timeoutId);
+        pending.reject(new Error(reason || 'Koneksi Apps Script direset.'));
+        gasBridgePending.delete(id);
+    }
+}
+
+function handleGasBridgeMessage(event) {
     const message = event.data;
     if (!message || message.channel !== GAS_BRIDGE_CHANNEL) return;
+    if (!gasBridgeNonce || message.client !== gasBridgeNonce) return;
 
+    // HTML Service menjalankan kode user di iframe sandbox internal Google.
+    // Karena itu event.source TIDAK sama dengan iframe /exec terluar.
+    // Simpan WindowProxy dari pesan "ready" dan kirim RPC langsung ke sana.
     if (message.type === 'ready') {
+        if (!isTrustedGasBridgeOrigin(event.origin)) return;
+
+        gasBridgeWindow = event.source;
+        gasBridgeOrigin = event.origin || '*';
+        console.info('[KaryaHub] Apps Script bridge ready:', gasBridgeOrigin);
+
         if (gasBridgeReadyResolve) {
             gasBridgeReadyResolve(true);
             gasBridgeReadyResolve = null;
@@ -7242,6 +7296,8 @@ function handleGasBridgeMessage(event) {
         return;
     }
 
+    if (!gasBridgeWindow || event.source !== gasBridgeWindow) return;
+    if (gasBridgeOrigin !== '*' && event.origin !== gasBridgeOrigin) return;
     if (!message.id || !gasBridgePending.has(message.id)) return;
 
     const pending = gasBridgePending.get(message.id);
@@ -7277,6 +7333,8 @@ function ensureGasBridge() {
 
     if (gasBridgeReadyPromise) return gasBridgeReadyPromise;
 
+    gasBridgeNonce = createBridgeNonce();
+
     gasBridgeReadyPromise = new Promise((resolve, reject) => {
         gasBridgeReadyResolve = resolve;
         gasBridgeReadyReject = reject;
@@ -7296,33 +7354,33 @@ function ensureGasBridge() {
         frame.style.left = '-9999px';
         frame.style.top = '-9999px';
 
-        frame.addEventListener('load', () => {
-            // Apps Script bridge juga mengirim ready sendiri. Ping ini hanya fallback.
-            try {
-                frame.contentWindow?.postMessage({
-                    channel: GAS_BRIDGE_CHANNEL,
-                    type: 'ping'
-                }, '*');
-            } catch (error) {}
-        });
-
         frame.addEventListener('error', () => {
+            resetGasBridge('Apps Script bridge gagal dimuat.');
             reject(new Error('Apps Script bridge gagal dimuat. Periksa URL deployment /exec.'));
-        });
+        }, { once: true });
 
         gasBridgeFrame = frame;
         document.body.appendChild(frame);
 
         setTimeout(() => {
             if (gasBridgeReadyResolve) {
+                // Jangan pertahankan promise gagal; user bisa mencoba login lagi setelah deployment diperbaiki.
+                if (gasBridgeFrame) {
+                    try { gasBridgeFrame.remove(); } catch (error) {}
+                }
+                gasBridgeFrame = null;
+                gasBridgeWindow = null;
+                gasBridgeOrigin = '*';
                 gasBridgeReadyPromise = null;
                 gasBridgeReadyResolve = null;
                 gasBridgeReadyReject = null;
+                gasBridgeNonce = '';
+
                 reject(new Error(
-                    'Apps Script bridge tidak merespons. Pastikan deployment Web App menggunakan Execute as: Me dan Who has access: Anyone, lalu gunakan URL /exec terbaru.'
+                    'Apps Script bridge tidak merespons. Buka URL /exec?bridge=1 langsung untuk memastikan halaman bridge dapat dimuat, lalu pastikan deployment memakai Execute as: Me dan akses Web App mengizinkan pengguna aplikasi.'
                 ));
             }
-        }, 20000);
+        }, GAS_BRIDGE_TIMEOUT_MS);
     });
 
     return gasBridgeReadyPromise;
@@ -7330,6 +7388,10 @@ function ensureGasBridge() {
 
 async function gasCall(method, ...args) {
     await ensureGasBridge();
+
+    if (!gasBridgeWindow) {
+        throw new Error('Apps Script bridge belum siap. Silakan coba lagi.');
+    }
 
     return new Promise((resolve, reject) => {
         const id = `rpc_${Date.now()}_${++gasBridgeSequence}`;
@@ -7341,13 +7403,14 @@ async function gasCall(method, ...args) {
         gasBridgePending.set(id, { resolve, reject, timeoutId });
 
         try {
-            gasBridgeFrame.contentWindow.postMessage({
+            gasBridgeWindow.postMessage({
                 channel: GAS_BRIDGE_CHANNEL,
+                client: gasBridgeNonce,
                 type: 'call',
                 id,
                 action: method,
                 args
-            }, '*');
+            }, gasBridgeOrigin || '*');
         } catch (error) {
             clearTimeout(timeoutId);
             gasBridgePending.delete(id);
